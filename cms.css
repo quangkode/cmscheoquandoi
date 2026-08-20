@@ -38,7 +38,12 @@ body {
 }
 h1, h2, h3, h4 { margin: 0 0 .5em; line-height: 1.25; }
 a { color: var(--do); }
-img { max-width: 100%; display: block; }
+/* height:auto là BẮT BUỘC, không phải cho đẹp: các thẻ img ở đây có sẵn
+   thuộc tính height trong HTML (logo là height="1121"). Thiếu dòng này thì
+   CSS width:36px đi cùng height 1121px từ thuộc tính, logo cao 1121px đẩy
+   toàn bộ menu ra ngoài màn hình. Có height:auto thì trình duyệt mới suy
+   chiều cao theo tỉ lệ ảnh. */
+img { max-width: 100%; height: auto; display: block; }
 button, input, select, textarea { font: inherit; color: inherit; }
 
 /* ---------- Nút ---------- */
@@ -99,6 +104,13 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .ben__chan p { margin: 0 0 10px; padding: 0 12px; font-size: 12.5px; color: #9aa89a; word-break: break-all; }
 
 .chinh { padding: 26px 30px 60px; min-width: 0; }
+
+/* Màn che của menu mobile. position:fixed phải khai ở ĐÂY chứ không phải chỉ
+   trong media query: .man-che từng là con trực tiếp của .ung-dung nên ở khổ
+   máy tính nó bị tính thành một ô của lưới hai cột, đẩy .chinh xuống hàng dưới
+   và bó vào cột 248px của sidebar. Nay thẻ đã nằm ngoài .ung-dung, thêm fixed
+   ở đây để dù có ai đưa nó trở vào trong lưới cũng không phá bố cục nữa. */
+.man-che { position: fixed; inset: 0; opacity: 0; pointer-events: none; }
 
 /* ---------- Đầu trang ---------- */
 .dau { display: flex; align-items: flex-start; gap: 16px; flex-wrap: wrap; margin-bottom: 22px; }
