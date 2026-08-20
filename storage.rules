@@ -1,0 +1,38 @@
+rules_version = '2';
+
+/* ==========================================================
+   LUẬT FIREBASE STORAGE — kho ảnh
+
+   Cách đăng: Firebase Console → Storage → tab Rules → dán đè
+   toàn bộ file này → Publish.
+   ========================================================== */
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function laQuanTri() {
+      return request.auth != null
+             && firestore.exists(/databases/(default)/documents/quan-tri/$(request.auth.uid));
+    }
+
+    /* Ảnh nội dung nằm trong các thư mục con khai báo ở luoc-do.js.
+       Đọc công khai vì trang web phải hiện được ảnh cho khách.
+       Ghi thì chỉ quản trị, kèm hai chặn quan trọng:
+       - bắt buộc là ảnh thật (contentType image/*), không cho ai
+         mượn kho làm chỗ chứa file lạ
+       - chặn trên 5 MB, khớp với giới hạn CMS kiểm ở phía trình
+         duyệt. Chỉ chặn ở trình duyệt là vô nghĩa vì người ta gọi
+         thẳng API được. */
+    match /{thuMuc}/{tenTep} {
+      allow read: if true;
+      allow write: if laQuanTri()
+                   && request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+      allow delete: if laQuanTri();
+    }
+
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

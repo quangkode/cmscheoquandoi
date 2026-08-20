@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Đăng nhập · Quản lý Nhà hát Chèo Quân đội</title>
+<link rel="icon" type="image/png" href="https://i.postimg.cc/FRktfv0p/Logo-Cheo-QD-PNG.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="./cms.css?v=1" />
+</head>
+<body>
+
+<main class="dangnhap">
+  <div class="dangnhap__the">
+    <div class="dangnhap__hieu">
+      <img src="https://i.postimg.cc/FRktfv0p/Logo-Cheo-QD-PNG.png" alt="" width="1279" height="1121" />
+      <h1>Quản lý nội dung</h1>
+      <p>Nhà hát Chèo Quân đội</p>
+    </div>
+
+    <div id="canhBao"></div>
+
+    <form id="bieuMau" novalidate>
+      <div class="o-nhap">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" autocomplete="username" required />
+      </div>
+      <div class="o-nhap">
+        <label for="matKhau">Mật khẩu</label>
+        <input type="password" id="matKhau" name="matKhau" autocomplete="current-password" required />
+      </div>
+      <p id="loi" class="loi" style="display:none;margin:0 0 14px;color:#a3333d;font-weight:600;font-size:13.5px"></p>
+      <button type="submit" class="nut nut--chinh" style="width:100%" id="nutGui">Đăng nhập</button>
+    </form>
+
+    <p style="margin:16px 0 0;text-align:center;font-size:13.5px">
+      <a href="#" id="quenMk">Quên mật khẩu?</a>
+    </p>
+  </div>
+</main>
+
+<script type="module" src="./js/dang-nhap.js"></script>
+</body>
+</html>

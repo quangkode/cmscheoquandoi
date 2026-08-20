@@ -1,0 +1,78 @@
+rules_version = '2';
+
+/* ==========================================================
+   LUẬT FIRESTORE — Nhà hát Chèo Quân đội
+
+   Đây mới là thứ bảo vệ dữ liệu, KHÔNG phải mấy khoá trong
+   cau-hinh.js. Khoá đó công khai theo thiết kế của Firebase;
+   ai cũng đọc được mã trang web và lấy ra. Nếu không đăng file
+   luật này thì bất kỳ ai trên Internet cũng xoá sạch được dữ
+   liệu Nhà hát bằng vài dòng lệnh.
+
+   Cách đăng: Firebase Console → Firestore Database → tab Rules
+   → dán toàn bộ file này đè lên → Publish.
+   ========================================================== */
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /* Quản trị viên = có một document trong collection quan-tri
+       mang đúng UID của mình. Đăng nhập được KHÔNG đủ để ghi —
+       nếu không sẽ chỉ cần tự đăng ký một tài khoản là sửa được
+       toàn bộ nội dung. */
+    function laQuanTri() {
+      return request.auth != null
+             && exists(/databases/$(database)/documents/quan-tri/$(request.auth.uid));
+    }
+
+    /* Danh sách quản trị: chỉ đọc từ phía ứng dụng, thêm/bớt
+       người phải làm tay trong Firebase Console. Cố ý không cho
+       ghi — để một quản trị viên bị chiếm tài khoản cũng không
+       tự phong thêm người khác được. */
+    match /quan-tri/{uid} {
+      allow read: if request.auth != null && request.auth.uid == uid;
+      allow write: if false;
+    }
+
+    /* Nội dung hiển thị công khai: ai cũng đọc được (trang web
+       không bắt đăng nhập), chỉ quản trị mới sửa. */
+    match /tin-tuc/{id}      { allow read: if true; allow write: if laQuanTri(); }
+    match /lich-dien/{id}    { allow read: if true; allow write: if laQuanTri(); }
+    match /thu-vien-anh/{id} { allow read: if true; allow write: if laQuanTri(); }
+    match /vo-dien/{id}      { allow read: if true; allow write: if laQuanTri(); }
+    match /nghe-si/{id}      { allow read: if true; allow write: if laQuanTri(); }
+    match /lanh-dao/{id}     { allow read: if true; allow write: if laQuanTri(); }
+
+    /* Đơn đặt chỗ đi ngược chiều với mọi thứ ở trên:
+       - AI CŨNG TẠO được (khách vãng lai giữ chỗ, không đăng nhập)
+       - CHỈ QUẢN TRỊ ĐỌC được (chứa tên và số điện thoại người dân,
+         để read công khai là rò rỉ thông tin cá nhân)
+       - không ai sửa/xoá ngoài quản trị */
+    match /dat-cho/{id} {
+      allow create: if hopLeDonDatCho();
+      allow read, update, delete: if laQuanTri();
+    }
+
+    /* Chặn rác và chặn nghịch: bắt buộc có tên, điện thoại, suất
+       diễn; giới hạn độ dài để không ai nhét cả quyển sách vào
+       làm phình hoá đơn Firebase; ép trạng thái ban đầu là "moi"
+       để người gửi không tự đánh dấu đơn của mình là đã xác nhận. */
+    function hopLeDonDatCho() {
+      let d = request.resource.data;
+      return d.hoTen is string && d.hoTen.size() > 0 && d.hoTen.size() < 120
+             && d.dienThoai is string && d.dienThoai.size() > 5 && d.dienThoai.size() < 30
+             && d.maSuat is string && d.maSuat.size() > 0 && d.maSuat.size() < 80
+             && (!('email' in d) || d.email.size() < 160)
+             && (!('ghiChu' in d) || d.ghiChu.size() < 1000)
+             && (!('donVi' in d) || d.donVi.size() < 200)
+             && d.trangThai == 'moi'
+             && d.soGhe is number && d.soGhe > 0 && d.soGhe <= 20;
+    }
+
+    /* Bất cứ collection nào chưa nghĩ tới thì cấm sạch. An toàn
+       hơn là để hở rồi quên. */
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

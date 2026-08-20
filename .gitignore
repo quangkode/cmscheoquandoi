@@ -1,0 +1,11 @@
+node_modules/
+.DS_Store
+Thumbs.db
+.vercel
+*.log
+
+# cau-hinh.js KHÔNG nằm trong này một cách cố ý.
+# Khoá Firebase công khai theo thiết kế — trình duyệt phải tải được chúng
+# thì trang mới chạy, giấu đi cũng vô nghĩa. Thứ bảo vệ dữ liệu là
+# firestore.rules và storage.rules. Đừng bao giờ đặt khoá riêng
+# (service account, admin SDK) vào thư mục này.
