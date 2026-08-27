@@ -28,7 +28,7 @@
   --ben: 248px;
 
   --serif: "Playfair Display", "Noto Serif", "Times New Roman", Georgia, serif;
-  --sans: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --sans: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 
 * { box-sizing: border-box; }
