@@ -6,6 +6,10 @@ Sửa ở đây xong, trang web đổi ngay — không cần đăng lại mã, k
 Không dùng npm, không cần cài gì. Toàn bộ là HTML/CSS/JS thuần, giống hệt
 cách trang web chính đang chạy.
 
+> **Đọc bằng trình duyệt cho dễ:** mở `huong-dan.html` — cùng nội dung file này
+> nhưng có mục lục, chia thành từng bước và in ra giấy được. File `.md` này giữ
+> lại để GitHub hiển thị ở trang đầu kho mã.
+
 ---
 
 ## Dựng lần đầu — làm theo đúng thứ tự
@@ -118,6 +122,7 @@ storage.rules        luật bảo vệ kho ảnh (đăng lên Console)
 index.html           đăng nhập
 app.html             màn quản lý chính
 nap-du-lieu.html     nạp dữ liệu ban đầu, chạy một lần
+huong-dan.html       bản HTML của file README này
 cms.css              giao diện
 js/firebase.js       lớp nối Firebase (auth, Firestore, Storage)
 js/luoc-do.js        mô tả các mục và các trường  ← sửa ở đây để thêm trường mới

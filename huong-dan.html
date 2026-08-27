@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Hướng dẫn sử dụng · Quản lý Nhà hát Chèo Quân đội</title>
+<link rel="icon" type="image/png" href="https://i.postimg.cc/FRktfv0p/Logo-Cheo-QD-PNG.png" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="./cms.css?v=1" />
+<style>
+/* ==========================================================
+   Trang hướng dẫn — bản HTML của README.md. Cùng một nội dung,
+   nhưng đọc được bằng trình duyệt và có mục lục bám theo cuộn.
+   Kiểu dáng riêng của trang này để ở đây chứ không nhét vào
+   cms.css: cms.css là giao diện phần mềm, không phải tài liệu.
+   ========================================================== */
+
+/* ---------- Băng đầu trang ---------- */
+.hd-dau {
+  background: linear-gradient(135deg, var(--quan-doi) 0%, var(--quan-doi-nhat) 45%, #4a3b12 100%);
+  color: #fff; padding: 40px 24px 44px; margin-bottom: 36px;
+}
+.hd-dau__trong { max-width: 1180px; margin: 0 auto; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.hd-dau img { width: 58px; flex: none; }
+.hd-dau h1 { font-family: var(--serif); font-size: 32px; margin: 0 0 6px; color: #fff; }
+.hd-dau p { margin: 0; color: #cfd8cb; font-size: 15px; max-width: 640px; }
+.hd-dau .nut { margin-left: auto; }
+
+/* ---------- Khung hai cột ---------- */
+.hd { max-width: 1180px; margin: 0 auto; padding: 0 24px 90px; display: grid; grid-template-columns: 250px 1fr; gap: 46px; align-items: start; }
+
+/* ---------- Mục lục ---------- */
+.ml { position: sticky; top: 24px; max-height: calc(100vh - 48px); overflow-y: auto; }
+.ml__nhan { font-size: 12px; font-weight: 700; letter-spacing: .09em; text-transform: uppercase; color: var(--muc-nhat); margin: 0 0 12px; }
+.ml ol { list-style: none; margin: 0; padding: 0; }
+.ml li { margin: 0; }
+.ml a {
+  display: block; padding: 6px 12px; border-left: 2px solid var(--vien);
+  color: var(--muc-nhat); text-decoration: none; font-size: 14px; transition: var(--t);
+}
+.ml a:hover { color: var(--muc); border-left-color: var(--muc-nhat); }
+.ml a.dang-xem { color: var(--do); border-left-color: var(--do); font-weight: 600; background: rgba(204, 71, 82, .05); }
+.ml__con a { padding-left: 26px; font-size: 13.5px; }
+
+/* ---------- Thân tài liệu ---------- */
+.than { min-width: 0; }
+.than section { scroll-margin-top: 20px; margin-bottom: 44px; }
+.than h2 {
+  font-family: var(--serif); font-size: 26px; margin: 0 0 10px;
+  padding-bottom: 12px; border-bottom: 2px solid var(--vien);
+}
+.than h3 { font-size: 17.5px; margin: 0 0 10px; }
+.than p { margin: 0 0 14px; }
+.than ol, .than ul { margin: 0 0 14px; padding-left: 22px; }
+.than li { margin-bottom: 6px; }
+.than code {
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: .89em; background: #efeadf; border: 1px solid var(--vien);
+  border-radius: 5px; padding: 1px 5px;
+}
+.than pre {
+  background: var(--quan-doi); color: #d9e0d6; border-radius: var(--r);
+  padding: 16px 18px; overflow-x: auto; margin: 0 0 16px; line-height: 1.55;
+}
+.than pre code { background: none; border: 0; padding: 0; color: inherit; font-size: 13.5px; }
+
+/* ---------- Thẻ từng bước ---------- */
+.buoc {
+  background: var(--the); border: 1px solid var(--vien); border-radius: var(--r);
+  padding: 22px 24px; margin-bottom: 18px; box-shadow: var(--bong); scroll-margin-top: 20px;
+}
+.buoc__dau { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.buoc__so {
+  flex: none; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--do); color: #fff; font-weight: 700; font-size: 15px;
+  display: grid; place-items: center;
+}
+.buoc__dau h3 { margin: 0; }
+.buoc > *:last-child { margin-bottom: 0; }
+
+/* ---------- Khối nhắc ---------- */
+.nhac {
+  border-left: 3px solid var(--cam); background: #fdf6e9;
+  border-radius: 0 var(--r) var(--r) 0; padding: 14px 18px; margin: 0 0 16px;
+}
+.nhac--nguy { border-left-color: var(--do); background: #fcf0f1; }
+.nhac--tot { border-left-color: var(--xanh-la); background: #eff6f1; }
+.nhac > *:last-child { margin-bottom: 0; }
+.nhac strong:first-child { display: block; margin-bottom: 4px; }
+
+/* ---------- Bảng ---------- */
+.cuon-ngang { overflow-x: auto; margin: 0 0 16px; }
+.than table {
+  width: 100%; min-width: 460px; border-collapse: collapse; background: var(--the);
+  font-size: 14.5px; border: 1px solid var(--vien); border-radius: var(--r); overflow: hidden;
+}
+.than th, .than td { text-align: left; padding: 11px 14px; border-bottom: 1px solid var(--vien); vertical-align: top; }
+.than th { background: #efeadf; font-size: 13px; text-transform: uppercase; letter-spacing: .05em; color: var(--muc-nhat); }
+.than tr:last-child td { border-bottom: 0; }
+
+/* ---------- Danh sách tệp ---------- */
+.tep { display: grid; grid-template-columns: 210px 1fr; gap: 4px 18px; font-size: 14.5px; margin: 0 0 16px; }
+.tep dt { font-family: ui-monospace, "Cascadia Mono", Consolas, monospace; font-size: 13.5px; color: var(--do-dam); }
+.tep dd { margin: 0; color: var(--muc-nhat); }
+
+/* ---------- Mục hỏng thì xem ---------- */
+.loi { border: 1px solid var(--vien); border-radius: var(--r); background: var(--the); overflow: hidden; }
+.loi details { border-bottom: 1px solid var(--vien); }
+.loi details:last-child { border-bottom: 0; }
+.loi summary { padding: 14px 18px; cursor: pointer; font-weight: 600; list-style: none; transition: var(--t); }
+.loi summary::-webkit-details-marker { display: none; }
+.loi summary::before { content: "\25B8  "; color: var(--do); }
+.loi details[open] summary::before { content: "\25BE  "; }
+.loi summary:hover { background: #faf7f1; }
+.loi details > p { margin: 0; padding: 0 18px 16px 32px; color: var(--muc-nhat); }
+
+.hd-chan { max-width: 1180px; margin: 0 auto; padding: 24px; border-top: 1px solid var(--vien); color: var(--muc-nhat); font-size: 13.5px; }
+
+/* ---------- Khổ hẹp ---------- */
+@media (max-width: 900px) {
+  .hd { grid-template-columns: 1fr; gap: 24px; }
+  .ml { position: static; max-height: none; border: 1px solid var(--vien); border-radius: var(--r); background: var(--the); padding: 16px 14px; }
+  .hd-dau h1 { font-size: 26px; }
+  .hd-dau .nut { margin-left: 0; }
+  .tep { grid-template-columns: 1fr; gap: 2px; }
+  .tep dd { margin-bottom: 10px; }
+}
+
+/* ---------- In ra giấy ---------- */
+@media print {
+  .ml, .hd-dau .nut { display: none; }
+  .hd { grid-template-columns: 1fr; padding-bottom: 0; }
+  .hd-dau { background: none; padding: 0 0 20px; }
+  .hd-dau h1, .hd-dau p { color: var(--muc); }
+  .buoc { break-inside: avoid; box-shadow: none; }
+}
+</style>
+</head>
+<body>
+
+<header class="hd-dau">
+  <div class="hd-dau__trong">
+    <img src="https://i.postimg.cc/FRktfv0p/Logo-Cheo-QD-PNG.png" alt="" width="1279" height="1121" />
+    <div>
+      <h1>Hướng dẫn sử dụng CMS</h1>
+      <p>Phần mềm quản lý nội dung cho trang web Nhà hát Chèo Quân đội. Sửa ở đây xong, trang web đổi ngay — không cần đăng lại mã, không cần chờ build.</p>
+    </div>
+    <a class="nut nut--chinh" href="./index.html">Vào phần mềm</a>
+  </div>
+</header>
+
+<div class="hd">
+
+  <nav class="ml" id="mucLuc" aria-label="Mục lục">
+    <p class="ml__nhan">Mục lục</p>
+    <ol>
+      <li><a href="#dung-lan-dau">Dựng lần đầu</a></li>
+      <li class="ml__con"><a href="#b1">1 · Tạo dự án Firebase</a></li>
+      <li class="ml__con"><a href="#b2">2 · Bật ba dịch vụ</a></li>
+      <li class="ml__con"><a href="#b3">3 · Lấy cấu hình</a></li>
+      <li class="ml__con"><a href="#b4">4 · Đăng luật bảo mật</a></li>
+      <li class="ml__con"><a href="#b5">5 · Tạo tài khoản quản trị</a></li>
+      <li class="ml__con"><a href="#b6">6 · Chạy thử tại máy</a></li>
+      <li class="ml__con"><a href="#b7">7 · Nạp dữ liệu ban đầu</a></li>
+      <li class="ml__con"><a href="#b8">8 · Đưa CMS lên mạng</a></li>
+      <li><a href="#hang-ngay">Cách dùng hằng ngày</a></li>
+      <li><a href="#cau-truc">Cấu trúc mã</a></li>
+      <li><a href="#hong">Hỏng thì xem ở đây</a></li>
+      <li><a href="#chi-phi">Chi phí</a></li>
+    </ol>
+  </nav>
+
+  <main class="than">
+
+    <section id="dung-lan-dau">
+      <h2>Dựng lần đầu</h2>
+      <p>Làm theo đúng thứ tự tám bước dưới đây. Không dùng npm, không cần cài gì — toàn bộ là HTML/CSS/JS thuần, giống hệt cách trang web chính đang chạy.</p>
+
+      <article class="buoc" id="b1">
+        <div class="buoc__dau"><span class="buoc__so">1</span><h3>Tạo dự án Firebase</h3></div>
+        <ol>
+          <li>Vào <a href="https://console.firebase.google.com" target="_blank" rel="noopener">console.firebase.google.com</a> → <strong>Add project</strong> → đặt tên, ví dụ <code>nha-hat-cheo-quan-doi</code>.</li>
+          <li>Tắt Google Analytics nếu không cần, bấm <strong>Create project</strong>.</li>
+        </ol>
+      </article>
+
+      <article class="buoc" id="b2">
+        <div class="buoc__dau"><span class="buoc__so">2</span><h3>Bật ba dịch vụ</h3></div>
+        <p>Trong dự án vừa tạo, bật lần lượt:</p>
+        <div class="cuon-ngang">
+          <table>
+            <thead><tr><th>Dịch vụ</th><th>Đường đi</th><th>Lưu ý</th></tr></thead>
+            <tbody>
+              <tr>
+                <td><strong>Authentication</strong></td>
+                <td>Build → Authentication → Get started → tab <strong>Sign-in method</strong> → bật <strong>Email/Password</strong></td>
+                <td>Chỉ bật Email/Password, không cần Google/Facebook</td>
+              </tr>
+              <tr>
+                <td><strong>Firestore Database</strong></td>
+                <td>Build → Firestore Database → Create database → chọn <strong>production mode</strong></td>
+                <td>Vùng nên chọn <code>asia-southeast1</code> (Singapore) cho gần Việt Nam</td>
+              </tr>
+              <tr>
+                <td><strong>Storage</strong></td>
+                <td>Build → Storage → Get started → <strong>production mode</strong></td>
+                <td>Nơi chứa ảnh tải lên</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="nhac">
+          <strong>Chọn production mode, không phải test mode.</strong>
+          Test mode mở toang dữ liệu cho cả Internet và tự khoá sau 30 ngày — đúng hai điều không nên có.
+        </div>
+      </article>
+
+      <article class="buoc" id="b3">
+        <div class="buoc__dau"><span class="buoc__so">3</span><h3>Lấy cấu hình, dán vào <code>cau-hinh.js</code></h3></div>
+        <p>Bánh răng ⚙ → <strong>Project settings</strong> → kéo xuống <strong>Your apps</strong> → bấm biểu tượng web <code>&lt;/&gt;</code> → đặt nickname bất kỳ → <strong>Register app</strong>. Màn hình hiện khối <code>firebaseConfig</code> — chép rồi dán đè vào phần tương ứng trong <code>cau-hinh.js</code>.</p>
+        <div class="nhac nhac--tot">
+          <strong>Mấy khoá đó không phải mật khẩu.</strong>
+          Firebase thiết kế để chúng nằm công khai trong mã trang web. Cái thực sự bảo vệ dữ liệu là hai file luật ở bước sau — <strong>đừng bỏ qua bước 4</strong>.
+        </div>
+      </article>
+
+      <article class="buoc" id="b4">
+        <div class="buoc__dau"><span class="buoc__so">4</span><h3>Đăng luật bảo mật <em>(bắt buộc)</em></h3></div>
+        <ul>
+          <li><strong>Firestore Database → tab Rules</strong> → dán toàn bộ <code>firestore.rules</code> đè lên → <strong>Publish</strong></li>
+          <li><strong>Storage → tab Rules</strong> → dán toàn bộ <code>storage.rules</code> đè lên → <strong>Publish</strong></li>
+        </ul>
+        <div class="nhac nhac--nguy">
+          <strong>Bỏ qua bước này là hỏng thật.</strong>
+          Bất kỳ ai trên Internet cũng đọc được số điện thoại của người đặt chỗ và xoá sạch nội dung Nhà hát.
+        </div>
+      </article>
+
+      <article class="buoc" id="b5">
+        <div class="buoc__dau"><span class="buoc__so">5</span><h3>Tạo tài khoản quản trị</h3></div>
+        <ol>
+          <li><strong>Authentication → tab Users → Add user</strong> → nhập email và mật khẩu cho người quản lý.</li>
+          <li>Bấm vào user vừa tạo, <strong>chép chuỗi User UID</strong>.</li>
+          <li><strong>Firestore Database → Start collection</strong> → Collection ID gõ đúng <code>quan-tri</code>.</li>
+          <li>Document ID: <strong>dán UID vừa chép</strong>. Thêm một trường bất kỳ để lưu được, ví dụ <code>ten</code> (string) = tên người đó → <strong>Save</strong>.</li>
+        </ol>
+        <div class="nhac">
+          <strong>Đăng nhập được chưa đủ để sửa nội dung.</strong>
+          Phải có document trong <code>quan-tri</code> mang đúng UID thì luật mới cho ghi. Nhờ vậy người lạ tự đăng ký tài khoản cũng không đụng được vào dữ liệu.
+        </div>
+        <p>Muốn thêm người quản lý: lặp lại bước 5. Muốn thu hồi quyền: xoá document trong <code>quan-tri</code> (không cần xoá tài khoản).</p>
+      </article>
+
+      <article class="buoc" id="b6">
+        <div class="buoc__dau"><span class="buoc__so">6</span><h3>Chạy thử tại máy</h3></div>
+        <p>Mở thư mục này bằng một máy chủ tĩnh bất kỳ. Không mở trực tiếp bằng <code>file://</code> — trình duyệt chặn ES module khi chạy kiểu đó.</p>
+        <pre><code>npx serve .</code></pre>
+        <p>Rồi mở địa chỉ hiện ra, đăng nhập bằng tài khoản ở bước 5.</p>
+      </article>
+
+      <article class="buoc" id="b7">
+        <div class="buoc__dau"><span class="buoc__so">7</span><h3>Nạp dữ liệu ban đầu</h3></div>
+        <p>Mở <a href="./nap-du-lieu.html">nap-du-lieu.html</a>, bấm <strong>Nạp tất cả mục đang trống</strong>. Toàn bộ nội dung đang có trên trang web (tin tức, lịch diễn, thư viện ảnh, nghệ sĩ, lãnh đạo, vở diễn) sẽ được đưa vào Firestore, khỏi phải gõ lại tay.</p>
+        <div class="nhac nhac--nguy">
+          <strong>Chỉ chạy một lần.</strong>
+          Bấm lại là dữ liệu nhân đôi.
+        </div>
+      </article>
+
+      <article class="buoc" id="b8">
+        <div class="buoc__dau"><span class="buoc__so">8</span><h3>Đưa CMS lên mạng</h3></div>
+        <p>CMS là trang tĩnh nên đẩy lên Vercel như trang web chính là xong. Nên đặt ở tên miền riêng, ví dụ <code>quanly.tenmiennhahat.vn</code>.</p>
+        <p>Trang đã gắn <code>noindex, nofollow</code> nên Google không đưa vào kết quả tìm kiếm. Bảo mật thật vẫn nằm ở đăng nhập và luật Firestore, không nằm ở việc giấu địa chỉ.</p>
+      </article>
+    </section>
+
+    <section id="hang-ngay">
+      <h2>Cách dùng hằng ngày</h2>
+      <div class="cuon-ngang">
+        <table>
+          <thead><tr><th>Việc</th><th>Làm ở đâu</th></tr></thead>
+          <tbody>
+            <tr><td>Đăng tin mới</td><td>Tin tức → Thêm mới</td></tr>
+            <tr><td>Đổi lịch diễn</td><td>Lịch diễn → sửa hoặc thêm suất</td></tr>
+            <tr><td>Thêm ảnh vào thư viện</td><td>Thư viện ảnh → Thêm mới → Chọn ảnh</td></tr>
+            <tr><td>Xem ai đã giữ chỗ</td><td>Đơn đặt chỗ</td></tr>
+            <tr><td>Tạm ẩn một mục</td><td>Mở mục đó, tắt <strong>Hiện trên web</strong>, lưu</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="nhac">
+        <strong>Tắt “Hiện trên web” thay vì xoá.</strong>
+        Xoá là mất hẳn, không lấy lại được. Tắt thì web không hiện nhưng dữ liệu còn nguyên, cần thì bật lại.
+      </div>
+      <p>Đơn đặt chỗ <strong>không tạo tay được</strong> — chỉ đến từ trang web. Trong CMS chỉ đổi được trạng thái và ghi chú nội bộ, thông tin người đặt để nguyên cho khớp với thứ người ta đã gửi.</p>
+    </section>
+
+    <section id="cau-truc">
+      <h2>Cấu trúc mã</h2>
+      <dl class="tep">
+        <dt>cau-hinh.js</dt><dd>khoá Firebase + phiên bản SDK — file duy nhất phải sửa khi dựng</dd>
+        <dt>firestore.rules</dt><dd>luật bảo vệ dữ liệu (đăng lên Console)</dd>
+        <dt>storage.rules</dt><dd>luật bảo vệ kho ảnh (đăng lên Console)</dd>
+        <dt>index.html</dt><dd>đăng nhập</dd>
+        <dt>app.html</dt><dd>màn quản lý chính</dd>
+        <dt>nap-du-lieu.html</dt><dd>nạp dữ liệu ban đầu, chạy một lần</dd>
+        <dt>huong-dan.html</dt><dd>trang hướng dẫn này</dd>
+        <dt>cms.css</dt><dd>giao diện</dd>
+        <dt>js/firebase.js</dt><dd>lớp nối Firebase (auth, Firestore, Storage)</dd>
+        <dt>js/luoc-do.js</dt><dd>mô tả các mục và các trường — sửa ở đây để thêm trường mới</dd>
+        <dt>js/app.js</dt><dd>bộ dựng giao diện từ lược đồ</dd>
+        <dt>js/dang-nhap.js</dt><dd>màn đăng nhập</dd>
+        <dt>js/nap-du-lieu.js</dt><dd>nạp dữ liệu ban đầu</dd>
+        <dt>js/du-lieu-goc.js</dt><dd>dữ liệu rút từ web, chỉ dùng cho bước nạp</dd>
+      </dl>
+      <div class="nhac nhac--tot">
+        <strong>Thêm một trường mới</strong>
+        Ví dụ thêm “Đạo diễn” cho vở diễn: mở <code>js/luoc-do.js</code>, thêm một dòng vào mảng <code>truong</code> của mục đó. Giao diện tự có ô nhập, bảng tự có cột — không phải viết thêm màn hình nào.
+      </div>
+    </section>
+
+    <section id="hong">
+      <h2>Hỏng thì xem ở đây</h2>
+      <div class="loi">
+        <details>
+          <summary>“Chưa nối Firebase”</summary>
+          <p>Chưa dán <code>firebaseConfig</code> vào <code>cau-hinh.js</code>. Làm lại bước 3.</p>
+        </details>
+        <details>
+          <summary>“Tài khoản này chưa được cấp quyền quản trị”</summary>
+          <p>Thiếu document trong collection <code>quan-tri</code>. Làm lại bước 5, chú ý Document ID phải đúng UID, không phải email.</p>
+        </details>
+        <details>
+          <summary>“Luật Firestore chặn thao tác này”</summary>
+          <p>Chưa <strong>Publish</strong> <code>firestore.rules</code>, hoặc UID trong <code>quan-tri</code> gõ sai.</p>
+        </details>
+        <details>
+          <summary>Tải ảnh báo lỗi</summary>
+          <p>Chưa bật Storage, hoặc chưa Publish <code>storage.rules</code>, hoặc ảnh nặng quá 5 MB.</p>
+        </details>
+        <details>
+          <summary>Trang trắng, F12 báo lỗi CORS hoặc module</summary>
+          <p>Đang mở bằng <code>file://</code>. Phải chạy qua máy chủ tĩnh — xem bước 6.</p>
+        </details>
+      </div>
+    </section>
+
+    <section id="chi-phi">
+      <h2>Chi phí</h2>
+      <p>Mức dùng của một nhà hát nằm gọn trong gói miễn phí <strong>Spark</strong> của Firebase (1 GiB Firestore, 5 GB Storage, 50k lượt đọc/ngày).</p>
+      <p>Nếu muốn chắc chắn không bao giờ phát sinh tiền thì cứ để nguyên gói Spark — hết hạn mức thì dịch vụ tạm dừng chứ không tự trừ tiền.</p>
+    </section>
+
+  </main>
+</div>
+
+<footer class="hd-chan">
+  CMS Nhà hát Chèo Quân đội · Trang này là bản HTML của <code>README.md</code> — hai bản cùng một nội dung.
+</footer>
+
+<script>
+/* Mục lục tự sáng theo phần đang đọc.
+
+   Không dùng IntersectionObserver ở đây. Cách đó tính theo "phần nào đang
+   nằm trong khung nhìn", mà mấy mục cuối trang (Chi phí) thì không bao giờ
+   lên tới được vạch đọc: cuộn hết cỡ rồi mà chúng vẫn nằm lưng chừng màn
+   hình, nên mục lục cứ sáng ở "Cấu trúc mã".
+
+   Thay bằng cách đo thẳng: mốc cuối cùng có mép trên đã trôi qua vạch đọc
+   chính là phần đang đọc. Chạm đáy trang thì luôn sáng mục cuối. */
+(function () {
+  var lien = Array.prototype.slice.call(document.querySelectorAll('#mucLuc a'));
+  var moc = lien
+    .map(function (a) { return document.getElementById(a.getAttribute('href').slice(1)); })
+    .filter(Boolean);
+  if (!moc.length) return;
+
+  var doi = false;
+
+  function capNhat() {
+    doi = false;
+    var vach = window.innerHeight * 0.3;
+    var id = moc[0].id;
+
+    for (var i = 0; i < moc.length; i++) {
+      if (moc[i].getBoundingClientRect().top <= vach) id = moc[i].id;
+    }
+    var day = document.documentElement.scrollHeight - window.innerHeight - 2;
+    if (window.scrollY >= day) id = moc[moc.length - 1].id;
+
+    lien.forEach(function (a) {
+      a.classList.toggle('dang-xem', a.getAttribute('href') === '#' + id);
+    });
+  }
+
+  function hen() {
+    if (doi) return;
+    doi = true;
+    requestAnimationFrame(capNhat);
+  }
+
+  window.addEventListener('scroll', hen, { passive: true });
+  window.addEventListener('resize', hen);
+  capNhat();
+})();
+</script>
+</body>
+</html>
