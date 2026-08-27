@@ -14,12 +14,12 @@
    ========================================================== */
 
 export const cauHinhFirebase = {
-  apiKey: "DAN_VAO_DAY",
-  authDomain: "DAN_VAO_DAY.firebaseapp.com",
-  projectId: "DAN_VAO_DAY",
-  storageBucket: "DAN_VAO_DAY.firebasestorage.app",
-  messagingSenderId: "DAN_VAO_DAY",
-  appId: "DAN_VAO_DAY"
+  apiKey: "AIzaSyBNgKNSMPAOGsgLOmnH1yso3HWPcML_SIQ",
+  authDomain: "cmsnhahatcheoquandoi.firebaseapp.com",
+  projectId: "cmsnhahatcheoquandoi",
+  storageBucket: "cmsnhahatcheoquandoi.firebasestorage.app",
+  messagingSenderId: "298927410640",
+  appId: "1:298927410640:web:5f41b7c0c2d86caca03dd5"
 };
 
 /* Đổi số này khi muốn nâng phiên bản Firebase SDK. Để một chỗ
