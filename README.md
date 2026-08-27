@@ -27,7 +27,7 @@ Trong dự án vừa tạo, bật lần lượt:
 |---|---|---|
 | **Authentication** | Build → Authentication → Get started → tab **Sign-in method** → bật **Email/Password** | Chỉ bật Email/Password, không cần Google/Facebook |
 | **Firestore Database** | Build → Firestore Database → Create database → chọn **production mode** | Vùng nên chọn `asia-southeast1` (Singapore) cho gần Việt Nam |
-| **Storage** | Build → Storage → Get started → **production mode** | Nơi chứa ảnh tải lên |
+| **Storage** | Build → Storage → Get started → **production mode** | Nơi chứa ảnh tải lên. Firebase sẽ bắt nâng lên gói **Blaze** ở bước này — bắt buộc, xem mục [Chi phí](#chi-phí) |
 
 > Chọn **production mode** chứ không phải test mode. Test mode mở toang dữ liệu
 > cho cả Internet và tự khoá sau 30 ngày — đúng hai điều không nên có.
@@ -158,7 +158,17 @@ qua máy chủ tĩnh (bước 6).
 
 ## Chi phí
 
-Mức dùng của một nhà hát nằm gọn trong gói miễn phí Spark của Firebase
-(1 GiB Firestore, 5 GB Storage, 50k lượt đọc/ngày). Nếu muốn chắc chắn không
-bao giờ phát sinh tiền thì cứ để nguyên gói Spark — hết hạn mức thì dịch vụ
-tạm dừng chứ không tự trừ tiền.
+Dự án đang ở gói **Blaze — trả theo mức dùng**. Không phải chọn cho sang: Firebase
+bắt buộc Blaze mới bật được Storage, không có đường nào vừa ở Spark vừa có kho ảnh.
+
+Blaze **vẫn giữ nguyên hạn mức miễn phí hằng tháng** (1 GiB Firestore, 5 GB
+Storage, 50k lượt đọc/ngày). Mức dùng của một nhà hát nằm gọn trong đó, nên hoá
+đơn gần như chắc chắn là 0 đồng. Khác nhau ở chỗ khi vượt hạn mức: Spark thì
+dịch vụ tạm dừng, Blaze thì tính tiền phần vượt.
+
+Đặt cảnh báo ngân sách cho yên tâm: ⚙ → **Usage and billing** → **Budgets &
+alerts** → ngưỡng vài đô la.
+
+> **Cảnh báo ngân sách chỉ gửi email, không tự chặn chi tiêu.** Google không có
+> nút khoá cứng ở mức hạn mức. Ở quy mô này thì cảnh báo là đủ — có email báo
+> nghĩa là có gì đó bất thường, còn hơn cuối tháng mới biết.

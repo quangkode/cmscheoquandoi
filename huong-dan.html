@@ -207,7 +207,7 @@
               <tr>
                 <td><strong>Storage</strong></td>
                 <td>Build → Storage → Get started → <strong>production mode</strong></td>
-                <td>Nơi chứa ảnh tải lên</td>
+                <td>Nơi chứa ảnh tải lên. Firebase sẽ bắt nâng lên gói <strong>Blaze</strong> ở bước này — bắt buộc, xem mục <a href="#chi-phi">Chi phí</a></td>
               </tr>
             </tbody>
           </table>
@@ -350,8 +350,13 @@
 
     <section id="chi-phi">
       <h2>Chi phí</h2>
-      <p>Mức dùng của một nhà hát nằm gọn trong gói miễn phí <strong>Spark</strong> của Firebase (1 GiB Firestore, 5 GB Storage, 50k lượt đọc/ngày).</p>
-      <p>Nếu muốn chắc chắn không bao giờ phát sinh tiền thì cứ để nguyên gói Spark — hết hạn mức thì dịch vụ tạm dừng chứ không tự trừ tiền.</p>
+      <p>Dự án đang ở gói <strong>Blaze — trả theo mức dùng</strong>. Không phải chọn cho sang: Firebase bắt buộc Blaze mới bật được Storage, không có đường nào vừa ở Spark vừa có kho ảnh.</p>
+      <p>Blaze <strong>vẫn giữ nguyên hạn mức miễn phí hằng tháng</strong> — 1 GiB Firestore, 5 GB Storage, 50k lượt đọc mỗi ngày. Mức dùng của một nhà hát nằm gọn trong đó, nên hoá đơn gần như chắc chắn là 0 đồng. Khác nhau ở chỗ khi vượt hạn mức: Spark thì dịch vụ tạm dừng, Blaze thì tính tiền phần vượt.</p>
+      <p>Đặt cảnh báo ngân sách cho yên tâm: ⚙ → <strong>Usage and billing</strong> → <strong>Budgets &amp; alerts</strong> → ngưỡng vài đô la.</p>
+      <div class="nhac">
+        <strong>Cảnh báo ngân sách chỉ gửi email, không tự chặn chi tiêu.</strong>
+        Google không có nút khoá cứng ở mức hạn mức. Ở quy mô này thì cảnh báo là đủ — có email báo nghĩa là có gì đó bất thường, còn hơn cuối tháng mới biết.
+      </div>
     </section>
 
   </main>
