@@ -80,18 +80,52 @@ async function chay() {
 
     <p style="margin-top:20px">
       <button type="button" class="nut nut--chinh" id="napTatCa">Nạp tất cả mục đang trống</button>
-    </p>`;
+    </p>
+
+    <div class="nhac nhac--nguy" style="margin-top:34px">
+      <h3>Lỡ nạp trùng thì dùng nút này</h3>
+      <p>Xoá sạch cả 6 mục nội dung rồi nạp lại từ đầu đúng một lần. Dùng khi
+         bảng trên hiện số lớn hơn cột “Sẽ thêm”.</p>
+      <p><strong>Mọi chỉnh sửa bạn đã làm trong CMS sẽ mất</strong>, chỉ còn lại
+         đúng nội dung gốc rút từ trang web. Xoá xong không lấy lại được.</p>
+      <p>Không đụng tới <strong>Đơn đặt chỗ</strong> và danh sách <strong>quản trị</strong>.</p>
+      <p id="tienDo" style="display:none;font-weight:600;color:var(--do-dam)"></p>
+      <button type="button" class="nut nut--nguy" id="xoaNapLai">Xoá sạch rồi nạp lại</button>
+    </div>`;
+
+  /* Nạp một mục, báo tiến độ ra ngoài qua hàm tien(). Tách khỏi napMot để
+     nút "Xoá sạch rồi nạp lại" dùng lại được mà không phải chép lại vòng lặp. */
+  const napVao = async (ma, khoa, tien) => {
+    const ds = DU_LIEU_GOC[khoa];
+    let xong = 0;
+    for (const muc of ds) {
+      // maCu chỉ để đối chiếu với mã suất cũ trong booking.js, không thuộc lược đồ
+      await fb.themMoi(ma, muc);
+      tien(++xong, ds.length);
+    }
+    return ds.length;
+  };
+
+  /* Xoá sạch một mục. Ảnh trong Firebase Storage phải xoá TRƯỚC bản ghi,
+     giống hệt lúc xoá tay trong CMS: xoá bản ghi trước rồi hỏng giữa chừng
+     là ảnh nằm lại trong kho vĩnh viễn, không còn đường nào tìm ra để dọn. */
+  const xoaSach = async (ma, tien) => {
+    const ds = await fb.layDanhSach(ma);
+    const oAnh = LUOC_DO[ma].truong.filter((t) => t.kieu === "anh");
+    let xong = 0;
+    for (const d of ds) {
+      for (const t of oAnh) if (d[t.ten]?.duongDan) await fb.xoaAnh(d[t.ten].duongDan);
+      await fb.xoaBo(ma, d.id);
+      tien(++xong, ds.length);
+    }
+    return ds.length;
+  };
 
   const napMot = async (ma, khoa, nut) => {
-    const ds = DU_LIEU_GOC[khoa];
     nut.disabled = true;
     let xong = 0;
     try {
-      for (const muc of ds) {
-        // maCu chỉ để đối chiếu với mã suất cũ trong booking.js, không thuộc lược đồ
-        await fb.themMoi(ma, muc);
-        nut.textContent = `Đang nạp ${++xong}/${ds.length}…`;
-      }
+      xong = await napVao(ma, khoa, (i, tong) => { nut.textContent = `Đang nạp ${i}/${tong}…`; });
       nut.textContent = `Đã nạp ${xong}`;
       bao(`${LUOC_DO[ma].nhan}: đã nạp ${xong} mục.`, "xong");
     } catch (e) {
@@ -124,5 +158,55 @@ async function chay() {
     }
     e.target.disabled = false;
     e.target.textContent = "Xong";
+  });
+
+  document.getElementById("xoaNapLai").addEventListener("click", async (e) => {
+    const tong = Object.values(hienTai).reduce((a, b) => a + b, 0);
+
+    /* Hai lớp chắn, cố ý phiền. Nút này xoá hàng trăm bản ghi và không có
+       đường hoàn tác — chính vì bấm nhầm một nút mà dữ liệu mới thành trùng
+       gấp đôi, nên nút dọn hậu quả không được phép bấm nhầm lần nữa. */
+    if (!confirm(
+      `Sắp xoá toàn bộ ${tong} bản ghi của 6 mục nội dung, rồi nạp lại từ đầu.\n\n` +
+      `Mọi chỉnh sửa bạn đã làm trong CMS sẽ mất.\n` +
+      `Đơn đặt chỗ và danh sách quản trị không bị đụng tới.\n\nTiếp tục?`
+    )) return;
+
+    if ((prompt("Gõ XOA (in hoa, không dấu) để xác nhận:") || "").trim().toUpperCase() !== "XOA") {
+      bao("Đã huỷ, không xoá gì cả.");
+      return;
+    }
+
+    const nut = e.target;
+    const tienDo = document.getElementById("tienDo");
+    const viet = (t) => { tienDo.textContent = t; };
+
+    nut.disabled = true;
+    document.getElementById("napTatCa").disabled = true;
+    noiDung.querySelectorAll("[data-nap]").forEach((b) => (b.disabled = true));
+    tienDo.style.display = "block";
+
+    try {
+      // Xoá hết rồi mới nạp, không xen kẽ: nếu hỏng giữa chừng thì mục nào
+      // đã xoá vẫn còn trống hẳn, nhìn bảng là biết ngay đang dở tới đâu.
+      for (const [ma] of BANG) {
+        await xoaSach(ma, (i, t) => viet(`Đang xoá ${LUOC_DO[ma].nhan}: ${i}/${t}`));
+      }
+      for (const [ma, khoa] of BANG) {
+        await napVao(ma, khoa, (i, t) => viet(`Đang nạp ${LUOC_DO[ma].nhan}: ${i}/${t}`));
+      }
+      viet("Xong. Đang tải lại bảng…");
+      bao("Đã xoá sạch và nạp lại.", "xong");
+      await chay();
+    } catch (err) {
+      nut.disabled = false;
+      viet(`Hỏng giữa chừng: ${err.code || err.message}. Bấm lại để chạy tiếp từ đầu.`);
+      bao(
+        err.code === "permission-denied"
+          ? "Firestore chặn. Kiểm tra firestore.rules và UID của bạn trong quan-tri."
+          : "Lỗi: " + (err.code || err.message),
+        "loi"
+      );
+    }
   });
 }

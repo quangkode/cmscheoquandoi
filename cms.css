@@ -245,6 +245,9 @@ td.o-thao-tac .nut { margin-left: 6px; }
   background: #fdf6e0; border: 1px solid #f0dfa8; border-left: 3px solid var(--vang);
   border-radius: var(--r); padding: 16px 20px; margin-bottom: 22px;
 }
+/* Biến thể đỏ: dành cho thao tác xoá không lấy lại được. Vàng là "đọc kỹ",
+   đỏ là "mất luôn" — hai mức khác nhau thì phải nhìn ra khác nhau. */
+.nhac--nguy { background: #fcf0f1; border-color: #e3b8bb; border-left-color: var(--do); }
 .nhac h3 { font-size: 15.5px; margin: 0 0 6px; }
 .nhac p { margin: 0 0 8px; font-size: 14px; }
 .nhac code {
