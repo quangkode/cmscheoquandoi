@@ -143,6 +143,29 @@ td.o-anh img, .khong-anh {
 td.o-thao-tac { width: 1%; white-space: nowrap; text-align: right; }
 td.o-thao-tac .nut { margin-left: 6px; }
 
+/* ---------- Bảng kiểu bảng tính ----------
+   Dùng cho Lịch diễn: xếp lịch cả tháng thì dò theo lưới kẻ ô nhanh hơn hẳn
+   danh sách thưa. table-layout:fixed để các cột chia đều đúng nghĩa — mặc
+   định trình duyệt co giãn cột theo nội dung nên cột "Vở diễn" nuốt hết chỗ
+   của cột "Ngày", mỗi hàng lại lệch một kiểu, nhìn không ra hàng lối. */
+table.bang-tinh { table-layout: fixed; }
+table.bang-tinh th,
+table.bang-tinh td {
+  border: 1px solid var(--vien);
+  padding: 9px 12px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+/* Ô cuối chứa hai nút Sửa/Xoá: khoá bề rộng riêng chứ không chia đều, VÀ phải
+   gỡ overflow:hidden ở trên ra — không thì nút Xoá bị cắt cụt thành "…". */
+table.bang-tinh th:last-child,
+table.bang-tinh td.o-thao-tac { width: 152px; }
+table.bang-tinh td.o-thao-tac { overflow: visible; text-overflow: clip; }
+table.bang-tinh thead th { background: #f3efe6; }
+/* kẻ hàng chẵn lẻ: dò ngang một hàng dài không bị lạc dòng */
+table.bang-tinh tbody tr:nth-child(even) { background: #fcfbf8; }
+table.bang-tinh tbody tr:hover { background: #f6f2ea; }
+table.bang-tinh tbody tr:last-child td { border-bottom: 1px solid var(--vien); }
+
 .chip {
   display: inline-block; padding: 3px 10px; border-radius: 999px;
   font-size: 12.5px; font-weight: 600; white-space: nowrap;
@@ -151,6 +174,15 @@ td.o-thao-tac .nut { margin-left: 6px; }
 .chip--xam { background: #eeeae2; color: var(--muc-nhat); }
 .chip--vang { background: #fdf0cc; color: var(--vang-muc); }
 .chip--do { background: #fbe6e8; color: var(--do-dam); }
+
+/* ---------- Xem trước khi nhập bảng tính ---------- */
+.tom-tat { display: flex; gap: 8px; flex-wrap: wrap; margin: 4px 0 10px; }
+.ds-loi {
+  margin: 10px 0 0; padding: 10px 12px 10px 28px; max-height: 190px; overflow-y: auto;
+  background: #fcf0f1; border: 1px solid #e3b8bb; border-radius: var(--r);
+  font-size: 13px; line-height: 1.55; color: var(--do-dam);
+}
+.ds-loi li { margin-bottom: 4px; }
 
 /* ---------- Trạng thái rỗng / đang tải ---------- */
 .trong { padding: 54px 24px; text-align: center; color: var(--muc-nhat); }

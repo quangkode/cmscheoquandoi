@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="./cms.css?v=3" />
+<link rel="stylesheet" href="./cms.css?v=4" />
 <style>
 /* ==========================================================
    Trang hướng dẫn — bản HTML của README.md. Cùng một nội dung,
@@ -285,6 +285,7 @@
           <tbody>
             <tr><td>Đăng tin mới</td><td>Tin tức → Thêm mới</td></tr>
             <tr><td>Đổi lịch diễn</td><td>Lịch diễn → sửa hoặc thêm suất</td></tr>
+            <tr><td>Xếp lịch cả tháng một lần</td><td>Lịch diễn → <strong>Xuất Excel</strong> → sửa trong bảng tính → lưu thành .csv → <strong>Nhập bảng tính</strong></td></tr>
             <tr><td>Thêm ảnh vào thư viện</td><td>Thư viện ảnh → Thêm mới → Chọn ảnh</td></tr>
             <tr><td>Xem ai đã giữ chỗ</td><td>Đơn đặt chỗ</td></tr>
             <tr><td>Tạm ẩn một mục</td><td>Mở mục đó, tắt <strong>Hiện trên web</strong>, lưu</td></tr>
@@ -296,6 +297,20 @@
         Xoá là mất hẳn, không lấy lại được. Tắt thì web không hiện nhưng dữ liệu còn nguyên, cần thì bật lại.
       </div>
       <p>Đơn đặt chỗ <strong>không tạo tay được</strong> — chỉ đến từ trang web. Trong CMS chỉ đổi được trạng thái và ghi chú nội bộ, thông tin người đặt để nguyên cho khớp với thứ người ta đã gửi.</p>
+
+      <h3>Làm việc bằng Excel hoặc Google Sheets</h3>
+      <p>Mục nào cũng có nút <strong>Xuất Excel</strong>: tải về một tệp <code>.xlsx</code>, mở thẳng bằng Excel, hoặc đưa lên Google Sheets bằng <em>Tệp → Nhập</em>. Hàng tiêu đề đã khoá sẵn và có sẵn bộ lọc cột.</p>
+      <p>Sửa xong thì nạp ngược lại bằng nút <strong>Nhập bảng tính</strong>, theo một trong hai cách:</p>
+      <ul>
+        <li>Trong Excel hoặc Google Sheets chọn <em>Lưu dưới dạng / Tải xuống → CSV</em>, rồi tải tệp đó lên.</li>
+        <li>Hoặc bôi đen các ô trong bảng tính, sao chép, dán thẳng vào ô văn bản trong hộp thoại.</li>
+      </ul>
+      <div class="nhac">
+        <strong>Cột <code>id</code> quyết định thêm hay sửa.</strong>
+        Dòng còn nguyên <code>id</code> thì <strong>cập nhật</strong> đúng bản ghi cũ; dòng bỏ trống ô <code>id</code> thì <strong>thêm mới</strong>.
+        Nhập <strong>không xoá</strong> bản ghi nào — xoá một dòng trong bảng tính rồi nạp lại thì dòng đó vẫn còn trên web, muốn bỏ hẳn phải vào bảng bấm Xoá.
+      </div>
+      <p>Trước khi ghi, hộp thoại đếm rõ bao nhiêu dòng thêm mới, bao nhiêu dòng cập nhật, dòng nào sai và sai ở cột nào. Dòng sai bị bỏ qua, phần còn lại vẫn nạp bình thường. Cột ảnh không nhập qua bảng tính được — ảnh phải chọn trong biểu mẫu.</p>
     </section>
 
     <section id="cau-truc">

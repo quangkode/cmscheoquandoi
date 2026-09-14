@@ -39,6 +39,9 @@ export const LUOC_DO = {
     moTa: "Suất diễn hiện ở trang chủ và là danh sách người xem chọn khi đặt chỗ.",
     bieuTuong: "M4 6h16v14H4zM4 10h16M9 3v4M15 3v4",
     sapXep: { truong: "ngay", chieu: "asc" },
+    // xếp lịch cả tháng thì nhìn theo lưới kẻ ô dễ dò hơn danh sách thưa;
+    // bảng kẻ ô, cột chia đều, hàng tiêu đề dính khi cuộn
+    bangTinh: true,
     cot: [cot("ngay", "Ngày", "ngay"), cot("gio", "Giờ"), cot("tenVo", "Vở diễn"), cot("diaDiem", "Địa điểm"), cot("hienThi", "Hiện", "cong-tac")],
     truong: [
       { ten: "tenVo", nhan: "Tên vở diễn", kieu: "text", batBuoc: true },

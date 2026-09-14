@@ -6,6 +6,7 @@
    ========================================================== */
 import { daCauHinh } from "../cau-hinh.js";
 import { LUOC_DO, DANH_MUC } from "./luoc-do.js";
+import { xuatXlsx, soanNhap } from "./xuat-nhap.js";
 
 const chinh = document.getElementById("chinh");
 const menu = document.getElementById("menu");
@@ -174,6 +175,8 @@ function veDanhSach(ma) {
       <p>${esc(m.moTa)}</p>
     </div>
     <div class="dau__phai">
+      <button type="button" class="nut" id="nutXuat" title="Tải toàn bộ mục này về máy dạng .xlsx">Xuất Excel</button>
+      ${m.chiDoc ? "" : `<button type="button" class="nut" id="nutNhap">Nhập bảng tính</button>`}
       ${m.chiDoc ? "" : `<button type="button" class="nut nut--chinh" id="nutThem">+ Thêm mới</button>`}
     </div></div>
 
@@ -188,6 +191,13 @@ function veDanhSach(ma) {
   if (!m.chiDoc) document.getElementById("nutThem").addEventListener("click", () => moBieuMau(ma, null));
 
   let duLieu = [];
+
+  document.getElementById("nutXuat").addEventListener("click", () => {
+    if (!duLieu.length) return bao("Chưa có dòng nào để xuất.", "loi");
+    const kq = xuatXlsx(ma, m, duLieu);
+    bao(`Đã xuất ${kq.soDong} dòng ra ${kq.ten}`, "xong");
+  });
+  document.getElementById("nutNhap")?.addEventListener("click", () => moNhap(ma, m, () => duLieu));
   const ve = () => {
     const tim = (document.getElementById("oTim").value || "").trim().toLowerCase();
     const loc = tim
@@ -208,6 +218,88 @@ function veDanhSach(ma) {
   });
 }
 
+/* ---------- Nhập từ bảng tính ----------
+   Nhận hai đường vào vì hai thói quen khác nhau: tải lên tệp .csv (Excel và
+   Google Sheets đều “Lưu dưới dạng CSV” được), hoặc bôi đen mấy ô trong bảng
+   tính rồi dán thẳng vào ô văn bản — lúc đó dữ liệu sang dạng ngăn bằng ký tự
+   tab, bộ đọc tự nhận ra.
+
+   Xem trước rồi mới ghi: màn hình đếm rõ bao nhiêu dòng thêm mới, bao nhiêu
+   dòng sửa, dòng nào lỗi, trước khi đụng vào Firestore. */
+function moNhap(ma, m, layDuLieu) {
+  let ketQua = null;
+
+  const veXemTruoc = (hop) => {
+    const o = hop.querySelector("#xemTruoc");
+    const nutOk = hop.querySelector("[data-ok]");
+    if (!ketQua) { o.innerHTML = ""; nutOk.disabled = true; return; }
+    if (ketQua.loiChung) {
+      o.innerHTML = `<div class="nhac nhac--nguy"><p>${esc(ketQua.loiChung)}</p></div>`;
+      nutOk.disabled = true;
+      return;
+    }
+    const { them, sua, loi, boQua, daNhan } = ketQua;
+    nutOk.disabled = them.length + sua.length === 0;
+    o.innerHTML = `
+      <div class="tom-tat">
+        <span class="chip chip--xanh">${them.length} dòng thêm mới</span>
+        <span class="chip chip--vang">${sua.length} dòng cập nhật</span>
+        ${loi.length ? `<span class="chip chip--do">${loi.length} dòng lỗi, sẽ bỏ qua</span>` : ""}
+      </div>
+      <p class="goi-y">Nhận ${daNhan.length} cột: ${esc(daNhan.join(", "))}.
+        ${boQua.length ? `Bỏ qua cột không nhận ra: ${esc(boQua.join(", "))}.` : ""}</p>
+      ${loi.length ? `<ul class="ds-loi">${loi.slice(0, 12).map((l) =>
+        `<li><b>Dòng ${l.dong}</b>: ${esc(l.chu)}</li>`).join("")}
+        ${loi.length > 12 ? `<li>… và ${loi.length - 12} dòng nữa</li>` : ""}</ul>` : ""}`;
+  };
+
+  moHop({
+    tieuDe: "Nhập " + m.nhan.toLowerCase() + " từ bảng tính",
+    nutChinh: "Nạp vào hệ thống",
+    than: `
+      <p class="goi-y">Cách chắc nhất: bấm <b>Xuất Excel</b> trước, sửa ngay trên tệp đó rồi
+        lưu thành <b>.csv</b> và tải lên đây. Giữ nguyên cột <code>id</code> thì dòng đó được
+        <b>cập nhật</b>; xoá trống ô <code>id</code> thì thành <b>dòng mới</b>.
+        Nhập không xoá bản ghi nào — muốn bỏ thì vào bảng bấm Xoá.</p>
+      <div class="o-nhap">
+        <label for="tepCsv">Tệp .csv</label>
+        <input type="file" id="tepCsv" accept=".csv,.txt,text/csv,text/plain" />
+      </div>
+      <div class="o-nhap">
+        <label for="danVao">hoặc dán các ô đã sao chép từ Excel / Google Sheets</label>
+        <textarea id="danVao" rows="5" placeholder="Dán vào đây…"></textarea>
+      </div>
+      <div id="xemTruoc"></div>`,
+    khiMo: (hop) => {
+      const xu = (vanBan) => {
+        ketQua = String(vanBan).trim() ? soanNhap(m, vanBan, layDuLieu()) : null;
+        veXemTruoc(hop);
+      };
+      hop.querySelector("#tepCsv").addEventListener("change", async (e) => {
+        const t = e.target.files?.[0];
+        if (!t) return;
+        xu(await t.text());
+        hop.querySelector("#danVao").value = "";
+      });
+      hop.querySelector("#danVao").addEventListener("input", (e) => xu(e.target.value));
+      veXemTruoc(hop);
+    },
+    khiXacNhan: async () => {
+      if (!ketQua || ketQua.loiChung) return false;
+      const { them, sua } = ketQua;
+      if (!them.length && !sua.length) { bao("Không có dòng nào hợp lệ để nạp.", "loi"); return false; }
+
+      // ghi theo từng chùm 10 cho nhanh mà không dội quá nhiều yêu cầu một lúc
+      const viec = [...sua.map((s) => () => fb.capNhat(ma, s.id, s.rec)),
+                    ...them.map((t) => () => fb.themMoi(ma, t.rec))];
+      for (let i = 0; i < viec.length; i += 10) {
+        await Promise.all(viec.slice(i, i + 10).map((f) => f()));
+      }
+      bao(`Đã nạp: thêm ${them.length}, cập nhật ${sua.length}.`, "xong");
+    }
+  });
+}
+
 function veBang(ma, ds, tong) {
   const m = LUOC_DO[ma];
   const khung = document.getElementById("khungBang");
@@ -225,7 +317,7 @@ function veBang(ma, ds, tong) {
     return;
   }
 
-  khung.innerHTML = `<table>
+  khung.innerHTML = `<table class="${m.bangTinh ? "bang-tinh" : ""}">
     <thead><tr>${m.cot.map((c) => `<th>${esc(c.nhan)}</th>`).join("")}<th></th></tr></thead>
     <tbody>${ds.map((d) => `<tr>${m.cot.map((c) => oBang(m, c, d)).join("")}
       <td class="o-thao-tac">
