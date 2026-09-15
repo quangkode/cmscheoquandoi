@@ -23,6 +23,9 @@ export const LUOC_DO = {
        trường trùng với thứ đọc được từ một bài báo (tiêu đề, tóm tắt, ảnh,
        nguồn) — mấy mục như Nghệ sĩ hay Lịch diễn thì không. */
     layTuBao: true,
+    /* Mục này soạn ở trang riêng (soan-bai.html) chứ không phải hộp thoại:
+       bài báo dài, cần cả màn hình và một thanh công cụ định dạng. */
+    trangSoan: "./soan-bai.html",
     cot: [cot("anh", "Ảnh", "anh"), cot("tieuDe", "Tiêu đề"), cot("ngay", "Ngày", "ngay"), cot("chuDe", "Chủ đề"), cot("hienThi", "Hiện", "cong-tac")],
     truong: [
       { ten: "tieuDe", nhan: "Tiêu đề", kieu: "text", batBuoc: true },

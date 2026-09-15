@@ -362,3 +362,73 @@ table.bang-tinh tbody tr:last-child td { border-bottom: 1px solid var(--vien); }
 @media (prefers-reduced-motion: reduce) {
   * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
 }
+
+/* ==========================================================
+   TRANG SOẠN BÀI — soan-bai.html
+   Mở tab riêng, dùng cả màn hình. Không có thanh bên như app.html:
+   đang viết thì đừng có gì kéo mắt đi chỗ khác.
+   ========================================================== */
+.trang-soan { background: var(--nen); }
+
+/* Thanh trên bám dính — bài dài mấy nghìn chữ, cuộn xuống giữa bài vẫn
+   phải với được nút Lưu ngay, không phải cuộn ngược lên đầu. */
+.sb-dau {
+  position: sticky; top: 0; z-index: 30;
+  display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+  padding: 12px 22px; background: var(--the); border-bottom: 1px solid var(--vien);
+  box-shadow: 0 1px 8px rgba(28, 26, 23, .05);
+}
+.sb-dau__trai { display: flex; align-items: center; gap: 14px; min-width: 0; }
+.sb-dau__trai strong { font-family: var(--serif); font-size: 19px; }
+.sb-dau__phai { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.sb-trangthai { font-size: 13px; color: var(--muc-nhat); }
+
+.sb-than { max-width: 1180px; margin: 0 auto; padding: 24px 22px 90px; }
+
+/* Ô dán link: một dòng, nằm trên cùng, không lẫn vào các ô khác */
+.sb-lay { display: flex; gap: 10px; margin-bottom: 18px; }
+.sb-lay input {
+  flex: 1; min-width: 0; min-height: 44px; padding: 0 14px;
+  border: 1px solid var(--vien); border-radius: var(--r); background: var(--the);
+}
+.sb-lay input:focus { outline: 2px solid var(--do); outline-offset: -1px; }
+.sb-lay .nut { flex: none; }
+
+.sb-luoi { display: grid; grid-template-columns: 1fr 296px; gap: 26px; align-items: start; }
+.sb-chinh { min-width: 0; }
+.sb-ben {
+  background: var(--the); border: 1px solid var(--vien); border-radius: var(--r);
+  padding: 18px; position: sticky; top: 78px;
+}
+.sb-ben .o-nhap:last-child { margin-bottom: 0; }
+
+.sb-tieude { font-family: var(--serif); font-size: 22px; font-weight: 700; min-height: 52px; }
+
+/* ---------- Thanh công cụ ---------- */
+.sb-cong-cu {
+  display: flex; align-items: center; gap: 3px; flex-wrap: wrap;
+  padding: 7px 9px; background: var(--the);
+  border: 1px solid var(--vien); border-bottom: 0;
+  border-radius: var(--r) var(--r) 0 0; position: sticky; top: 62px; z-index: 20;
+}
+.sb-cong-cu button {
+  min-width: 34px; height: 32px; padding: 0 8px;
+  border: 1px solid transparent; border-radius: 7px; background: none;
+  cursor: pointer; font-size: 14px; line-height: 1; transition: var(--t);
+}
+.sb-cong-cu button:hover { background: #efeadf; border-color: var(--vien); }
+.sb-cong-cu button:active { background: var(--vien); }
+.sb-cach { width: 1px; height: 20px; background: var(--vien); margin: 0 5px; }
+.sb-dem { margin-left: auto; font-size: 12.5px; color: var(--muc-nhat); padding-right: 4px; }
+
+.sb-o { border-radius: 0 0 var(--r) var(--r); max-height: none; min-height: 460px; }
+
+@media (max-width: 900px) {
+  .sb-luoi { grid-template-columns: 1fr; }
+  .sb-ben { position: static; }
+  .sb-than { padding: 18px 14px 70px; }
+  .sb-dau { padding: 10px 14px; }
+  .sb-dau__trai strong { font-size: 16px; }
+  .sb-cong-cu { top: 0; position: relative; }
+  .sb-dem { width: 100%; margin: 4px 0 0; }
+}

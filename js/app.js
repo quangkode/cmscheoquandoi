@@ -177,7 +177,7 @@ function veDanhSach(ma) {
     </div>
     <div class="dau__phai">
       <button type="button" class="nut" id="nutXuat" title="Tải toàn bộ mục này về máy dạng .xlsx">Xuất Excel</button>
-      ${m.layTuBao ? `<button type="button" class="nut" id="nutLayBai" title="Dán đường dẫn bài báo, CMS tự điền sẵn biểu mẫu">Lấy từ link báo</button>` : ""}
+      ${m.layTuBao && !m.trangSoan ? `<button type="button" class="nut" id="nutLayBai" title="Dán đường dẫn bài báo, CMS tự điền sẵn biểu mẫu">Lấy từ link báo</button>` : ""}
       ${m.chiDoc ? "" : `<button type="button" class="nut" id="nutNhap">Nhập bảng tính</button>`}
       ${m.chiDoc ? "" : `<button type="button" class="nut nut--chinh" id="nutThem">+ Thêm mới</button>`}
     </div></div>
@@ -190,7 +190,12 @@ function veDanhSach(ma) {
       <div class="dang-tai"><div class="xoay"></div>Đang tải…</div>
     </div>`;
 
-  if (!m.chiDoc) document.getElementById("nutThem").addEventListener("click", () => moBieuMau(ma, null));
+  // Mục có trang soạn riêng thì mở tab mới, không dùng hộp thoại: bài báo
+  // dài, soạn trong khung nhỏ thì cuộn mỏi tay.
+  if (!m.chiDoc) document.getElementById("nutThem").addEventListener("click", () => {
+    if (m.trangSoan) window.open(m.trangSoan, "_blank");
+    else moBieuMau(ma, null);
+  });
 
   let duLieu = [];
 
@@ -330,7 +335,11 @@ function veBang(ma, ds, tong) {
   </table>`;
 
   khung.querySelectorAll("[data-sua]").forEach((b) =>
-    b.addEventListener("click", () => moBieuMau(ma, ds.find((x) => x.id === b.dataset.sua))));
+    b.addEventListener("click", () => {
+      const m2 = LUOC_DO[ma];
+      if (m2.trangSoan) window.open(m2.trangSoan + "?id=" + encodeURIComponent(b.dataset.sua), "_blank");
+      else moBieuMau(ma, ds.find((x) => x.id === b.dataset.sua));
+    }));
   khung.querySelectorAll("[data-xoa]").forEach((b) =>
     b.addEventListener("click", () => hoiXoa(ma, ds.find((x) => x.id === b.dataset.xoa))));
 }
