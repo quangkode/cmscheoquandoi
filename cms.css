@@ -27,7 +27,11 @@
   --bong-lon: 0 16px 44px rgba(28, 26, 23, .16);
   --ben: 248px;
 
-  --serif: "Playfair Display", "Noto Serif", "Times New Roman", Georgia, serif;
+  /* Noto Serif phải tải từ Google Fonts cùng Playfair (xem thẻ <link> trong
+     từng trang) chứ không chỉ gọi tên: Windows và iOS không cài sẵn nó. Font
+     dự phòng mà thiếu dấu tiếng Việt dựng sẵn thì trình duyệt tự ghép, dấu
+     rơi lệch khỏi chữ. */
+  --serif: "Playfair Display", "Noto Serif", Montserrat, serif;
   --sans: "Montserrat", system-ui, -apple-system, "Segoe UI", sans-serif;
 }
 

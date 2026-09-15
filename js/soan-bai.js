@@ -423,11 +423,11 @@ function xemTruoc() {
   const nguonUrl = document.getElementById("f-nguonUrl").value.trim();
   w.document.write(`<!DOCTYPE html><html lang="vi"><head><meta charset="utf-8" />
     <title>Xem thử</title>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Noto+Serif:wght@400;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
     <style>
       body{font-family:Montserrat,system-ui,sans-serif;max-width:760px;margin:40px auto;padding:0 20px;
            line-height:1.8;font-size:17.5px;color:#1c1a17}
-      h1{font-family:"Playfair Display",Georgia,serif;font-size:36px;line-height:1.22}
+      h1{font-family:"Playfair Display","Noto Serif",Montserrat,serif;font-size:36px;line-height:1.22}
       img{max-width:100%;height:auto;border-radius:10px;display:block;margin:10px 0}
       figcaption{font-size:14px;color:#6b6459;font-style:italic;text-align:center;margin-top:8px}
       blockquote{border-left:3px solid #ffcd00;margin:24px 0;padding-left:18px;color:#6b6459}
