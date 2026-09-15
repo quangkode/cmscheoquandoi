@@ -54,6 +54,8 @@ export const LUOC_DO = {
       { ten: "thoiLuong", nhan: "Thời lượng", kieu: "text", goiY: "Ví dụ: 120 phút" },
       { ten: "tongGhe", nhan: "Tổng số chỗ", kieu: "so", macDinh: 120,
         goiY: "Dùng để tính còn bao nhiêu chỗ. Đặt chỗ luôn miễn phí, không có giá vé." },
+      { ten: "daDat", nhan: "Số chỗ đã nhận", kieu: "so", macDinh: 0,
+        goiY: "Web lấy số này chia cho tổng số chỗ để hiện Còn chỗ / Sắp hết / Hết chỗ. Trang công khai KHÔNG đọc được bảng Đặt chỗ (luật chỉ cho quản trị đọc, vì có tên và số điện thoại người dân), nên số này phải tự điền." },
       { ten: "hienThi", nhan: "Nhận đặt chỗ", kieu: "cong-tac", macDinh: true }
     ]
   },
