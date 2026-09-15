@@ -66,6 +66,12 @@ async function kiemDiaChi(chuoi) {
 async function tai(chuoi, nhan, themDau) {
   let u = await kiemDiaChi(chuoi);
 
+  /* Giữ cookie qua từng chặng chuyển hướng. Nhiều báo — qdnd.vn là một —
+     đặt cookie rồi chuyển hướng về chính trang cũ để kiểm xem khách có
+     nhận cookie không. Không gửi lại thì nó chuyển hướng mãi và mình
+     tưởng trang bị lỗi vòng lặp. */
+  const banh = new Map();
+
   for (let i = 0; i <= SO_LAN_CHUYEN_HUONG; i++) {
     const bo = new AbortController();
     const hen = setTimeout(() => bo.abort(), CHO_TOI_DA);
@@ -79,6 +85,7 @@ async function tai(chuoi, nhan, themDau) {
           "User-Agent": "Mozilla/5.0 (compatible; NhaHatCheoQuanDoi-CMS/1.0)",
           "Accept": nhan,
           "Accept-Language": "vi,en;q=0.8",
+          ...(banh.size ? { Cookie: [...banh].map(([k, v]) => `${k}=${v}`).join("; ") } : {}),
           ...(themDau || {})
         }
       });
@@ -86,6 +93,13 @@ async function tai(chuoi, nhan, themDau) {
       throw new Error(e.name === "AbortError" ? "Trang phản hồi quá chậm." : "Không tải được trang.");
     } finally {
       clearTimeout(hen);
+    }
+
+    // Nhặt cookie máy chủ vừa đặt để gửi lại ở chặng sau
+    for (const d of (r.headers.getSetCookie ? r.headers.getSetCookie() : [])) {
+      const [cap] = d.split(";");
+      const vt = cap.indexOf("=");
+      if (vt > 0) banh.set(cap.slice(0, vt).trim(), cap.slice(vt + 1).trim());
     }
 
     if (r.status >= 300 && r.status < 400 && r.headers.get("location")) {

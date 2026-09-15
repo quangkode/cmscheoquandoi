@@ -7,6 +7,7 @@
 import { daCauHinh } from "../cau-hinh.js";
 import { LUOC_DO, DANH_MUC } from "./luoc-do.js";
 import { xuatXlsx, soanNhap } from "./xuat-nhap.js";
+import { bocBai, locHtml } from "./doc-bai.js";
 
 const chinh = document.getElementById("chinh");
 const menu = document.getElementById("menu");
@@ -381,6 +382,10 @@ function moLayBai(ma, m, layDuLieu) {
           <p class="goi-y">${esc(kq.nguonTen)}${kq.ngay ? " · " + esc(ngayVN(kq.ngay)) : ""}</p>
         </div>
       </div>
+      ${kq.bai.soChu
+        ? `<p class="goi-y">Bóc được <strong>${kq.bai.soChu.toLocaleString("vi-VN")}</strong> ký tự toàn văn${kq.bai.anh.length ? ` và <strong>${kq.bai.anh.length}</strong> ảnh trong bài` : ""}. Ảnh sẽ được tải về kho Nhà hát.</p>`
+        : `<div class="nhac"><h3>Không bóc được toàn văn</h3>
+           <p>Trang này dựng nội dung bằng JavaScript hoặc có cấu trúc lạ. Các ô khác vẫn điền được, phần nội dung bạn tự dán vào.</p></div>`}
       ${kq.thieu.length ? `<div class="nhac"><h3>Máy không tự tìm được: ${esc(kq.thieu.join(", "))}</h3>
         <p>Bấm tiếp rồi tự điền mấy ô đó trong biểu mẫu.</p></div>` : ""}
       ${trung ? `<div class="nhac nhac--nguy"><h3>Bài này đã có trong Tin tức</h3>
@@ -413,9 +418,13 @@ function moLayBai(ma, m, layDuLieu) {
         hop.querySelector("#kqLayBai").innerHTML =
           `<div class="dang-tai"><div class="xoay"></div>Đang đọc bài báo…</div>`;
         try {
-          const r = await fetch("/api/lay-bai?url=" + encodeURIComponent(dc));
+          const r = await fetch("/api/lay-bai?html=1&url=" + encodeURIComponent(dc));
           const kq = await r.json();
           if (!r.ok) throw new Error(kq.loi || "Không đọc được bài.");
+
+          // Bóc toàn văn ngay tại trình duyệt — máy chủ chỉ đưa HTML thô về
+          kq.bai = kq.html ? bocBai(kq.html, kq.goc || kq.nguonUrl || dc) : { html: "", anh: [], soChu: 0 };
+          delete kq.html;   // đừng giữ cả trang báo trong bộ nhớ nữa
 
           ketQua = kq;
           const trung = (layDuLieu() || []).find((x) => x.nguonUrl && x.nguonUrl === kq.nguonUrl);
@@ -444,25 +453,56 @@ function moLayBai(ma, m, layDuLieu) {
         anhNguon: ketQua.nguonTen ? "Ảnh: " + ketQua.nguonTen : ""
       };
 
-      /* Mang ảnh về kho Firebase chứ không trỏ thẳng sang báo. Trỏ thẳng thì
-         ảnh sống chết theo máy chủ người ta — đúng kiểu logo hỏng hôm 10/9.
-         Ảnh hỏng thì vẫn mở biểu mẫu, chỉ thiếu ảnh, không chặn cả việc. */
+      /* Mang MỌI ảnh về kho Firebase chứ không trỏ thẳng sang báo. Trỏ thẳng
+         thì ảnh sống chết theo máy chủ người ta — đúng kiểu logo hỏng hôm
+         10/9 — và nhiều báo chặn tải chéo nên ảnh cũng không hiện.
+         Ảnh nào hỏng thì bỏ ảnh đó, không chặn cả việc. */
+      const veKho = async (dc) => {
+        const r = await fetch("/api/lay-anh?url=" + encodeURIComponent(dc) +
+                              "&tu=" + encodeURIComponent(ketQua.nguonUrl || ""));
+        if (!r.ok) throw new Error(((await r.json().catch(() => ({}))).loi) || "lỗi " + r.status);
+        const blob = await r.blob();
+        const duoi = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
+        return fb.taiAnhLen(new File([blob], `bai-bao.${duoi}`, { type: blob.type }), "tin-tuc");
+      };
+
+      const oTienDo = document.querySelector("#kqLayBai");
+      const viet = (t) => { if (oTienDo) oTienDo.innerHTML = `<div class="dang-tai"><div class="xoay"></div>${esc(t)}</div>`; };
+
       if (ketQua.anh) {
-        try {
-          // tu= là trang bài, để máy chủ gửi kèm Referer — kho ảnh của báo
-          // lớn hay chặn tải chéo khi thiếu nó
-          const r = await fetch("/api/lay-anh?url=" + encodeURIComponent(ketQua.anh) +
-                                "&tu=" + encodeURIComponent(ketQua.nguonUrl || ""));
-          if (!r.ok) throw new Error(((await r.json().catch(() => ({}))).loi) || "lỗi " + r.status);
-          const blob = await r.blob();
-          const duoi = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
-          const tep = new File([blob], `bai-bao.${duoi}`, { type: blob.type });
-          dienSan.anh = await fb.taiAnhLen(tep, "tin-tuc");
-        } catch (e) {
-          bao("Không lấy được ảnh (" + e.message + "). Biểu mẫu vẫn mở, bạn tự chọn ảnh.", "loi");
-        }
+        viet("Đang tải ảnh đại diện…");
+        try { dienSan.anh = await veKho(ketQua.anh); }
+        catch (e) { bao("Không lấy được ảnh đại diện (" + e.message + ").", "loi"); }
       }
 
+      /* Ảnh trong thân bài. Chặn ở 20 tấm: bài ảnh dài của báo có khi vài
+         chục tấm, tải hết vừa lâu vừa phình kho mà người đọc không cần. */
+      let noiDung = ketQua.bai.html || "";
+      const dsAnh = (ketQua.bai.anh || []).slice(0, 20);
+      let hong = 0;
+
+      for (let i = 0; i < dsAnh.length; i++) {
+        viet(`Đang tải ảnh trong bài ${i + 1}/${dsAnh.length}…`);
+        try {
+          const kq = await veKho(dsAnh[i]);
+          // thay mọi chỗ xuất hiện địa chỉ cũ bằng địa chỉ trong kho
+          noiDung = noiDung.split(dsAnh[i]).join(kq.url);
+        } catch { hong++; }
+      }
+
+      /* Ảnh nào không tải được thì gỡ hẳn thẻ img đi, đừng để lại ô vỡ
+         trỏ về máy chủ báo. */
+      if (hong) {
+        const tam = document.createElement("div");
+        tam.innerHTML = noiDung;
+        tam.querySelectorAll("img").forEach((im) => {
+          if (!/firebasestorage\.googleapis\.com/.test(im.getAttribute("src") || "")) im.remove();
+        });
+        noiDung = tam.innerHTML;
+        bao(`${hong} ảnh trong bài không tải được, đã bỏ.`, "loi");
+      }
+
+      dienSan.noiDung = noiDung;
       moBieuMau(ma, null, dienSan);
     }
   });
@@ -519,7 +559,9 @@ function moBieuMau(ma, d, dienSan) {
       for (const t of m.truong) {
         const o = bm.querySelector(`[name="${t.ten}"]`);
         let gia;
-        if (t.kieu === "anh") gia = anhDaChon[t.ten] ?? giaTri?.[t.ten] ?? null;
+        // ô soạn bài là div contenteditable, không có name và không có .value
+        if (t.kieu === "bai") gia = locHtml(bm.querySelector(`[data-bai="${t.ten}"]`).innerHTML, giaTri?.nguonUrl);
+        else if (t.kieu === "anh") gia = anhDaChon[t.ten] ?? giaTri?.[t.ten] ?? null;
         else if (t.kieu === "cong-tac") gia = o.checked;
         else if (t.kieu === "so") gia = o.value === "" ? null : Number(o.value);
         else gia = o.value.trim();
@@ -572,6 +614,12 @@ function veTruong(t, d) {
             <span class="goi-y" data-tt="${t.ten}"></span>
           </div>
         </div>${goiY}</div>`;
+    case "bai":
+      // Cố ý KHÔNG esc(): nội dung này đã lọc theo danh sách thẻ cho phép
+      // lúc lưu (locHtml), ném thẳng vào để người dùng sửa được như văn bản.
+      return `${mo}${nhan}
+        <div class="soan-bai" data-bai="${t.ten}" contenteditable="true" role="textbox" aria-multiline="true">${gia || ""}</div>
+        ${goiY}</div>`;
     case "so":
       return `${mo}${nhan}<input type="number" id="f-${t.ten}" name="${t.ten}" value="${esc(gia)}" />${goiY}</div>`;
     case "ngay":

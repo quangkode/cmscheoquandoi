@@ -281,6 +281,26 @@ table.bang-tinh tbody tr:last-child td { border-bottom: 1px solid var(--vien); }
    đỏ là "mất luôn" — hai mức khác nhau thì phải nhìn ra khác nhau. */
 .nhac--nguy { background: #fcf0f1; border-color: #e3b8bb; border-left-color: var(--do); }
 
+/* ---------- Ô soạn toàn văn bài ---------- */
+.soan-bai {
+  border: 1px solid var(--vien); border-radius: var(--r); background: var(--the);
+  padding: 16px 18px; max-height: 460px; overflow-y: auto;
+  font-size: 15px; line-height: 1.75;
+}
+.soan-bai:focus { outline: 2px solid var(--do); outline-offset: -1px; }
+.soan-bai p { margin: 0 0 14px; }
+.soan-bai h2, .soan-bai h3, .soan-bai h4 { font-size: 17px; margin: 22px 0 10px; }
+.soan-bai img { border-radius: 8px; margin: 6px 0; }
+.soan-bai figure { margin: 16px 0; }
+.soan-bai figcaption { font-size: 13px; color: var(--muc-nhat); margin-top: 6px; font-style: italic; }
+.soan-bai blockquote {
+  margin: 16px 0; padding: 2px 0 2px 16px;
+  border-left: 3px solid var(--vang); color: var(--muc-nhat);
+}
+.soan-bai table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
+.soan-bai th, .soan-bai td { border: 1px solid var(--vien); padding: 8px 10px; text-align: left; }
+.soan-bai:empty::before { content: "Chưa có nội dung. Dùng nút “Lấy từ link báo” hoặc gõ thẳng vào đây."; color: var(--muc-nhat); }
+
 /* ---------- Xem trước bài báo vừa lấy về ---------- */
 .xem-bai {
   display: flex; gap: 16px; align-items: flex-start; margin-bottom: 18px;

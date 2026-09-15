@@ -30,6 +30,8 @@ export const LUOC_DO = {
       { ten: "chuDe", nhan: "Chủ đề", kieu: "chon", batBuoc: true,
         chon: [{ gia: "hoat-dong", nhan: "Hoạt động" }, { gia: "su-kien", nhan: "Sự kiện" }] },
       { ten: "tomTat", nhan: "Tóm tắt", kieu: "dai", batBuoc: true, goiY: "2-4 câu, hiện ngay dưới tiêu đề trong thẻ tin." },
+      { ten: "noiDung", nhan: "Nội dung bài", kieu: "bai",
+        goiY: "Toàn văn bài viết. Sửa được trực tiếp: bấm vào chữ để gõ, bôi đen rồi Delete để xoá đoạn." },
       { ten: "anh", nhan: "Ảnh minh hoạ", kieu: "anh", thuMuc: "tin-tuc" },
       { ten: "anhNguon", nhan: "Ghi công ảnh", kieu: "text", goiY: "Ví dụ: Ảnh: Báo Quân đội nhân dân" },
       { ten: "nguonTen", nhan: "Tên nguồn", kieu: "text", goiY: "Ví dụ: Báo Thanh Niên" },
