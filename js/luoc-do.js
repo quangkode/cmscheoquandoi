@@ -19,6 +19,10 @@ export const LUOC_DO = {
     moTa: "Bài viết hiện ở trang Tin tức và khối tin mới nhất ngoài trang chủ.",
     bieuTuong: "M4 5h16v14H4zM7 9h10M7 13h10M7 17h6",
     sapXep: { truong: "ngay", chieu: "desc" },
+    /* Bật nút "Lấy từ link báo" cho mục này. Chỉ có ý nghĩa ở nơi mà các
+       trường trùng với thứ đọc được từ một bài báo (tiêu đề, tóm tắt, ảnh,
+       nguồn) — mấy mục như Nghệ sĩ hay Lịch diễn thì không. */
+    layTuBao: true,
     cot: [cot("anh", "Ảnh", "anh"), cot("tieuDe", "Tiêu đề"), cot("ngay", "Ngày", "ngay"), cot("chuDe", "Chủ đề"), cot("hienThi", "Hiện", "cong-tac")],
     truong: [
       { ten: "tieuDe", nhan: "Tiêu đề", kieu: "text", batBuoc: true },

@@ -176,6 +176,7 @@ function veDanhSach(ma) {
     </div>
     <div class="dau__phai">
       <button type="button" class="nut" id="nutXuat" title="Tải toàn bộ mục này về máy dạng .xlsx">Xuất Excel</button>
+      ${m.layTuBao ? `<button type="button" class="nut" id="nutLayBai" title="Dán đường dẫn bài báo, CMS tự điền sẵn biểu mẫu">Lấy từ link báo</button>` : ""}
       ${m.chiDoc ? "" : `<button type="button" class="nut" id="nutNhap">Nhập bảng tính</button>`}
       ${m.chiDoc ? "" : `<button type="button" class="nut nut--chinh" id="nutThem">+ Thêm mới</button>`}
     </div></div>
@@ -198,6 +199,7 @@ function veDanhSach(ma) {
     bao(`Đã xuất ${kq.soDong} dòng ra ${kq.ten}`, "xong");
   });
   document.getElementById("nutNhap")?.addEventListener("click", () => moNhap(ma, m, () => duLieu));
+  document.getElementById("nutLayBai")?.addEventListener("click", () => moLayBai(ma, m, () => duLieu));
   const ve = () => {
     const tim = (document.getElementById("oTim").value || "").trim().toLowerCase();
     const loc = tim
@@ -353,6 +355,119 @@ function oBang(m, c, d) {
   return `<td>${esc(chu ?? "")}</td>`;
 }
 
+/* ---------- Lấy bài từ báo ----------
+   Dán đường dẫn một bài báo, CMS nhờ máy chủ đọc hộ rồi điền sẵn biểu mẫu.
+   Trình duyệt không tự đọc được trang báo khác vì bị CORS chặn, nên phải đi
+   vòng qua /api/lay-bai (xem api/_chung.js).
+
+   Chỉ ĐIỀN SẴN chứ không tự lưu: máy đoán sai tiêu đề hay ngày là chuyện
+   thường, và Chủ đề thì máy không thể biết. Người vẫn phải đọc lại rồi bấm
+   Tạo mới.
+
+   Lấy tiêu đề, tóm tắt, ảnh, nguồn — không lấy toàn văn. Mục Tin tức vốn
+   không có ô nào chứa nội dung đầy đủ; nó làm theo lối điểm báo, dẫn nguồn
+   và liên kết về bài gốc. */
+function moLayBai(ma, m, layDuLieu) {
+  let ketQua = null;
+
+  const veKetQua = (hop, kq, trung) => {
+    const o = hop.querySelector("#kqLayBai");
+    o.innerHTML = `
+      <div class="xem-bai">
+        ${kq.anh ? `<img src="${esc(kq.anh)}" alt="" class="xem-bai__anh" />` : `<div class="xem-bai__anh xem-bai__anh--trong">Không tìm thấy ảnh</div>`}
+        <div class="xem-bai__chu">
+          <h3>${esc(kq.tieuDe) || "<em>không lấy được tiêu đề</em>"}</h3>
+          <p>${esc(kq.tomTat) || "<em>không lấy được tóm tắt</em>"}</p>
+          <p class="goi-y">${esc(kq.nguonTen)}${kq.ngay ? " · " + esc(ngayVN(kq.ngay)) : ""}</p>
+        </div>
+      </div>
+      ${kq.thieu.length ? `<div class="nhac"><h3>Máy không tự tìm được: ${esc(kq.thieu.join(", "))}</h3>
+        <p>Bấm tiếp rồi tự điền mấy ô đó trong biểu mẫu.</p></div>` : ""}
+      ${trung ? `<div class="nhac nhac--nguy"><h3>Bài này đã có trong Tin tức</h3>
+        <p>Đang có mục <strong>${esc(trung.tieuDe)}</strong> cùng đường dẫn gốc. Lấy tiếp là thành hai bản.</p></div>` : ""}
+      <p class="goi-y">Chủ đề phải tự chọn — máy không đoán được bài thuộc Hoạt động hay Sự kiện.</p>`;
+  };
+
+  moHop({
+    tieuDe: "Lấy bài từ báo về",
+    than: `
+      <div class="o-nhap" data-o="urlBai">
+        <label for="urlBai">Đường dẫn bài báo</label>
+        <input type="url" id="urlBai" placeholder="https://..." />
+        <p class="goi-y">Dán nguyên đường dẫn trên thanh địa chỉ của bài báo.</p>
+      </div>
+      <p><button type="button" class="nut" id="nutDoc">Lấy về</button></p>
+      <div id="kqLayBai"></div>`,
+    nutChinh: "Điền vào biểu mẫu",
+    khiMo: (hop) => {
+      const nut = hop.querySelector("#nutDoc");
+      const oUrl = hop.querySelector("#urlBai");
+
+      const doc = async () => {
+        const dc = oUrl.value.trim();
+        if (!dc) return bao("Chưa dán đường dẫn.", "loi");
+
+        ketQua = null;
+        nut.disabled = true;
+        nut.textContent = "Đang đọc…";
+        hop.querySelector("#kqLayBai").innerHTML =
+          `<div class="dang-tai"><div class="xoay"></div>Đang đọc bài báo…</div>`;
+        try {
+          const r = await fetch("/api/lay-bai?url=" + encodeURIComponent(dc));
+          const kq = await r.json();
+          if (!r.ok) throw new Error(kq.loi || "Không đọc được bài.");
+
+          ketQua = kq;
+          const trung = (layDuLieu() || []).find((x) => x.nguonUrl && x.nguonUrl === kq.nguonUrl);
+          veKetQua(hop, kq, trung);
+        } catch (e) {
+          hop.querySelector("#kqLayBai").innerHTML =
+            `<div class="nhac nhac--nguy"><h3>Không lấy được bài</h3><p>${esc(e.message)}</p></div>`;
+        } finally {
+          nut.disabled = false;
+          nut.textContent = "Lấy về";
+        }
+      };
+
+      nut.addEventListener("click", doc);
+      oUrl.addEventListener("keydown", (e) => { if (e.key === "Enter") { e.preventDefault(); doc(); } });
+    },
+    khiXacNhan: async () => {
+      if (!ketQua) { bao("Dán đường dẫn rồi bấm Lấy về đã.", "loi"); return false; }
+
+      const dienSan = {
+        tieuDe: ketQua.tieuDe || "",
+        ngay: ketQua.ngay || "",
+        tomTat: ketQua.tomTat || "",
+        nguonTen: ketQua.nguonTen || "",
+        nguonUrl: ketQua.nguonUrl || "",
+        anhNguon: ketQua.nguonTen ? "Ảnh: " + ketQua.nguonTen : ""
+      };
+
+      /* Mang ảnh về kho Firebase chứ không trỏ thẳng sang báo. Trỏ thẳng thì
+         ảnh sống chết theo máy chủ người ta — đúng kiểu logo hỏng hôm 10/9.
+         Ảnh hỏng thì vẫn mở biểu mẫu, chỉ thiếu ảnh, không chặn cả việc. */
+      if (ketQua.anh) {
+        try {
+          // tu= là trang bài, để máy chủ gửi kèm Referer — kho ảnh của báo
+          // lớn hay chặn tải chéo khi thiếu nó
+          const r = await fetch("/api/lay-anh?url=" + encodeURIComponent(ketQua.anh) +
+                                "&tu=" + encodeURIComponent(ketQua.nguonUrl || ""));
+          if (!r.ok) throw new Error(((await r.json().catch(() => ({}))).loi) || "lỗi " + r.status);
+          const blob = await r.blob();
+          const duoi = (blob.type.split("/")[1] || "jpg").replace("jpeg", "jpg");
+          const tep = new File([blob], `bai-bao.${duoi}`, { type: blob.type });
+          dienSan.anh = await fb.taiAnhLen(tep, "tin-tuc");
+        } catch (e) {
+          bao("Không lấy được ảnh (" + e.message + "). Biểu mẫu vẫn mở, bạn tự chọn ảnh.", "loi");
+        }
+      }
+
+      moBieuMau(ma, null, dienSan);
+    }
+  });
+}
+
 /* ---------- Hộp thoại xoá ---------- */
 function hoiXoa(ma, d) {
   const ten = d.tieuDe || d.hoTen || d.ten || d.tenVo || d.chuThich || d.id;
@@ -376,9 +491,14 @@ function hoiXoa(ma, d) {
 }
 
 /* ---------- Biểu mẫu thêm/sửa ---------- */
-function moBieuMau(ma, d) {
+/* dienSan: giá trị điền sẵn cho một bản ghi MỚI (dùng khi lấy bài từ báo về).
+   Cố ý tách khỏi tham số d — d có nghĩa là "đang sửa bản ghi đã có", điền sẵn
+   thì vẫn là tạo mới, nút phải ghi "Tạo mới" và phải gọi themMoi chứ không
+   phải capNhat vào một id không tồn tại. */
+function moBieuMau(ma, d, dienSan) {
   const m = LUOC_DO[ma];
   const laSua = !!d;
+  const giaTri = d || dienSan || null;
   const anhDaChon = {};   // { tenTruong: {url, duongDan} } cho ảnh vừa tải lên
 
   const chiXem = (m.chiXem || []).map((f) => `<dt>${esc(f.nhan)}</dt><dd>${esc(d?.[f.ten] ?? "—")}</dd>`).join("");
@@ -388,9 +508,9 @@ function moBieuMau(ma, d) {
     than:
       (chiXem ? `<div class="chi-xem"><dl>${chiXem}
          ${d?.taoLuc ? `<dt>Gửi lúc</dt><dd>${esc(ngayGioVN(d.taoLuc))}</dd>` : ""}</dl></div>` : "") +
-      `<form id="bmChinh" novalidate>${m.truong.map((t) => veTruong(t, d)).join("")}</form>`,
+      `<form id="bmChinh" novalidate>${m.truong.map((t) => veTruong(t, giaTri)).join("")}</form>`,
     nutChinh: laSua ? "Lưu thay đổi" : "Tạo mới",
-    khiMo: (hop) => ganTaiAnh(hop, m, d, anhDaChon),
+    khiMo: (hop) => ganTaiAnh(hop, m, giaTri, anhDaChon),
     khiXacNhan: async () => {
       const bm = document.getElementById("bmChinh");
       const duLieu = {};
@@ -399,7 +519,7 @@ function moBieuMau(ma, d) {
       for (const t of m.truong) {
         const o = bm.querySelector(`[name="${t.ten}"]`);
         let gia;
-        if (t.kieu === "anh") gia = anhDaChon[t.ten] ?? d?.[t.ten] ?? null;
+        if (t.kieu === "anh") gia = anhDaChon[t.ten] ?? giaTri?.[t.ten] ?? null;
         else if (t.kieu === "cong-tac") gia = o.checked;
         else if (t.kieu === "so") gia = o.value === "" ? null : Number(o.value);
         else gia = o.value.trim();

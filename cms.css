@@ -280,6 +280,28 @@ table.bang-tinh tbody tr:last-child td { border-bottom: 1px solid var(--vien); }
 /* Biến thể đỏ: dành cho thao tác xoá không lấy lại được. Vàng là "đọc kỹ",
    đỏ là "mất luôn" — hai mức khác nhau thì phải nhìn ra khác nhau. */
 .nhac--nguy { background: #fcf0f1; border-color: #e3b8bb; border-left-color: var(--do); }
+
+/* ---------- Xem trước bài báo vừa lấy về ---------- */
+.xem-bai {
+  display: flex; gap: 16px; align-items: flex-start; margin-bottom: 18px;
+  background: var(--the); border: 1px solid var(--vien); border-radius: var(--r); padding: 14px;
+}
+.xem-bai__anh {
+  flex: none; width: 140px; aspect-ratio: 16/10; object-fit: cover;
+  border-radius: 8px; background: #efeadf;
+}
+.xem-bai__anh--trong {
+  display: grid; place-items: center; text-align: center;
+  font-size: 12.5px; color: var(--muc-nhat); padding: 8px;
+}
+.xem-bai__chu { min-width: 0; }
+.xem-bai__chu h3 { font-size: 16px; margin: 0 0 6px; }
+.xem-bai__chu p { margin: 0 0 6px; font-size: 14px; color: var(--muc-nhat); }
+.xem-bai__chu .goi-y { margin: 0; }
+@media (max-width: 560px) {
+  .xem-bai { flex-direction: column; }
+  .xem-bai__anh { width: 100%; }
+}
 .nhac h3 { font-size: 15.5px; margin: 0 0 6px; }
 .nhac p { margin: 0 0 8px; font-size: 14px; }
 .nhac code {
