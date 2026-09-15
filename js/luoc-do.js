@@ -148,6 +148,9 @@ export const LUOC_DO = {
     /* Không cho tạo mới bằng tay: đơn phải đến từ trang web, gõ tay vào đây
        sẽ đẻ ra đơn không có mã và không khớp với chỗ ngồi đã giữ. */
     chiDoc: true,
+    /* Lọc theo ngày gửi đơn. Phải khai riêng vì taoLuc do Firestore tự ghi,
+       không nằm trong truong[] như mấy trường người nhập. */
+    locNgay: { truong: "taoLuc", nhan: "Ngày gửi" },
     cot: [cot("ma", "Mã"), cot("hoTen", "Người đặt"), cot("dienThoai", "Điện thoại"), cot("tenVo", "Suất diễn"), cot("soGhe", "Số chỗ"), cot("trangThai", "Trạng thái")],
     truong: [
       { ten: "trangThai", nhan: "Trạng thái", kieu: "chon", batBuoc: true,

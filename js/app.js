@@ -38,6 +38,21 @@ function ngayGioVN(v) {
   return isNaN(d) ? String(v) : d.toLocaleString("vi-VN", { dateStyle: "short", timeStyle: "short" });
 }
 
+/* Đưa mọi kiểu ngày về 'YYYY-MM-DD' để so với ô <input type="date">.
+   Chuỗi sẵn dạng đó thì trả nguyên — KHÔNG đi qua new Date(), vì
+   new Date('2026-09-15') hiểu là nửa đêm giờ UTC, ở múi giờ Việt Nam
+   đổi ngược ra lại thành 14/9. Với Timestamp của Firestore thì lấy
+   từng phần ngày theo giờ máy, cũng vì lý do đó: đơn gửi lúc 2h sáng
+   giờ Hà Nội mà dùng toISOString sẽ bị tính sang hôm trước. */
+function ngayISO(v) {
+  if (!v) return "";
+  if (typeof v === "string") return /^\d{4}-\d{2}-\d{2}/.test(v) ? v.slice(0, 10) : "";
+  const d = typeof v?.toDate === "function" ? v.toDate() : new Date(v);
+  if (isNaN(d)) return "";
+  const p = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())}`;
+}
+
 const MAU_CHIP = { moi: "vang", "da-goi": "xam", "da-xac-nhan": "xanh", "da-huy": "do" };
 
 function nhanCuaChon(truong, gia) {
@@ -165,6 +180,105 @@ async function demDonMoi() {
   } catch { /* chưa có collection hoặc chưa có quyền — không phải lỗi cần kêu */ }
 }
 
+/* ---------- Bộ lọc ----------
+   Sinh thẳng từ lược đồ, không khai báo riêng cho từng mục: trường nào
+   kiểu "chon" thì thành ô chọn, "cong-tac" thành Có/Không, "ngay" thành
+   khoảng từ–đến. Thêm một trường mới vào luoc-do.js là có lọc theo nó
+   ngay, khỏi đụng file này.
+
+   Mục nào muốn lọc theo một trường KHÔNG nằm trong truong[] — ví dụ
+   Đơn đặt chỗ lọc theo taoLuc, thứ Firestore tự ghi — thì khai locNgay. */
+function dsLoc(m) {
+  const ds = [];
+  for (const t of m.truong || []) {
+    if (t.kieu === "chon") ds.push({ loai: "chon", truong: t.ten, nhan: t.nhan, chon: t.chon });
+    else if (t.kieu === "cong-tac") ds.push({ loai: "co", truong: t.ten, nhan: t.nhan });
+    else if (t.kieu === "ngay") ds.push({ loai: "ngay", truong: t.ten, nhan: t.nhan });
+  }
+  if (m.locNgay) ds.push({ loai: "ngay", truong: m.locNgay.truong, nhan: m.locNgay.nhan });
+  // xếp cùng một trật tự ở mọi mục để mắt quen chỗ, khỏi phải dò lại
+  const uu = { chon: 0, ngay: 1, co: 2 };
+  return ds.sort((a, b) => uu[a.loai] - uu[b.loai]);
+}
+
+function dungThanhLoc(m) {
+  const o = dsLoc(m).map((f) => {
+    if (f.loai === "chon") {
+      return `<select data-loc="chon" data-truong="${esc(f.truong)}" aria-label="${esc(f.nhan)}">
+        <option value="">${esc(f.nhan)}: tất cả</option>
+        ${f.chon.map((c) => `<option value="${esc(c.gia)}">${esc(c.nhan)}</option>`).join("")}
+      </select>`;
+    }
+    if (f.loai === "co") {
+      /* Cố ý dùng Có/Không chứ không phải Hiện/Ẩn: nhãn của trường này khác
+         nhau tuỳ mục ("Hiện trên web", "Nhận đặt chỗ"), ghép với Có/Không
+         thì câu nào cũng xuôi. */
+      return `<select data-loc="co" data-truong="${esc(f.truong)}" aria-label="${esc(f.nhan)}">
+        <option value="">${esc(f.nhan)}: tất cả</option>
+        <option value="1">Có</option><option value="0">Không</option>
+      </select>`;
+    }
+    return `<span class="loc-ngay">
+      <span>${esc(f.nhan)}</span>
+      <input type="date" data-loc="tu" data-truong="${esc(f.truong)}" aria-label="${esc(f.nhan)} từ ngày" />
+      <span aria-hidden="true">→</span>
+      <input type="date" data-loc="den" data-truong="${esc(f.truong)}" aria-label="${esc(f.nhan)} đến ngày" />
+    </span>`;
+  }).join("");
+
+  return `<div class="thanh-loc" id="thanhLoc">
+    <input type="search" id="oTim" placeholder="Tìm trong ${esc(m.nhan.toLowerCase())}…" />
+    ${o}
+    <span class="loc-dem" id="locDem"></span>
+    <button type="button" class="nut nut--nho" id="nutXoaLoc" hidden>Xoá lọc</button>
+  </div>`;
+}
+
+const coLoc = (thanh) => [...thanh.querySelectorAll("input, select")].some((o) => o.value !== "");
+
+/* Chuỗi để tìm kiếm. Dựng theo lược đồ chứ không JSON.stringify cả bản ghi:
+   - bài viết toàn văn phải bỏ thẻ HTML, không thì gõ "img" hay "href" là
+     ra sạch mọi bài
+   - trường dạng chọn ghép thêm nhãn tiếng Việt, để gõ "Chèo cổ" tìm được
+     chứ không bắt người ta nhớ mã "cheo-co"
+   Kết quả gắn lại vào bản ghi để gõ phím tiếp không phải dựng lại; onSnapshot
+   trả về object mới mỗi lần đổi nên không sợ đọc phải bản cũ. Đặt
+   enumerable:false để khoá này không lọt vào chỗ nào ghi ngược lên Firestore. */
+const boThe = (h) => String(h).replace(/<[^>]*>/g, " ");
+
+function chuoiTim(m, d) {
+  if (d.__tim !== undefined) return d.__tim;
+  const phan = [String(d.id || "")];
+  for (const t of [...(m.truong || []), ...(m.chiXem || [])]) {
+    const v = d[t.ten];
+    if (v == null || v === "" || typeof v === "boolean" || typeof v === "object") continue;
+    phan.push(t.kieu === "bai" ? boThe(v) : String(v));
+    if (t.chon) phan.push(nhanCuaChon(t, v));
+  }
+  const s = phan.join(" ").toLowerCase();
+  Object.defineProperty(d, "__tim", { value: s, enumerable: false, configurable: true });
+  return s;
+}
+
+function apDungLoc(m, ds, thanh) {
+  const tim = (thanh.querySelector("#oTim").value || "").trim().toLowerCase();
+  let kq = tim ? ds.filter((d) => chuoiTim(m, d).includes(tim)) : ds;
+
+  thanh.querySelectorAll("[data-loc]").forEach((o) => {
+    const v = o.value;
+    if (!v) return;
+    const tr = o.dataset.truong;
+    switch (o.dataset.loc) {
+      case "chon": kq = kq.filter((d) => (d[tr] ?? "") === v); break;
+      // thiếu hẳn trường thì coi như đang bật, khớp với cách bảng vẽ cột đó
+      case "co": kq = kq.filter((d) => (d[tr] !== false) === (v === "1")); break;
+      case "tu": kq = kq.filter((d) => { const x = ngayISO(d[tr]); return x && x >= v; }); break;
+      case "den": kq = kq.filter((d) => { const x = ngayISO(d[tr]); return x && x <= v; }); break;
+    }
+  });
+  return kq;
+}
+
 /* ---------- Màn danh sách ---------- */
 let boNghe = null;
 
@@ -182,9 +296,7 @@ function veDanhSach(ma) {
       ${m.chiDoc ? "" : `<button type="button" class="nut nut--chinh" id="nutThem">+ Thêm mới</button>`}
     </div></div>
 
-    <div class="thanh-loc">
-      <input type="search" id="oTim" placeholder="Tìm trong ${esc(m.nhan.toLowerCase())}…" />
-    </div>
+    ${dungThanhLoc(m)}
 
     <div class="bang-bao" id="khungBang">
       <div class="dang-tai"><div class="xoay"></div>Đang tải…</div>
@@ -197,23 +309,40 @@ function veDanhSach(ma) {
     else moBieuMau(ma, null);
   });
 
-  let duLieu = [];
+  let duLieu = [];     // toàn bộ mục
+  let dangHien = [];   // phần còn lại sau khi lọc
 
+  const thanh = document.getElementById("thanhLoc");
+  const oDem = document.getElementById("locDem");
+  const nutXoaLoc = document.getElementById("nutXoaLoc");
+
+  /* Xuất đúng những dòng đang nhìn thấy. Lọc xong bấm Xuất mà ra cả bảng
+     thì vừa bất ngờ vừa mất công xoá lại trong Excel. */
   document.getElementById("nutXuat").addEventListener("click", () => {
-    if (!duLieu.length) return bao("Chưa có dòng nào để xuất.", "loi");
-    const kq = xuatXlsx(ma, m, duLieu);
+    if (!dangHien.length) return bao("Không có dòng nào để xuất.", "loi");
+    const kq = xuatXlsx(ma, m, dangHien);
     bao(`Đã xuất ${kq.soDong} dòng ra ${kq.ten}`, "xong");
   });
   document.getElementById("nutNhap")?.addEventListener("click", () => moNhap(ma, m, () => duLieu));
   document.getElementById("nutLayBai")?.addEventListener("click", () => moLayBai(ma, m, () => duLieu));
+
   const ve = () => {
-    const tim = (document.getElementById("oTim").value || "").trim().toLowerCase();
-    const loc = tim
-      ? duLieu.filter((d) => JSON.stringify(Object.values(d)).toLowerCase().includes(tim))
-      : duLieu;
-    veBang(ma, loc, duLieu.length);
+    dangHien = apDungLoc(m, duLieu, thanh);
+    const dangLoc = coLoc(thanh);
+    oDem.textContent = dangLoc
+      ? `${dangHien.length} / ${duLieu.length} mục`
+      : `${duLieu.length} mục`;
+    nutXoaLoc.hidden = !dangLoc;
+    veBang(ma, dangHien, duLieu.length, dangLoc);
   };
-  document.getElementById("oTim").addEventListener("input", ve);
+
+  // một listener trên cả thanh: ô tìm, ô chọn và ô ngày đều phát "input"
+  thanh.addEventListener("input", ve);
+  nutXoaLoc.addEventListener("click", () => {
+    thanh.querySelectorAll("input, select").forEach((o) => { o.value = ""; });
+    ve();
+    thanh.querySelector("#oTim").focus();
+  });
 
   // onSnapshot: hai người cùng sửa thì bảng của cả hai tự cập nhật
   if (boNghe) boNghe();
@@ -308,16 +437,18 @@ function moNhap(ma, m, layDuLieu) {
   });
 }
 
-function veBang(ma, ds, tong) {
+function veBang(ma, ds, tong, dangLoc) {
   const m = LUOC_DO[ma];
   const khung = document.getElementById("khungBang");
   if (!khung) return;
 
   if (!ds.length) {
     khung.innerHTML = `<div class="trong">
-      <h3>${tong ? "Không tìm thấy" : "Chưa có gì ở đây"}</h3>
+      <h3>${tong ? "Không có mục nào khớp" : "Chưa có gì ở đây"}</h3>
       <p>${tong
-        ? "Thử từ khoá khác."
+        ? (dangLoc
+            ? `Cả ${tong} mục đều bị bộ lọc loại ra. Bấm “Xoá lọc” để xem lại tất cả.`
+            : "Thử từ khoá khác.")
         : m.chiDoc
           ? "Đơn đặt chỗ sẽ tự hiện ở đây khi có người giữ chỗ trên web."
           : "Bấm “Thêm mới” để tạo mục đầu tiên."}</p>

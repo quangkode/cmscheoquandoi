@@ -36,6 +36,12 @@
 }
 
 * { box-sizing: border-box; }
+/* BẮT BUỘC, không phải cho gọn: luật [hidden]{display:none} của trình duyệt
+   nằm ở bảng mặc định, độ ưu tiên thua bất kỳ lớp nào của mình. .nut đặt
+   display:inline-flex nên mọi nút có thuộc tính hidden vẫn hiện nguyên —
+   nút "Bỏ ảnh" lúc chưa có ảnh, nút "Xoá lọc" lúc chưa lọc. Dòng này kéo
+   [hidden] lên trên lại. */
+[hidden] { display: none !important; }
 body {
   margin: 0; font-family: var(--sans); font-size: 15px; line-height: 1.6;
   color: var(--muc); background: var(--nen); -webkit-font-smoothing: antialiased;
@@ -122,12 +128,29 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dau p { margin: 0; color: var(--muc-nhat); font-size: 14px; max-width: 620px; }
 .dau__phai { margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap; }
 
-.thanh-loc { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 16px; }
+.thanh-loc { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
 .thanh-loc input, .thanh-loc select {
   min-height: 40px; padding: 0 12px; border: 1px solid var(--vien);
   border-radius: var(--r); background: var(--the);
 }
-.thanh-loc input { flex: 1 1 260px; }
+/* Chỉ ô tìm mới giãn ra chiếm chỗ trống; ô chọn và ô ngày giữ nguyên bề
+   rộng, không thì mỗi mục một kiểu vì số bộ lọc khác nhau. */
+.thanh-loc input[type="search"] { flex: 1 1 240px; min-width: 0; }
+.thanh-loc select { flex: 0 0 auto; max-width: 100%; }
+.loc-ngay {
+  display: flex; align-items: center; gap: 6px; flex: 0 0 auto;
+  font-size: 13px; color: var(--muc-nhat);
+}
+.loc-ngay input[type="date"] { flex: 0 0 auto; padding: 0 8px; }
+/* đẩy số đếm và nút xoá về cuối hàng, tách khỏi cụm ô lọc */
+.loc-dem { margin-left: auto; font-size: 13px; color: var(--muc-nhat); white-space: nowrap; }
+.thanh-loc .nut--nho { flex: 0 0 auto; }
+
+@media (max-width: 720px) {
+  .loc-ngay, .thanh-loc select { flex: 1 1 100%; }
+  .loc-ngay input[type="date"] { flex: 1 1 0; min-width: 0; }
+  .loc-dem { margin-left: 0; }
+}
 
 /* ---------- Bảng ---------- */
 .bang-bao { background: var(--the); border: 1px solid var(--vien); border-radius: var(--r); overflow-x: auto; }
