@@ -128,29 +128,72 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .dau p { margin: 0; color: var(--muc-nhat); font-size: 14px; max-width: 620px; }
 .dau__phai { margin-left: auto; display: flex; gap: 10px; flex-wrap: wrap; }
 
-.thanh-loc { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+.thanh-loc { display: flex; gap: 10px 14px; flex-wrap: wrap; align-items: center; margin-bottom: 16px; }
+/* Thanh lọc chia hai nhóm: nhóm ô lọc, và nhóm phụ (nút lọc nhanh, số đếm,
+   Xoá lọc). Đủ rộng thì hai nhóm chung một hàng; hẹp thì nhóm phụ xuống
+   nguyên cụm chứ không vỡ lẻ.
+
+   flex-basis 760px không phải con số cho vui. Flexbox quyết định xuống hàng
+   theo tổng flex-basis, chứ không theo bề rộng sau khi co. Đo thật ở 1280px:
+   vùng nội dung rộng 972px, nhóm ô lọc của Tin tức và Lịch diễn cần ~800px,
+   nhóm phụ ~250-330px — cộng lại quá chỗ. Basis nhỏ thì nhóm này chịu co,
+   ở lại hàng trên rồi tự vỡ, để một ô chọn nằm trơ hàng dưới. Basis 760 làm
+   cả nhóm phụ rơi xuống hàng dưới nguyên cụm, nhóm ô lọc giữ trọn một hàng.
+   Từ 1440px trở lên thì tổng basis lọt, hai nhóm về chung một hàng. */
+.thanh-loc__o { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; flex: 1 1 760px; min-width: 0; }
+.thanh-loc__phu { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; flex: 0 0 auto; margin-left: auto; }
 .thanh-loc input, .thanh-loc select {
   min-height: 40px; padding: 0 12px; border: 1px solid var(--vien);
   border-radius: var(--r); background: var(--the);
 }
-/* Chỉ ô tìm mới giãn ra chiếm chỗ trống; ô chọn và ô ngày giữ nguyên bề
-   rộng, không thì mỗi mục một kiểu vì số bộ lọc khác nhau. */
-.thanh-loc input[type="search"] { flex: 1 1 240px; min-width: 0; }
-.thanh-loc select { flex: 0 0 auto; max-width: 100%; }
-.loc-ngay {
-  display: flex; align-items: center; gap: 6px; flex: 0 0 auto;
-  font-size: 13px; color: var(--muc-nhat);
+/* Ô tìm co được tới 150px, ô ngày bỏ nhãn chữ (đã có title và aria-label),
+   chữ nhỏ lại một nấc — đủ để nhóm ô lọc giữ trọn một hàng ở 1280px. */
+.thanh-loc input, .thanh-loc select { font-size: 13.5px; }
+.thanh-loc input[type="search"] { flex: 1 1 150px; min-width: 0; }
+/* Chặn trên 205px: vừa đủ cho nhãn dài nhất ở trạng thái chưa lọc ("Nhận
+   đặt chỗ: tất cả"), mà vẫn ghìm được "Chương trình nghệ thuật" — nhãn này kéo ô chọn ra
+   231px, một mình nó ăn gần một phần tư hàng. Cắt bằng ellipsis, bung đủ
+   khi người ta mở ra chọn. */
+.thanh-loc select {
+  flex: 0 1 auto; min-width: 0; max-width: 205px;
+  padding: 0 28px 0 10px; text-overflow: ellipsis;
 }
-.loc-ngay input[type="date"] { flex: 0 0 auto; padding: 0 8px; }
+.loc-ngay { display: flex; align-items: center; gap: 5px; flex: 0 0 auto; color: var(--muc-nhat); }
+.loc-ngay input[type="date"] { flex: 0 0 auto; width: 126px; padding: 0 6px; }
+
+/* Nút lọc nhanh: mấy bộ lọc dùng hằng ngày, bấm một cái là xong. */
+.chip-loc {
+  flex: 0 0 auto; min-height: 40px; padding: 0 12px; cursor: pointer;
+  border: 1px solid var(--vien); border-radius: 999px; background: var(--the);
+  font-family: inherit; font-size: 13px; font-weight: 600; color: var(--muc-nhat);
+  transition: var(--t);
+}
+.chip-loc:hover { border-color: var(--muc-nhat); color: var(--muc); }
+.chip-loc.dang-bat { background: var(--do); border-color: var(--do); color: #fff; }
+
 /* đẩy số đếm và nút xoá về cuối hàng, tách khỏi cụm ô lọc */
 .loc-dem { margin-left: auto; font-size: 13px; color: var(--muc-nhat); white-space: nowrap; }
 .thanh-loc .nut--nho { flex: 0 0 auto; }
 
-@media (max-width: 720px) {
+@media (max-width: 860px) {
   .loc-ngay, .thanh-loc select { flex: 1 1 100%; }
-  .loc-ngay input[type="date"] { flex: 1 1 0; min-width: 0; }
-  .loc-dem { margin-left: 0; }
+  .loc-ngay input[type="date"] { flex: 1 1 0; width: auto; min-width: 0; }
+  .thanh-loc__phu { margin-left: 0; width: 100%; }
+  .loc-dem { margin-left: auto; }
 }
+
+/* ---------- Chọn nhiều dòng ---------- */
+.thanh-chon {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  margin-bottom: 14px; padding: 10px 14px;
+  border: 1px solid #e6c9cc; border-left: 3px solid var(--do);
+  border-radius: var(--r); background: #fdf5f5;
+}
+.thanh-chon strong { margin-right: auto; font-size: 14px; }
+th.o-tich, td.o-tich { width: 38px; padding-right: 0; text-align: center; }
+.o-tich input { width: 16px; height: 16px; cursor: pointer; accent-color: var(--do); }
+tbody tr.dong-chon { background: #fdf5f5; }
+tbody tr.dong-chon:hover { background: #fbeeee; }
 
 /* ---------- Bảng ---------- */
 .bang-bao { background: var(--the); border: 1px solid var(--vien); border-radius: var(--r); overflow-x: auto; }

@@ -219,22 +219,76 @@ function dungThanhLoc(m) {
       </select>`;
     }
     return `<span class="loc-ngay">
-      <span>${esc(f.nhan)}</span>
-      <input type="date" data-loc="tu" data-truong="${esc(f.truong)}" aria-label="${esc(f.nhan)} từ ngày" />
+      <input type="date" data-loc="tu" data-truong="${esc(f.truong)}" title="${esc(f.nhan)} từ ngày" aria-label="${esc(f.nhan)} từ ngày" />
       <span aria-hidden="true">→</span>
-      <input type="date" data-loc="den" data-truong="${esc(f.truong)}" aria-label="${esc(f.nhan)} đến ngày" />
+      <input type="date" data-loc="den" data-truong="${esc(f.truong)}" title="${esc(f.nhan)} đến ngày" aria-label="${esc(f.nhan)} đến ngày" />
     </span>`;
   }).join("");
 
+  /* Nút lọc nhanh: mấy bộ lọc dùng đi dùng lại hằng ngày, khai trong lược đồ
+     để mỗi mục tự chọn cái hợp với mình. Bấm lần nữa là bỏ. */
+  const nhanh = (m.locNhanh || [])
+    .map((p, i) => `<button type="button" class="chip-loc" data-nhanh="${i}">${esc(p.nhan)}</button>`)
+    .join("");
+
+  /* Chia hai nhóm chứ không để một hàng dài tự rơi: mục nhiều bộ lọc thì
+     kiểu gì cũng không đủ chỗ ở 1280px, mà rơi tự do thì còn lại một ô chọn
+     nằm trơ giữa hàng dưới, nhìn như vỡ. Hai nhóm này rộng thì nằm cùng
+     hàng, hẹp thì xuống hàng nguyên cụm. */
   return `<div class="thanh-loc" id="thanhLoc">
-    <input type="search" id="oTim" placeholder="Tìm trong ${esc(m.nhan.toLowerCase())}…" />
-    ${o}
-    <span class="loc-dem" id="locDem"></span>
-    <button type="button" class="nut nut--nho" id="nutXoaLoc" hidden>Xoá lọc</button>
+    <div class="thanh-loc__o">
+      <input type="search" id="oTim" placeholder="Tìm trong ${esc(m.nhan.toLowerCase())}…" />
+      ${o}
+    </div>
+    <div class="thanh-loc__phu">
+      ${nhanh}
+      <span class="loc-dem" id="locDem"></span>
+      <button type="button" class="nut nut--nho" id="nutXoaLoc" hidden>Xoá lọc</button>
+    </div>
   </div>`;
 }
 
+const oLoc = (thanh, khoa) => {
+  if (khoa === "tim") return thanh.querySelector("#oTim");
+  const [loai, truong] = khoa.split(":");
+  return thanh.querySelector(`[data-loc="${loai}"][data-truong="${truong}"]`);
+};
+const khoaLoc = (e) => (e.id === "oTim" ? "tim" : e.dataset.loc + ":" + e.dataset.truong);
+
+/* Giá trị của nút lọc nhanh: hoặc một chuỗi cố định, hoặc mốc ngày tính lúc
+   bấm. Phải tính lúc bấm chứ không phải lúc dựng trang — CMS mở cả ngày,
+   qua nửa đêm mà "Sắp diễn" vẫn giữ ngày hôm trước thì lọc sai. */
+function giaTriNhanh(v) {
+  const NGAY = 86400000;
+  if (v === "@homNay") return ngayISO(new Date());
+  if (v === "@homQua") return ngayISO(new Date(Date.now() - NGAY));
+  if (v === "@30NgayTruoc") return ngayISO(new Date(Date.now() - 30 * NGAY));
+  return v;
+}
+const nhanhDangBat = (thanh, p) =>
+  Object.entries(p.dat).every(([k, v]) => oLoc(thanh, k)?.value === giaTriNhanh(v));
+
 const coLoc = (thanh) => [...thanh.querySelectorAll("input, select")].some((o) => o.value !== "");
+
+/* Nhớ bộ lọc theo từng mục. sessionStorage chứ không localStorage: đi xem
+   mục khác rồi quay lại thì còn nguyên, nhưng mở buổi làm việc mới thì sạch
+   — không ai muốn hôm sau mở CMS ra thấy bảng trống vì bộ lọc tuần trước. */
+const KHOA_LOC = (ma) => "loc:" + ma;
+
+function luuLoc(ma, thanh) {
+  const o = {};
+  thanh.querySelectorAll("input, select").forEach((e) => { if (e.value) o[khoaLoc(e)] = e.value; });
+  try { sessionStorage.setItem(KHOA_LOC(ma), JSON.stringify(o)); } catch { /* chế độ riêng tư */ }
+}
+
+function napLoc(ma, thanh) {
+  let o;
+  try { o = JSON.parse(sessionStorage.getItem(KHOA_LOC(ma)) || "{}"); } catch { return; }
+  thanh.querySelectorAll("input, select").forEach((e) => {
+    const v = o[khoaLoc(e)];
+    if (v != null) e.value = v;
+  });
+}
 
 /* Chuỗi để tìm kiếm. Dựng theo lược đồ chứ không JSON.stringify cả bản ghi:
    - bài viết toàn văn phải bỏ thẻ HTML, không thì gõ "img" hay "href" là
@@ -298,6 +352,13 @@ function veDanhSach(ma) {
 
     ${dungThanhLoc(m)}
 
+    <div class="thanh-chon" id="thanhChon" hidden>
+      <strong id="chonDem"></strong>
+      <button type="button" class="nut nut--nho" id="nutChonHet">Chọn cả ${esc(m.nhan.toLowerCase())} đang lọc</button>
+      <button type="button" class="nut nut--nho" id="nutBoChon">Bỏ chọn</button>
+      <button type="button" class="nut nut--nho nut--nguy" id="nutXoaChon">Xoá mục đã chọn</button>
+    </div>
+
     <div class="bang-bao" id="khungBang">
       <div class="dang-tai"><div class="xoay"></div>Đang tải…</div>
     </div>`;
@@ -326,6 +387,26 @@ function veDanhSach(ma) {
   document.getElementById("nutNhap")?.addEventListener("click", () => moNhap(ma, m, () => duLieu));
   document.getElementById("nutLayBai")?.addEventListener("click", () => moLayBai(ma, m, () => duLieu));
 
+  /* Các dòng được tích chọn, giữ theo id chứ không theo phần tử: onSnapshot
+     vẽ lại bảng bất cứ lúc nào, bám vào ô checkbox là mất sạch lựa chọn. */
+  const daChon = new Set();
+
+  const veThanhChon = () => {
+    // bỏ khỏi lựa chọn những mục người khác vừa xoá, không thì đếm ra số ma
+    const con = new Set(duLieu.map((d) => d.id));
+    for (const id of [...daChon]) if (!con.has(id)) daChon.delete(id);
+
+    const n = daChon.size;
+    document.getElementById("thanhChon").hidden = n === 0;
+    if (n) document.getElementById("chonDem").textContent = `Đã chọn ${n} mục`;
+    const oHet = document.getElementById("chonTatCa");
+    if (oHet) {
+      const soHien = dangHien.filter((d) => daChon.has(d.id)).length;
+      oHet.checked = soHien > 0 && soHien === dangHien.length;
+      oHet.indeterminate = soHien > 0 && soHien < dangHien.length;
+    }
+  };
+
   const ve = () => {
     dangHien = apDungLoc(m, duLieu, thanh);
     const dangLoc = coLoc(thanh);
@@ -333,7 +414,11 @@ function veDanhSach(ma) {
       ? `${dangHien.length} / ${duLieu.length} mục`
       : `${duLieu.length} mục`;
     nutXoaLoc.hidden = !dangLoc;
-    veBang(ma, dangHien, duLieu.length, dangLoc);
+    thanh.querySelectorAll("[data-nhanh]").forEach((b) =>
+      b.classList.toggle("dang-bat", nhanhDangBat(thanh, m.locNhanh[+b.dataset.nhanh])));
+    veBang(ma, dangHien, duLieu.length, dangLoc, daChon, veThanhChon);
+    veThanhChon();
+    luuLoc(ma, thanh);
   };
 
   // một listener trên cả thanh: ô tìm, ô chọn và ô ngày đều phát "input"
@@ -343,6 +428,26 @@ function veDanhSach(ma) {
     ve();
     thanh.querySelector("#oTim").focus();
   });
+  thanh.querySelectorAll("[data-nhanh]").forEach((b) =>
+    b.addEventListener("click", () => {
+      const p = m.locNhanh[+b.dataset.nhanh];
+      const bo = nhanhDangBat(thanh, p);   // đang bật sẵn thì bấm lần nữa là tắt
+      for (const [k, v] of Object.entries(p.dat)) {
+        const o = oLoc(thanh, k);
+        if (o) o.value = bo ? "" : giaTriNhanh(v);
+      }
+      ve();
+    }));
+
+  document.getElementById("nutBoChon").addEventListener("click", () => { daChon.clear(); ve(); });
+  document.getElementById("nutChonHet").addEventListener("click", () => {
+    dangHien.forEach((d) => daChon.add(d.id));
+    ve();
+  });
+  document.getElementById("nutXoaChon").addEventListener("click", () =>
+    hoiXoaNhieu(ma, duLieu.filter((d) => daChon.has(d.id)), () => daChon.clear()));
+
+  napLoc(ma, thanh);
 
   // onSnapshot: hai người cùng sửa thì bảng của cả hai tự cập nhật
   if (boNghe) boNghe();
@@ -437,7 +542,7 @@ function moNhap(ma, m, layDuLieu) {
   });
 }
 
-function veBang(ma, ds, tong, dangLoc) {
+function veBang(ma, ds, tong, dangLoc, daChon, khiDoiChon) {
   const m = LUOC_DO[ma];
   const khung = document.getElementById("khungBang");
   if (!khung) return;
@@ -456,12 +561,19 @@ function veBang(ma, ds, tong, dangLoc) {
     return;
   }
 
+  /* Cột tích chọn có ở mọi mục, kể cả mục chiDoc. chiDoc nghĩa là không gõ
+     tay thêm bản ghi mới, chứ không phải cấm xoá — đơn đặt chỗ thử nghiệm
+     hay đơn rác vẫn phải dọn được, và luật Firestore vốn cho quản trị xoá. */
   khung.innerHTML = `<table class="${m.bangTinh ? "bang-tinh" : ""}">
-    <thead><tr>${m.cot.map((c) => `<th>${esc(c.nhan)}</th>`).join("")}<th></th></tr></thead>
-    <tbody>${ds.map((d) => `<tr>${m.cot.map((c) => oBang(m, c, d)).join("")}
+    <thead><tr>
+      <th class="o-tich"><input type="checkbox" id="chonTatCa" aria-label="Chọn tất cả dòng đang hiện" /></th>
+      ${m.cot.map((c) => `<th>${esc(c.nhan)}</th>`).join("")}<th></th></tr></thead>
+    <tbody>${ds.map((d) => `<tr${daChon.has(d.id) ? ' class="dong-chon"' : ""}>
+      <td class="o-tich"><input type="checkbox" data-tich="${esc(d.id)}"${daChon.has(d.id) ? " checked" : ""} aria-label="Chọn dòng này" /></td>
+      ${m.cot.map((c) => oBang(m, c, d)).join("")}
       <td class="o-thao-tac">
         <button type="button" class="nut nut--nho" data-sua="${esc(d.id)}">${m.chiDoc ? "Xem" : "Sửa"}</button>
-        ${m.chiDoc ? "" : `<button type="button" class="nut nut--nho nut--nguy" data-xoa="${esc(d.id)}">Xoá</button>`}
+        <button type="button" class="nut nut--nho nut--nguy" data-xoa="${esc(d.id)}">Xoá</button>
       </td></tr>`).join("")}</tbody>
   </table>`;
 
@@ -473,6 +585,21 @@ function veBang(ma, ds, tong, dangLoc) {
     }));
   khung.querySelectorAll("[data-xoa]").forEach((b) =>
     b.addEventListener("click", () => hoiXoa(ma, ds.find((x) => x.id === b.dataset.xoa))));
+
+  khung.querySelectorAll("[data-tich]").forEach((o) =>
+    o.addEventListener("change", () => {
+      if (o.checked) daChon.add(o.dataset.tich); else daChon.delete(o.dataset.tich);
+      o.closest("tr").classList.toggle("dong-chon", o.checked);
+      khiDoiChon();
+    }));
+  khung.querySelector("#chonTatCa").addEventListener("change", (e) => {
+    ds.forEach((d) => { if (e.target.checked) daChon.add(d.id); else daChon.delete(d.id); });
+    khung.querySelectorAll("[data-tich]").forEach((o) => {
+      o.checked = e.target.checked;
+      o.closest("tr").classList.toggle("dong-chon", e.target.checked);
+    });
+    khiDoiChon();
+  });
 }
 
 function oBang(m, c, d) {
@@ -666,6 +793,69 @@ function hoiXoa(ma, d) {
       }
       await fb.xoaBo(ma, d.id);
       bao("Đã xoá.", "xong");
+    }
+  });
+}
+
+/* ---------- Xoá nhiều mục cùng lúc ----------
+   Đường ra cho hai việc nặng tay mà trước đây phải vào Firebase Console:
+   dọn bản ghi bị nạp trùng, và bỏ hẳn một loạt bài cũ. Lọc lấy đúng thứ
+   cần bỏ, bấm "Chọn cả …", rồi xoá một lượt.
+
+   Bắt gõ chữ XOA chứ không chỉ bấm Đồng ý: bấm nhầm một nút thì mất 88 bản
+   ghi, mà Firestore không có thùng rác để moi lại. */
+function hoiXoaNhieu(ma, ds, xong) {
+  if (!ds.length) return;
+  const m = LUOC_DO[ma];
+  const truongAnh = (m.truong || []).filter((t) => t.kieu === "anh");
+  const ten = (d) => d.tieuDe || d.hoTen || d.ten || d.tenVo || d.chuThich || d.ma || d.id;
+
+  moHop({
+    tieuDe: `Xoá ${ds.length} mục?`,
+    nutChinh: "Xoá vĩnh viễn",
+    lopNutChinh: "nut--nguy",
+    than: `
+      <div class="nhac nhac--nguy">
+        <h3>Sắp xoá ${ds.length} mục khỏi ${esc(m.nhan)}</h3>
+        <p>Xoá xong không lấy lại được${truongAnh.length ? ", ảnh kèm theo cũng mất khỏi kho" : ""}.
+           Trang web mất những mục này ngay lập tức.</p>
+      </div>
+      <ul class="ds-loi">${ds.slice(0, 10).map((d) => `<li>${esc(ten(d))}</li>`).join("")}
+        ${ds.length > 10 ? `<li>… và ${ds.length - 10} mục nữa</li>` : ""}</ul>
+      <div class="o-nhap">
+        <label for="xacNhanXoa">Gõ <code>XOA</code> vào ô dưới rồi mới xoá được</label>
+        <input type="text" id="xacNhanXoa" autocomplete="off" placeholder="XOA" />
+      </div>
+      <div id="tienDoXoa"></div>`,
+    khiXacNhan: async () => {
+      const o = document.getElementById("xacNhanXoa");
+      if ((o.value || "").trim().toUpperCase() !== "XOA") {
+        bao("Gõ đúng chữ XOA rồi mới xoá được.", "loi");
+        o.focus();
+        return false;
+      }
+
+      const tienDo = document.getElementById("tienDoXoa");
+      const CHUM = 5;   // vài cái một lượt cho nhanh, không dội hết một lúc
+      let hong = 0;
+
+      for (let i = 0; i < ds.length; i += CHUM) {
+        tienDo.innerHTML = `<div class="dang-tai"><div class="xoay"></div>
+          Đang xoá ${Math.min(i + CHUM, ds.length)}/${ds.length}…</div>`;
+        await Promise.all(ds.slice(i, i + CHUM).map(async (d) => {
+          try {
+            // ảnh trước, bản ghi sau — xoá ngược lại mà lỗi giữa chừng thì ảnh
+            // nằm lại trong kho vĩnh viễn, không còn đường nào lần ra để dọn
+            for (const t of truongAnh) if (d[t.ten]?.duongDan) await fb.xoaAnh(d[t.ten].duongDan);
+            await fb.xoaBo(ma, d.id);
+          } catch { hong++; }
+        }));
+      }
+
+      xong();
+      bao(hong
+        ? `Đã xoá ${ds.length - hong} mục, ${hong} mục không xoá được.`
+        : `Đã xoá ${ds.length} mục.`, hong ? "loi" : "xong");
     }
   });
 }

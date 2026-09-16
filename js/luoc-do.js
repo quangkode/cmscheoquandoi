@@ -19,6 +19,10 @@ export const LUOC_DO = {
     moTa: "Bài viết hiện ở trang Tin tức và khối tin mới nhất ngoài trang chủ.",
     bieuTuong: "M4 5h16v14H4zM7 9h10M7 13h10M7 17h6",
     sapXep: { truong: "ngay", chieu: "desc" },
+    locNhanh: [
+      { nhan: "30 ngày qua", dat: { "tu:ngay": "@30NgayTruoc" } },
+      { nhan: "Đang ẩn", dat: { "co:hienThi": "0" } }
+    ],
     /* Bật nút "Lấy từ link báo" cho mục này. Chỉ có ý nghĩa ở nơi mà các
        trường trùng với thứ đọc được từ một bài báo (tiêu đề, tóm tắt, ảnh,
        nguồn) — mấy mục như Nghệ sĩ hay Lịch diễn thì không. */
@@ -48,6 +52,12 @@ export const LUOC_DO = {
     moTa: "Suất diễn hiện ở trang chủ và là danh sách người xem chọn khi đặt chỗ.",
     bieuTuong: "M4 6h16v14H4zM4 10h16M9 3v4M15 3v4",
     sapXep: { truong: "ngay", chieu: "asc" },
+    /* Hai câu hỏi thường trực với lịch diễn: sắp tới diễn gì, và tháng trước
+       đã diễn những gì. Mốc ngày tính lúc bấm nên qua nửa đêm vẫn đúng. */
+    locNhanh: [
+      { nhan: "Sắp diễn", dat: { "tu:ngay": "@homNay" } },
+      { nhan: "Đã qua", dat: { "den:ngay": "@homQua" } }
+    ],
     // xếp lịch cả tháng thì nhìn theo lưới kẻ ô dễ dò hơn danh sách thưa;
     // bảng kẻ ô, cột chia đều, hàng tiêu đề dính khi cuộn
     bangTinh: true,
@@ -151,6 +161,10 @@ export const LUOC_DO = {
     /* Lọc theo ngày gửi đơn. Phải khai riêng vì taoLuc do Firestore tự ghi,
        không nằm trong truong[] như mấy trường người nhập. */
     locNgay: { truong: "taoLuc", nhan: "Ngày gửi" },
+    locNhanh: [
+      { nhan: "Đơn mới", dat: { "chon:trangThai": "moi" } },
+      { nhan: "Đã xác nhận", dat: { "chon:trangThai": "da-xac-nhan" } }
+    ],
     cot: [cot("ma", "Mã"), cot("hoTen", "Người đặt"), cot("dienThoai", "Điện thoại"), cot("tenVo", "Suất diễn"), cot("soGhe", "Số chỗ"), cot("trangThai", "Trạng thái")],
     truong: [
       { ten: "trangThai", nhan: "Trạng thái", kieu: "chon", batBuoc: true,
