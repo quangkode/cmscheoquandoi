@@ -7,6 +7,7 @@
 import { daCauHinh } from "../cau-hinh.js";
 import { DU_LIEU_GOC } from "./du-lieu-goc.js";
 import { LUOC_DO } from "./luoc-do.js";
+import { dungDoiChieu } from "./doi-chieu.js";
 
 const noiDung = document.getElementById("noiDung");
 const khayBao = document.getElementById("khayBao");
@@ -82,6 +83,15 @@ async function chay() {
       <button type="button" class="nut nut--chinh" id="napTatCa">Nạp tất cả mục đang trống</button>
     </p>
 
+    <h2 class="doi-chieu__tieude">Đối chiếu với bản gốc</h2>
+    <div class="nhac">
+      <p>Dùng khi CMS <strong>đã có dữ liệu</strong> nhưng còn thiếu — hay gặp nhất là
+         ô ảnh bỏ trống, hoặc lược đồ vừa thêm trường mới mà bản ghi cũ chưa có.</p>
+      <p>Bảng dưới so từng trường với bản gốc rồi <strong>chỉ điền vào chỗ trống</strong>.
+         Chỗ bạn đã nhập và bản ghi bạn tự thêm đều được giữ nguyên, không xoá gì cả.</p>
+    </div>
+    <div id="doiChieu"><div class="dang-tai"><div class="xoay"></div>Đang đối chiếu…</div></div>
+
     <div class="nhac nhac--nguy" style="margin-top:34px">
       <h3>Lỡ nạp trùng thì dùng nút này</h3>
       <p>Xoá sạch cả 6 mục nội dung rồi nạp lại từ đầu đúng một lần. Dùng khi
@@ -148,6 +158,11 @@ async function chay() {
           !confirm(`Mục này đã có ${hienTai[b.dataset.nap]} mục. Nạp thêm sẽ tạo bản trùng. Vẫn tiếp tục?`)) return;
       napMot(b.dataset.nap, b.dataset.khoa, b).catch(() => {});
     }));
+
+  dungDoiChieu(fb, document.getElementById("doiChieu"), bao).catch((e) => {
+    document.getElementById("doiChieu").innerHTML =
+      `<div class="nhac"><h3>Không đối chiếu được</h3><p><code>${esc(e.message)}</code></p></div>`;
+  });
 
   document.getElementById("napTatCa").addEventListener("click", async (e) => {
     e.target.disabled = true;

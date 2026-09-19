@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Noto+Serif:wght@400;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="./cms.css?v=10" />
+<link rel="stylesheet" href="./cms.css?v=11" />
 <style>
 /* ==========================================================
    Trang hướng dẫn — bản HTML của README.md. Cùng một nội dung,
@@ -167,6 +167,7 @@
       <li class="ml__con"><a href="#b7">7 · Nạp dữ liệu ban đầu</a></li>
       <li class="ml__con"><a href="#b8">8 · Đưa CMS lên mạng</a></li>
       <li><a href="#hang-ngay">Cách dùng hằng ngày</a></li>
+      <li><a href="#dong-bo">CMS và trang web ăn khớp nhau</a></li>
       <li><a href="#cau-truc">Cấu trúc mã</a></li>
       <li><a href="#hong">Hỏng thì xem ở đây</a></li>
       <li><a href="#chi-phi">Chi phí</a></li>
@@ -268,6 +269,9 @@
           <strong>Chỉ chạy một lần.</strong>
           Bấm lại là dữ liệu nhân đôi.
         </div>
+        <p>Cuối trang đó còn khối <strong>Đối chiếu với bản gốc</strong> — dùng về sau,
+           khi CMS đã có dữ liệu mà vẫn thiếu chỗ nào đó. Xem
+           <a href="#dong-bo">CMS và trang web ăn khớp nhau</a>.</p>
       </article>
 
       <article class="buoc" id="b8">
@@ -288,6 +292,8 @@
             <tr><td>Xếp lịch cả tháng một lần</td><td>Lịch diễn → <strong>Xuất Excel</strong> → sửa trong bảng tính → lưu thành .csv → <strong>Nhập bảng tính</strong></td></tr>
             <tr><td>Thêm ảnh vào thư viện</td><td>Thư viện ảnh → Thêm mới → Chọn ảnh</td></tr>
             <tr><td>Xem ai đã giữ chỗ</td><td>Đơn đặt chỗ</td></tr>
+            <tr><td>Thêm vở vào kịch mục</td><td>Vở diễn → Thêm mới. Điền <strong>Nhóm phụ</strong> giống hệt các vở cùng mục, nếu không trang sẽ tách thành hai mục</td></tr>
+            <tr><td>Đổi ảnh chân dung lãnh đạo</td><td>Lãnh đạo → mở người đó → Chọn ảnh</td></tr>
             <tr><td>Tạm ẩn một mục</td><td>Mở mục đó, tắt <strong>Hiện trên web</strong>, lưu</td></tr>
           </tbody>
         </table>
@@ -311,6 +317,63 @@
         Nhập <strong>không xoá</strong> bản ghi nào — xoá một dòng trong bảng tính rồi nạp lại thì dòng đó vẫn còn trên web, muốn bỏ hẳn phải vào bảng bấm Xoá.
       </div>
       <p>Trước khi ghi, hộp thoại đếm rõ bao nhiêu dòng thêm mới, bao nhiêu dòng cập nhật, dòng nào sai và sai ở cột nào. Dòng sai bị bỏ qua, phần còn lại vẫn nạp bình thường. Cột ảnh không nhập qua bảng tính được — ảnh phải chọn trong biểu mẫu.</p>
+    </section>
+
+    <section id="dong-bo">
+      <h2>CMS và trang web ăn khớp nhau</h2>
+      <p>Cả sáu mục nội dung đều đã nối hai chiều: sửa trong CMS là trang web đổi theo,
+         không phải nhờ ai sửa mã nữa.</p>
+      <div class="cuon-ngang">
+        <table>
+          <thead><tr><th>Mục trong CMS</th><th>Hiện ở đâu trên web</th></tr></thead>
+          <tbody>
+            <tr><td>Tin tức</td><td>Trang chủ (khối tin mới) và trang Tin tức</td></tr>
+            <tr><td>Lịch diễn</td><td>Trang chủ và danh sách suất khi đặt chỗ</td></tr>
+            <tr><td>Thư viện ảnh</td><td>Trang Tin tức, mục Thư viện ảnh</td></tr>
+            <tr><td>Nghệ sĩ</td><td>Trang Nghệ sĩ, hai mục NSND và NSƯT</td></tr>
+            <tr><td>Lãnh đạo</td><td>Trang Nghệ sĩ, mục Ban lãnh đạo qua các thời kỳ</td></tr>
+            <tr><td>Vở diễn</td><td>Trang Vở diễn, ba mục Chèo cổ · Người lính · Danh nhân</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="nhac">
+        <strong>Trang web không bao giờ để CMS làm nó nghèo đi.</strong>
+        Mỗi khối vẫn còn bản viết tay trong mã. Trang chỉ thay bằng bản từ CMS khi bản
+        đó <em>không ít thẻ và ít ảnh hơn</em> bản đang hiện. Thiếu thì giữ nguyên bản cũ
+        rồi ghi một dòng cảnh báo trong Console của trình duyệt (F12). Nhờ vậy một bản ghi
+        bỏ trống ô ảnh không thể làm biến mất cả hàng ảnh chân dung.
+      </div>
+
+      <h3>Đối chiếu với bản gốc</h3>
+      <p>Ở cuối <a href="./nap-du-lieu.html">nap-du-lieu.html</a>. Nó so từng trường giữa
+         Firestore và bản gốc rút từ trang web, rồi <strong>chỉ điền vào chỗ trống</strong>.
+         Dùng khi:</p>
+      <ul>
+        <li>Lược đồ vừa thêm trường mới, bản ghi cũ chưa có trường đó.</li>
+        <li>Ô ảnh trong CMS còn trống mà trang web thì đang có sẵn ảnh trong mã.</li>
+      </ul>
+      <p>Bấm <strong>Xem</strong> để đọc trước đúng những gì nó sắp sửa, rồi mới bấm
+         <strong>Điền chỗ trống</strong>. Chỗ bạn đã nhập và bản ghi bạn tự thêm đều
+         không bị đụng tới; không xoá gì cả.</p>
+      <div class="nhac">
+        <strong>Tin tức và Lịch diễn chỉ so trường, không thêm lại bản ghi.</strong>
+        Hai mục này gắn với thời gian — bài cũ gỡ đi, suất diễn qua rồi xoá đi là chuyện
+        bình thường. Bản gốc là ảnh chụp trang web hồi 2024; thêm lại theo nó là dựng dậy
+        đúng mấy bài vừa cố ý xoá.
+      </div>
+      <p>Nút <strong>Ghi đè cả chỗ khác bản gốc</strong> kéo bản ghi về đúng bản gốc, kể cả
+         chỗ bạn đã sửa — hỏi lại trước khi chạy. Ảnh bạn đã tải lên kho Firebase thì kể cả
+         ghi đè cũng không đụng: xoá đường dẫn đi là tệp nằm lại trong kho vĩnh viễn,
+         không còn cách nào tìm ra để dọn.</p>
+
+      <h3>Hai chỗ vẫn phải sửa trong mã</h3>
+      <p>Trang Vở diễn còn hai mục cuối chưa nối CMS:
+         <strong>Theo giai đoạn phát triển</strong> và <strong>Vở diễn đoạt giải</strong>.
+         Mục giải thưởng cần ghi tách bạch loại huy chương, tên hội diễn và năm cho từng
+         giải một, mà lược đồ hiện chỉ có một ô “Giải thưởng” dạng chữ tự do — đổ ra trang
+         thì mất hết cách trình bày. Sửa hai mục đó vẫn phải vào
+         <code>vo-dien.html</code>.</p>
     </section>
 
     <section id="cau-truc">

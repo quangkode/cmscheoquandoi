@@ -84,6 +84,9 @@ sẽ được đưa vào Firestore, khỏi phải gõ lại tay.
 
 Chỉ chạy **một lần**. Bấm lại là dữ liệu nhân đôi.
 
+Cuối trang đó còn khối **Đối chiếu với bản gốc** — dùng về sau, xem mục
+[CMS và trang web ăn khớp nhau](#cms-và-trang-web-ăn-khớp-nhau).
+
 ### 8. Đưa CMS lên mạng
 
 CMS là trang tĩnh nên đẩy lên Vercel như trang web chính là xong. Nên đặt ở
@@ -113,6 +116,52 @@ thứ người ta đã gửi.
 
 ---
 
+## CMS và trang web ăn khớp nhau
+
+Cả sáu mục nội dung đều nối hai chiều — sửa trong CMS là trang web đổi theo:
+
+| Mục trong CMS | Hiện ở đâu trên web |
+|---|---|
+| Tin tức | Trang chủ (khối tin mới) và trang Tin tức |
+| Lịch diễn | Trang chủ và danh sách suất khi đặt chỗ |
+| Thư viện ảnh | Trang Tin tức, mục Thư viện ảnh |
+| Nghệ sĩ | Trang Nghệ sĩ, hai mục NSND và NSƯT |
+| Lãnh đạo | Trang Nghệ sĩ, mục Ban lãnh đạo qua các thời kỳ |
+| Vở diễn | Trang Vở diễn, ba mục Chèo cổ · Người lính · Danh nhân |
+
+**Trang web không bao giờ để CMS làm nó nghèo đi.** Mỗi khối vẫn giữ bản HTML
+viết tay; `noi-cms.js` chỉ thay bằng bản từ CMS khi bản đó *không ít thẻ và ít
+ảnh hơn* bản đang hiện. Thiếu thì giữ nguyên bản cũ rồi ghi cảnh báo ra Console
+(F12). Nhờ vậy một bản ghi bỏ trống ô ảnh không thể xoá sạch hàng ảnh chân dung.
+
+### Đối chiếu với bản gốc
+
+Ở cuối `nap-du-lieu.html`. So từng trường giữa Firestore và `js/du-lieu-goc.js`
+rồi **chỉ điền vào chỗ trống**. Dùng khi:
+
+- lược đồ vừa thêm trường mới, bản ghi cũ chưa có trường đó;
+- ô ảnh trong CMS còn trống mà trang web đã có ảnh sẵn trong kho mã.
+
+Bấm **Xem** để đọc trước đúng những gì nó sắp sửa. Chỗ đã nhập và bản ghi tự thêm
+đều không bị đụng tới; không xoá gì cả.
+
+**Tin tức và Lịch diễn chỉ so trường, không thêm lại bản ghi** (`khongThem: true`).
+Hai mục này gắn với thời gian — bài cũ gỡ đi, suất diễn qua rồi xoá đi là chuyện
+bình thường; dữ liệu gốc là ảnh chụp trang web hồi 2024, thêm lại theo nó là dựng
+dậy đúng mấy bài vừa cố ý xoá.
+
+Nút **Ghi đè cả chỗ khác bản gốc** kéo bản ghi về đúng bản gốc, kể cả chỗ đã sửa.
+Ảnh đã tải lên Firebase Storage thì kể cả ghi đè cũng chừa ra: xoá đường dẫn đi là
+tệp nằm lại trong kho vĩnh viễn, không còn cách nào tìm ra để dọn.
+
+### Hai chỗ vẫn phải sửa trong mã
+
+Trang Vở diễn còn hai mục cuối chưa nối CMS: **Theo giai đoạn phát triển** và
+**Vở diễn đoạt giải**. Mục giải thưởng cần tách riêng loại huy chương, tên hội diễn
+và năm cho từng giải, mà lược đồ mới có một ô "Giải thưởng" dạng chữ tự do — đổ ra
+trang là mất hết cách trình bày. Sửa hai mục đó vẫn phải vào `vo-dien.html` bên
+kho mã trang web.
+
 ## Cấu trúc mã
 
 ```
@@ -129,7 +178,8 @@ js/luoc-do.js        mô tả các mục và các trường  ← sửa ở đây
 js/app.js            bộ dựng giao diện từ lược đồ
 js/dang-nhap.js      màn đăng nhập
 js/nap-du-lieu.js    nạp dữ liệu ban đầu
-js/du-lieu-goc.js    dữ liệu rút từ web, chỉ dùng cho bước nạp
+js/doi-chieu.js      so CMS với bản gốc, điền nốt chỗ trống
+js/du-lieu-goc.js    dữ liệu rút từ web — bản đối chiếu, phải khớp thứ web đang hiện
 ```
 
 **Thêm một trường mới** (ví dụ thêm "Đạo diễn" cho vở diễn): mở `js/luoc-do.js`,

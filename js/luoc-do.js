@@ -98,18 +98,37 @@ export const LUOC_DO = {
 
   "vo-dien": {
     nhan: "Vở diễn",
-    moTa: "Danh mục vở trong kịch mục của Nhà hát.",
+    moTa: "Danh mục vở ở trang Vở diễn, ba mục: Chèo cổ, Đề tài người lính, Danh nhân.",
     bieuTuong: "M5 4h14v16l-7-4-7 4z",
-    sapXep: { truong: "ten", chieu: "asc" },
-    cot: [cot("anh", "Ảnh", "anh"), cot("ten", "Tên vở"), cot("nhom", "Nhóm"), cot("nam", "Năm"), cot("hienThi", "Hiện", "cong-tac")],
+    /* Trang web xếp theo đúng thứ tự này chứ không theo bảng chữ cái: trong
+       mỗi nhóm phụ, vở có năm dàn dựng đứng trước và xếp theo năm, vở chưa
+       rõ năm xuống cuối. Sắp bảng theo thuTu để nhìn trong CMS giống hệt
+       thứ tự ngoài trang. */
+    sapXep: { truong: "thuTu", chieu: "asc" },
+    locNhanh: [
+      { nhan: "Thẻ lớn đầu mục", dat: { "co:noiBat": "1" } },
+      { nhan: "Đang ẩn", dat: { "co:hienThi": "0" } }
+    ],
+    cot: [cot("anh", "Ảnh", "anh"), cot("ten", "Tên vở"), cot("nhom", "Nhóm"), cot("nhomPhu", "Nhóm phụ"), cot("nam", "Năm"), cot("hienThi", "Hiện", "cong-tac")],
     truong: [
       { ten: "ten", nhan: "Tên vở", kieu: "text", batBuoc: true },
       { ten: "nhom", nhan: "Nhóm", kieu: "chon", batBuoc: true,
         chon: [{ gia: "cheo-co", nhan: "Chèo cổ" }, { gia: "nguoi-linh", nhan: "Đề tài người lính" }, { gia: "danh-nhan", nhan: "Danh nhân - lịch sử" }] },
+      { ten: "nhomPhu", nhan: "Nhóm phụ", kieu: "text",
+        goiY: "Tiêu đề nhỏ trong trang, ví dụ: Kháng chiến chống Pháp và chống Mỹ. Gõ GIỐNG HỆT nhau cho các vở cùng một nhóm phụ, sai một dấu là trang tách thành hai mục. Để trống thì vở nằm ở hàng thẻ lớn đầu mục." },
+      { ten: "noiBat", nhan: "Thẻ lớn đầu mục", kieu: "cong-tac",
+        goiY: "Bật thì vở hiện thành thẻ lớn có ảnh ở đầu mục. Mỗi mục nên để 3-4 vở, nhiều hơn là hàng thẻ vỡ bố cục." },
+      { ten: "nhanThe", nhan: "Nhãn trên thẻ lớn", kieu: "text",
+        goiY: "Dòng chữ nhỏ phía trên tên vở, ví dụ: Kháng chiến chống Pháp. Có năm dàn dựng thì trang tự ghép thành \"Kháng chiến chống Pháp · 2008\"." },
       { ten: "tomTat", nhan: "Tóm tắt", kieu: "dai" },
       { ten: "nam", nhan: "Năm dàn dựng", kieu: "text" },
-      { ten: "giaiThuong", nhan: "Giải thưởng", kieu: "dai", goiY: "Mỗi giải một dòng." },
-      { ten: "anh", nhan: "Ảnh", kieu: "anh", thuMuc: "vo-dien" },
+      { ten: "trichDoan", nhan: "Là trích đoạn", kieu: "cong-tac",
+        goiY: "Bật thì cạnh tên vở có nhãn \"Trích đoạn\"." },
+      { ten: "giaiThuong", nhan: "Giải thưởng", kieu: "dai", goiY: "Mỗi giải một dòng. Mục \"Vở diễn đoạt giải\" ngoài trang vẫn viết tay, trường này chưa đổ ra trang." },
+      { ten: "anh", nhan: "Ảnh", kieu: "anh", thuMuc: "vo-dien", goiY: "Chỉ thẻ lớn mới hiện ảnh." },
+      { ten: "anhMoTa", nhan: "Mô tả ảnh", kieu: "text", goiY: "Cho người khiếm thị và lúc ảnh hỏng. Ví dụ: Cảnh trong vở Đêm trắng." },
+      { ten: "anhNguon", nhan: "Ghi chú dưới ảnh", kieu: "text", goiY: "Chỉ điền khi ảnh không phải cảnh diễn. Ví dụ: Ảnh: bìa đĩa VCD…" },
+      { ten: "thuTu", nhan: "Thứ tự", kieu: "so", macDinh: 500 },
       { ten: "hienThi", nhan: "Hiện trên web", kieu: "cong-tac", macDinh: true }
     ]
   },
