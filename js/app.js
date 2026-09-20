@@ -149,25 +149,15 @@ async function veTongQuan() {
   chinh.innerHTML = `
     <div class="dau">${nutMoBen}<div>
       <h1>Tổng quan</h1>
-      <p>Sửa ở đây xong là trang web đổi ngay, không cần đăng lại.</p>
     </div></div>
 
     ${trong.length ? `<div class="nhac">
       <h3>Còn ${trong.length} mục chưa có dữ liệu</h3>
-      <p>Trang web vẫn hiện nội dung tĩnh sẵn có, nên hiện tại không có gì hỏng.
-         Mở <code>nap-du-lieu.html</code> để đưa nội dung đang có trên web vào đây một lần,
-         khỏi phải gõ lại tay.</p>
     </div>` : ""}
 
     <div class="the-so">
       ${DANH_MUC.map((ma) => `<a class="the-so__o" href="#/${ma}">
         <strong>${dem[ma]}</strong><span>${esc(LUOC_DO[ma].nhan)}</span></a>`).join("")}
-    </div>
-
-    <div class="nhac" style="background:#f2f6f1;border-color:#cfe0cd;border-left-color:#2f7d4f">
-      <h3>Ảnh tải lên ở đâu?</h3>
-      <p>Mọi ảnh bạn chọn trong CMS được tải thẳng lên Firebase Storage rồi web lấy về.
-         Không cần gửi ảnh cho ai, không cần đụng vào mã nguồn.</p>
     </div>`;
 }
 
@@ -345,7 +335,7 @@ function veDanhSach(ma) {
     </div>
     <div class="dau__phai">
       <button type="button" class="nut" id="nutXuat" title="Tải toàn bộ mục này về máy dạng .xlsx">Xuất Excel</button>
-      ${m.layTuBao && !m.trangSoan ? `<button type="button" class="nut" id="nutLayBai" title="Dán đường dẫn bài báo, CMS tự điền sẵn biểu mẫu">Lấy từ link báo</button>` : ""}
+      ${m.layTuBao && !m.trangSoan ? `<button type="button" class="nut" id="nutLayBai" title="Lấy bài từ báo về">Lấy từ link báo</button>` : ""}
       ${m.chiDoc ? "" : `<button type="button" class="nut" id="nutNhap">Nhập bảng tính</button>`}
       ${m.chiDoc ? "" : `<button type="button" class="nut nut--chinh" id="nutThem">+ Thêm mới</button>`}
     </div></div>
@@ -499,10 +489,6 @@ function moNhap(ma, m, layDuLieu) {
     tieuDe: "Nhập " + m.nhan.toLowerCase() + " từ bảng tính",
     nutChinh: "Nạp vào hệ thống",
     than: `
-      <p class="goi-y">Cách chắc nhất: bấm <b>Xuất Excel</b> trước, sửa ngay trên tệp đó rồi
-        lưu thành <b>.csv</b> và tải lên đây. Giữ nguyên cột <code>id</code> thì dòng đó được
-        <b>cập nhật</b>; xoá trống ô <code>id</code> thì thành <b>dòng mới</b>.
-        Nhập không xoá bản ghi nào — muốn bỏ thì vào bảng bấm Xoá.</p>
       <div class="o-nhap">
         <label for="tepCsv">Tệp .csv</label>
         <input type="file" id="tepCsv" accept=".csv,.txt,text/csv,text/plain" />
@@ -651,13 +637,10 @@ function moLayBai(ma, m, layDuLieu) {
       </div>
       ${kq.bai.soChu
         ? `<p class="goi-y">Bóc được <strong>${kq.bai.soChu.toLocaleString("vi-VN")}</strong> ký tự toàn văn${kq.bai.anh.length ? ` và <strong>${kq.bai.anh.length}</strong> ảnh trong bài` : ""}. Ảnh sẽ được tải về kho Nhà hát.</p>`
-        : `<div class="nhac"><h3>Không bóc được toàn văn</h3>
-           <p>Trang này dựng nội dung bằng JavaScript hoặc có cấu trúc lạ. Các ô khác vẫn điền được, phần nội dung bạn tự dán vào.</p></div>`}
-      ${kq.thieu.length ? `<div class="nhac"><h3>Máy không tự tìm được: ${esc(kq.thieu.join(", "))}</h3>
-        <p>Bấm tiếp rồi tự điền mấy ô đó trong biểu mẫu.</p></div>` : ""}
+        : `<div class="nhac"><h3>Không bóc được toàn văn</h3></div>`}
+      ${kq.thieu.length ? `<div class="nhac"><h3>Máy không tự tìm được: ${esc(kq.thieu.join(", "))}</h3></div>` : ""}
       ${trung ? `<div class="nhac nhac--nguy"><h3>Bài này đã có trong Tin tức</h3>
-        <p>Đang có mục <strong>${esc(trung.tieuDe)}</strong> cùng đường dẫn gốc. Lấy tiếp là thành hai bản.</p></div>` : ""}
-      <p class="goi-y">Chủ đề phải tự chọn — máy không đoán được bài thuộc Hoạt động hay Sự kiện.</p>`;
+        <p>Đang có mục <strong>${esc(trung.tieuDe)}</strong> cùng đường dẫn gốc. Lấy tiếp là thành hai bản.</p></div>` : ""}`;
   };
 
   moHop({
@@ -666,7 +649,6 @@ function moLayBai(ma, m, layDuLieu) {
       <div class="o-nhap" data-o="urlBai">
         <label for="urlBai">Đường dẫn bài báo</label>
         <input type="url" id="urlBai" placeholder="https://..." />
-        <p class="goi-y">Dán nguyên đường dẫn trên thanh địa chỉ của bài báo.</p>
       </div>
       <p><button type="button" class="nut" id="nutDoc">Lấy về</button></p>
       <div id="kqLayBai"></div>`,

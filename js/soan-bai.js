@@ -109,19 +109,12 @@ function veManChon() {
         <button type="button" class="sb-the" data-che="tu">
           <span class="sb-the__hinh" aria-hidden="true">✍</span>
           <strong>Tự soạn thảo</strong>
-          <span class="sb-the__mo">Bài của Nhà hát, tự viết từ đầu. Có ảnh bìa và đủ
-            công cụ định dạng. Không có ô ghi nguồn — bài mình viết thì không dẫn
-            nguồn ai cả.</span>
         </button>
         <button type="button" class="sb-the" data-che="bao">
           <span class="sb-the__hinh" aria-hidden="true">🔗</span>
           <strong>Chép link rồi biên soạn</strong>
-          <span class="sb-the__mo">Dán đường dẫn bài báo, CMS lấy toàn văn và ảnh về,
-            bạn biên tập lại. Có ô <strong>Tên nguồn</strong> và
-            <strong>Đường dẫn bài gốc</strong> để ghi công đầy đủ.</span>
         </button>
       </div>
-      <p class="sb-chon__nho">Chọn nhầm cũng không sao — đổi được ngay trong lúc soạn.</p>
     </div>`;
   than.querySelectorAll("[data-che]").forEach((b) =>
     b.addEventListener("click", () => {
@@ -170,7 +163,7 @@ function ve() {
     ${laBao ? `
     <!-- Dán link bài báo: chỉ một dòng, nằm trên cùng cho dễ thấy -->
     <div class="sb-lay">
-      <input type="url" id="sbUrl" placeholder="Dán link bài báo để lấy toàn bộ chữ và ảnh về đây…" />
+      <input type="url" id="sbUrl" placeholder="Dán link bài báo…" />
       <button type="button" class="nut" id="sbNutLay">Lấy về</button>
     </div>
     <div id="sbKetQuaLay"></div>` : ""}
@@ -184,7 +177,7 @@ function ve() {
 
         <div class="o-nhap" data-o="tomTat">
           <label for="f-tomTat">Tóm tắt <span class="bat-buoc">*</span></label>
-          <textarea id="f-tomTat" rows="3" placeholder="2-4 câu, hiện dưới tiêu đề trong thẻ tin.">${esc(t("tomTat"))}</textarea>
+          <textarea id="f-tomTat" rows="3" placeholder="Tóm tắt">${esc(t("tomTat"))}</textarea>
         </div>
 
         <div class="o-nhap" data-o="noiDung">
@@ -286,11 +279,7 @@ function ve() {
         <div class="o-nhap" data-o="nguonUrl">
           <label for="f-nguonUrl">Đường dẫn bài gốc</label>
           <input type="url" id="f-nguonUrl" value="${esc(t("nguonUrl"))}" placeholder="https://…" />
-        </div>` : `
-        <div class="nhac nhac--nho">
-          <strong>Bài Nhà hát tự viết.</strong>
-          Không có ô ghi nguồn. Cần dẫn nguồn thì đổi sang lối biên soạn từ bài báo.
-        </div>`}
+        </div>` : ""}
 
         <div class="o-nhap">
           <label class="cong-tac">
@@ -795,7 +784,6 @@ function hoiNhap() {
     <div class="nhac nhac--tot sb-nhap" id="sbNhap">
       <div>
         <strong>Có bản nháp chưa lưu</strong> — giữ lúc ${esc(luc)}.
-        Lần trước trang đóng khi còn dở, bản này nằm trong máy bạn.
       </div>
       <div class="sb-nhap__nut">
         <button type="button" class="nut nut--nho nut--chinh" id="sbKhoiPhuc">Khôi phục</button>

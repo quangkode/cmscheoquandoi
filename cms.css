@@ -369,7 +369,7 @@ table.bang-tinh tbody tr:last-child td { border-bottom: 1px solid var(--vien); }
 }
 .soan-bai table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
 .soan-bai th, .soan-bai td { border: 1px solid var(--vien); padding: 8px 10px; text-align: left; }
-.soan-bai:empty::before { content: "Gõ thẳng vào đây. Bôi đen chữ rồi dùng thanh trên để đổi cỡ, phông, màu."; color: var(--muc-nhat); }
+.soan-bai:empty::before { content: "Nội dung bài viết"; color: var(--muc-nhat); }
 
 /* ---------- Xem trước bài báo vừa lấy về ---------- */
 .xem-bai {
@@ -539,7 +539,6 @@ table.bang-tinh tbody tr:last-child td { border-bottom: 1px solid var(--vien); }
 .sb-chon h1 { font-family: var(--serif); font-size: 32px; margin: 0 0 6px; }
 .sb-chon__dan { color: var(--muc-nhat); margin: 0 0 28px; }
 .sb-chon__luoi { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; text-align: left; }
-.sb-chon__nho { margin-top: 22px; font-size: 13px; color: var(--muc-nhat); }
 
 .sb-the {
   display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
@@ -551,7 +550,6 @@ table.bang-tinh tbody tr:last-child td { border-bottom: 1px solid var(--vien); }
 .sb-the:hover { border-color: var(--do); box-shadow: var(--bong); transform: translateY(-2px); }
 .sb-the__hinh { font-size: 30px; line-height: 1; }
 .sb-the strong { font-size: 17px; }
-.sb-the__mo { font-size: 13.5px; line-height: 1.6; color: var(--muc-nhat); }
 
 /* ---------- Dải báo đang ở lối nào ---------- */
 .sb-che {
@@ -602,9 +600,6 @@ table.bang-tinh tbody tr:last-child td { border-bottom: 1px solid var(--vien); }
 /* ---------- Dải hỏi khôi phục bản nháp ---------- */
 .sb-nhap { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
 .sb-nhap__nut { display: flex; gap: 8px; margin-left: auto; }
-
-.nhac--nho { padding: 12px 14px; font-size: 13px; line-height: 1.6; }
-.nhac--nho strong { display: block; margin-bottom: 3px; }
 
 @media (max-width: 720px) {
   .sb-chon__luoi { grid-template-columns: 1fr; }

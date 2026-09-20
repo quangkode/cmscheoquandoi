@@ -55,12 +55,8 @@ async function chay() {
   }
 
   noiDung.innerHTML = `
-    <div class="nhac">
-      <h3>Đọc kỹ trước khi bấm</h3>
-      <p>Trang này <strong>thêm mới</strong> chứ không thay thế. Bấm hai lần vào cùng một mục
-         là dữ liệu nhân đôi, phải vào CMS xoá tay từng cái.</p>
-      <p>Ảnh giữ nguyên đường dẫn của trang web (<code>/anh/…</code>), chưa nằm trong kho
-         Firebase. Web hiện đúng ngay; muốn đưa ảnh về hẳn Firebase thì vào CMS tải lại từng ảnh.</p>
+    <div class="nhac nhac--nguy">
+      <h3>Nạp là thêm mới, không thay thế — bấm hai lần là dữ liệu nhân đôi</h3>
     </div>
 
     <div class="bang-bao">
@@ -84,21 +80,12 @@ async function chay() {
     </p>
 
     <h2 class="doi-chieu__tieude">Đối chiếu với bản gốc</h2>
-    <div class="nhac">
-      <p>Dùng khi CMS <strong>đã có dữ liệu</strong> nhưng còn thiếu — hay gặp nhất là
-         ô ảnh bỏ trống, hoặc lược đồ vừa thêm trường mới mà bản ghi cũ chưa có.</p>
-      <p>Bảng dưới so từng trường với bản gốc rồi <strong>chỉ điền vào chỗ trống</strong>.
-         Chỗ bạn đã nhập và bản ghi bạn tự thêm đều được giữ nguyên, không xoá gì cả.</p>
-    </div>
     <div id="doiChieu"><div class="dang-tai"><div class="xoay"></div>Đang đối chiếu…</div></div>
 
     <div class="nhac nhac--nguy" style="margin-top:34px">
-      <h3>Lỡ nạp trùng thì dùng nút này</h3>
-      <p>Xoá sạch cả 6 mục nội dung rồi nạp lại từ đầu đúng một lần. Dùng khi
-         bảng trên hiện số lớn hơn cột “Sẽ thêm”.</p>
-      <p><strong>Mọi chỉnh sửa bạn đã làm trong CMS sẽ mất</strong>, chỉ còn lại
-         đúng nội dung gốc rút từ trang web. Xoá xong không lấy lại được.</p>
-      <p>Không đụng tới <strong>Đơn đặt chỗ</strong> và danh sách <strong>quản trị</strong>.</p>
+      <h3>Xoá sạch 6 mục nội dung rồi nạp lại từ đầu</h3>
+      <p><strong>Mọi chỉnh sửa trong CMS sẽ mất</strong>, không lấy lại được.
+         Không đụng tới Đơn đặt chỗ và danh sách quản trị.</p>
       <p id="tienDo" style="display:none;font-weight:600;color:var(--do-dam)"></p>
       <button type="button" class="nut nut--nguy" id="xoaNapLai">Xoá sạch rồi nạp lại</button>
     </div>`;

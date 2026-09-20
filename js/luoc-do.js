@@ -36,9 +36,8 @@ export const LUOC_DO = {
       { ten: "ngay", nhan: "Ngày đăng", kieu: "ngay", batBuoc: true },
       { ten: "chuDe", nhan: "Chủ đề", kieu: "chon", batBuoc: true,
         chon: [{ gia: "hoat-dong", nhan: "Hoạt động" }, { gia: "su-kien", nhan: "Sự kiện" }] },
-      { ten: "tomTat", nhan: "Tóm tắt", kieu: "dai", batBuoc: true, goiY: "2-4 câu, hiện ngay dưới tiêu đề trong thẻ tin." },
-      { ten: "noiDung", nhan: "Nội dung bài", kieu: "bai",
-        goiY: "Toàn văn bài viết. Sửa được trực tiếp: bấm vào chữ để gõ, bôi đen rồi Delete để xoá đoạn." },
+      { ten: "tomTat", nhan: "Tóm tắt", kieu: "dai", batBuoc: true },
+      { ten: "noiDung", nhan: "Nội dung bài", kieu: "bai" },
       { ten: "anh", nhan: "Ảnh minh hoạ", kieu: "anh", thuMuc: "tin-tuc" },
       { ten: "anhNguon", nhan: "Ghi công ảnh", kieu: "text", goiY: "Ví dụ: Ảnh: Báo Quân đội nhân dân" },
       { ten: "nguonTen", nhan: "Tên nguồn", kieu: "text", goiY: "Ví dụ: Báo Thanh Niên" },
@@ -71,10 +70,8 @@ export const LUOC_DO = {
       { ten: "diaDiem", nhan: "Địa điểm", kieu: "text", batBuoc: true, macDinh: "Rạp Nhà hát Chèo Quân đội" },
       { ten: "diaChi", nhan: "Địa chỉ", kieu: "text", macDinh: "45 Ng. 126 Đ. Xuân Đỉnh, Xuân Đỉnh, Hà Nội" },
       { ten: "thoiLuong", nhan: "Thời lượng", kieu: "text", goiY: "Ví dụ: 120 phút" },
-      { ten: "tongGhe", nhan: "Tổng số chỗ", kieu: "so", macDinh: 120,
-        goiY: "Dùng để tính còn bao nhiêu chỗ. Đặt chỗ luôn miễn phí, không có giá vé." },
-      { ten: "daDat", nhan: "Số chỗ đã nhận", kieu: "so", macDinh: 0,
-        goiY: "Web lấy số này chia cho tổng số chỗ để hiện Còn chỗ / Sắp hết / Hết chỗ. Trang công khai KHÔNG đọc được bảng Đặt chỗ (luật chỉ cho quản trị đọc, vì có tên và số điện thoại người dân), nên số này phải tự điền." },
+      { ten: "tongGhe", nhan: "Tổng số chỗ", kieu: "so", macDinh: 120 },
+      { ten: "daDat", nhan: "Số chỗ đã nhận", kieu: "so", macDinh: 0 },
       { ten: "hienThi", nhan: "Nhận đặt chỗ", kieu: "cong-tac", macDinh: true }
     ]
   },
@@ -87,8 +84,8 @@ export const LUOC_DO = {
     cot: [cot("anh", "Ảnh", "anh"), cot("chuThich", "Chú thích"), cot("khoAnh", "Khổ"), cot("thuTu", "Thứ tự"), cot("hienThi", "Hiện", "cong-tac")],
     truong: [
       { ten: "anh", nhan: "Ảnh", kieu: "anh", batBuoc: true, thuMuc: "thu-vien" },
-      { ten: "chuThich", nhan: "Chú thích", kieu: "text", batBuoc: true, goiY: "Không hiện dưới ảnh, chỉ hiện khi bấm vào xem bản đầy đủ." },
-      { ten: "nguon", nhan: "Nguồn ảnh", kieu: "text", goiY: "Để trống nếu là ảnh Nhà hát tự chụp." },
+      { ten: "chuThich", nhan: "Chú thích", kieu: "text", batBuoc: true },
+      { ten: "nguon", nhan: "Nguồn ảnh", kieu: "text" },
       { ten: "khoAnh", nhan: "Khổ trong lưới", kieu: "chon", macDinh: "thuong",
         chon: [{ gia: "thuong", nhan: "Thường (1 ô)" }, { gia: "cao", nhan: "Cao (2 hàng)" }, { gia: "rong", nhan: "Rộng (2 cột)" }] },
       { ten: "thuTu", nhan: "Thứ tự", kieu: "so", macDinh: 10 },
@@ -115,19 +112,17 @@ export const LUOC_DO = {
       { ten: "nhom", nhan: "Nhóm", kieu: "chon", batBuoc: true,
         chon: [{ gia: "cheo-co", nhan: "Chèo cổ" }, { gia: "nguoi-linh", nhan: "Đề tài người lính" }, { gia: "danh-nhan", nhan: "Danh nhân - lịch sử" }] },
       { ten: "nhomPhu", nhan: "Nhóm phụ", kieu: "text",
-        goiY: "Tiêu đề nhỏ trong trang, ví dụ: Kháng chiến chống Pháp và chống Mỹ. Gõ GIỐNG HỆT nhau cho các vở cùng một nhóm phụ, sai một dấu là trang tách thành hai mục. Để trống thì vở nằm ở hàng thẻ lớn đầu mục." },
-      { ten: "noiBat", nhan: "Thẻ lớn đầu mục", kieu: "cong-tac",
-        goiY: "Bật thì vở hiện thành thẻ lớn có ảnh ở đầu mục. Mỗi mục nên để 3-4 vở, nhiều hơn là hàng thẻ vỡ bố cục." },
+        goiY: "Ví dụ: Kháng chiến chống Pháp và chống Mỹ — gõ giống hệt nhau cho các vở cùng nhóm." },
+      { ten: "noiBat", nhan: "Thẻ lớn đầu mục", kieu: "cong-tac" },
       { ten: "nhanThe", nhan: "Nhãn trên thẻ lớn", kieu: "text",
-        goiY: "Dòng chữ nhỏ phía trên tên vở, ví dụ: Kháng chiến chống Pháp. Có năm dàn dựng thì trang tự ghép thành \"Kháng chiến chống Pháp · 2008\"." },
+        goiY: "Ví dụ: Kháng chiến chống Pháp" },
       { ten: "tomTat", nhan: "Tóm tắt", kieu: "dai" },
       { ten: "nam", nhan: "Năm dàn dựng", kieu: "text" },
-      { ten: "trichDoan", nhan: "Là trích đoạn", kieu: "cong-tac",
-        goiY: "Bật thì cạnh tên vở có nhãn \"Trích đoạn\"." },
-      { ten: "giaiThuong", nhan: "Giải thưởng", kieu: "dai", goiY: "Mỗi giải một dòng. Mục \"Vở diễn đoạt giải\" ngoài trang vẫn viết tay, trường này chưa đổ ra trang." },
-      { ten: "anh", nhan: "Ảnh", kieu: "anh", thuMuc: "vo-dien", goiY: "Chỉ thẻ lớn mới hiện ảnh." },
-      { ten: "anhMoTa", nhan: "Mô tả ảnh", kieu: "text", goiY: "Cho người khiếm thị và lúc ảnh hỏng. Ví dụ: Cảnh trong vở Đêm trắng." },
-      { ten: "anhNguon", nhan: "Ghi chú dưới ảnh", kieu: "text", goiY: "Chỉ điền khi ảnh không phải cảnh diễn. Ví dụ: Ảnh: bìa đĩa VCD…" },
+      { ten: "trichDoan", nhan: "Là trích đoạn", kieu: "cong-tac" },
+      { ten: "giaiThuong", nhan: "Giải thưởng", kieu: "dai", goiY: "Mỗi giải một dòng" },
+      { ten: "anh", nhan: "Ảnh", kieu: "anh", thuMuc: "vo-dien" },
+      { ten: "anhMoTa", nhan: "Mô tả ảnh", kieu: "text", goiY: "Ví dụ: Cảnh trong vở Đêm trắng" },
+      { ten: "anhNguon", nhan: "Ghi chú dưới ảnh", kieu: "text", goiY: "Ví dụ: Ảnh: bìa đĩa VCD…" },
       { ten: "thuTu", nhan: "Thứ tự", kieu: "so", macDinh: 500 },
       { ten: "hienThi", nhan: "Hiện trên web", kieu: "cong-tac", macDinh: true }
     ]
@@ -140,7 +135,7 @@ export const LUOC_DO = {
     sapXep: { truong: "thuTu", chieu: "asc" },
     cot: [cot("anh", "Ảnh", "anh"), cot("hoTen", "Họ tên"), cot("danhHieu", "Danh hiệu"), cot("namNSND", "Năm"), cot("hienThi", "Hiện", "cong-tac")],
     truong: [
-      { ten: "hoTen", nhan: "Họ và tên", kieu: "text", batBuoc: true, goiY: "Không cần gõ tiền tố NSND/NSƯT, hệ thống tự ghép." },
+      { ten: "hoTen", nhan: "Họ và tên", kieu: "text", batBuoc: true },
       { ten: "danhHieu", nhan: "Danh hiệu", kieu: "chon", batBuoc: true,
         chon: [{ gia: "NSND", nhan: "Nghệ sĩ Nhân dân" }, { gia: "NSƯT", nhan: "Nghệ sĩ Ưu tú" }] },
       { ten: "namNSND", nhan: "Năm phong NSND", kieu: "text" },
@@ -158,11 +153,11 @@ export const LUOC_DO = {
     sapXep: { truong: "thuTu", chieu: "asc" },
     cot: [cot("anh", "Ảnh", "anh"), cot("hoTen", "Họ tên"), cot("nhom", "Nhóm"), cot("nhiemKy", "Nhiệm kỳ"), cot("hienThi", "Hiện", "cong-tac")],
     truong: [
-      { ten: "hoTen", nhan: "Họ và tên", kieu: "text", batBuoc: true, goiY: "Gồm cả quân hàm và danh hiệu, ví dụ: Đại tá, Đạo diễn, NSND Vũ Tự Long" },
+      { ten: "hoTen", nhan: "Họ và tên", kieu: "text", batBuoc: true, goiY: "Ví dụ: Đại tá, Đạo diễn, NSND Vũ Tự Long" },
       { ten: "nhom", nhan: "Nhóm", kieu: "chon", batBuoc: true,
         chon: [{ gia: "doan-truong", nhan: "Đoàn trưởng" }, { gia: "giam-doc", nhan: "Giám đốc Nhà hát" }, { gia: "chinh-tri-vien", nhan: "Chính trị viên - Bí thư Đảng ủy" }, { gia: "cap-pho", nhan: "Phó Đoàn trưởng - Phó Giám đốc" }] },
-      { ten: "nhiemKy", nhan: "Nhiệm kỳ", kieu: "text", batBuoc: true, goiY: "Ví dụ: 9/2014 - 12/2024, hoặc: từ 12/2024, hoặc: chưa rõ" },
-      { ten: "chucDanh", nhan: "Chức danh chi tiết", kieu: "text", goiY: "Chỉ điền khi một người giữ nhiều chức, ví dụ: Phó Đoàn trưởng (2002 - 2009) · Phó Giám đốc (2010 - 2011)" },
+      { ten: "nhiemKy", nhan: "Nhiệm kỳ", kieu: "text", batBuoc: true, goiY: "Ví dụ: 9/2014 - 12/2024 · từ 12/2024 · chưa rõ" },
+      { ten: "chucDanh", nhan: "Chức danh chi tiết", kieu: "text", goiY: "Ví dụ: Phó Đoàn trưởng (2002 - 2009) · Phó Giám đốc (2010 - 2011)" },
       { ten: "anh", nhan: "Ảnh chân dung", kieu: "anh", thuMuc: "lanh-dao" },
       { ten: "thuTu", nhan: "Thứ tự", kieu: "so", macDinh: 10 },
       { ten: "hienThi", nhan: "Hiện trên web", kieu: "cong-tac", macDinh: true }
@@ -188,7 +183,7 @@ export const LUOC_DO = {
     truong: [
       { ten: "trangThai", nhan: "Trạng thái", kieu: "chon", batBuoc: true,
         chon: [{ gia: "moi", nhan: "Mới" }, { gia: "da-goi", nhan: "Đã liên hệ" }, { gia: "da-xac-nhan", nhan: "Đã xác nhận" }, { gia: "da-huy", nhan: "Đã huỷ" }] },
-      { ten: "ghiChuNoiBo", nhan: "Ghi chú nội bộ", kieu: "dai", goiY: "Người xem không thấy phần này." }
+      { ten: "ghiChuNoiBo", nhan: "Ghi chú nội bộ", kieu: "dai" }
     ],
     /* Thông tin người đặt chỉ để đọc, không sửa được — sửa đi thì không còn
        khớp với thứ người ta đã gửi lên. */
