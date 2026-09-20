@@ -15,17 +15,30 @@
    — liệt kê thứ cần cấm — là sai hướng, vì luôn sót thứ chưa nghĩ tới.
    ========================================================== */
 
+import { locLop } from "./kieu-chu.js";
+
 /* Thẻ được giữ lại. Đủ để đọc một bài báo: đoạn văn, tiêu đề phụ, danh
-   sách, trích dẫn, ảnh, chú thích ảnh, in đậm nghiêng, liên kết. */
+   sách, trích dẫn, ảnh, chú thích ảnh, in đậm nghiêng, liên kết.
+
+   SPAN nằm đây để cõng cỡ chữ, phông và màu do người soạn đặt. Thẻ span
+   nào không mang lớp nào trong danh sách cho phép thì bị bóc vỏ ngay
+   trong loc() — báo nào cũng rắc span khắp bài, giữ lại là mang về cả
+   đống thẻ rỗng vô nghĩa. */
 const THE_CHO_PHEP = new Set([
   "P", "BR", "H2", "H3", "H4", "UL", "OL", "LI", "BLOCKQUOTE",
   "STRONG", "B", "EM", "I", "FIGURE", "FIGCAPTION", "IMG", "A", "TABLE",
-  "THEAD", "TBODY", "TR", "TH", "TD"
+  "THEAD", "TBODY", "TR", "TH", "TD", "SPAN"
 ]);
 
 /* Thuộc tính giữ lại, theo từng thẻ. Không có on* nào ở đây, nên mọi
-   bẫy kiểu onclick/onerror rụng hết. */
+   bẫy kiểu onclick/onerror rụng hết.
+
+   class chỉ qua được sau khi lọc qua locLop(): chỉ đúng mấy tên lớp khai
+   trong kieu-chu.js, mọi tên khác rụng. Nhờ vậy dán HTML từ trang lạ vào
+   cũng không lôi được CSS của họ sang. */
+const CO_LOP = ["SPAN", "P", "H2", "H3", "H4", "LI", "BLOCKQUOTE", "FIGURE", "FIGCAPTION"];
 const THUOC_TINH = { A: ["href"], IMG: ["src", "alt"] };
+CO_LOP.forEach((t) => { THUOC_TINH[t] = (THUOC_TINH[t] || []).concat("class"); });
 
 /* Bỏ sạch, không cần xét nội dung bên trong.
 
@@ -122,6 +135,16 @@ function nguonAnh(img) {
   return "";
 }
 
+/* Gom các con đã lọc vào một mảnh rời — dùng khi phải bỏ vỏ giữ ruột. */
+function gomCon(nut, goc, ra) {
+  const manh = document.createDocumentFragment();
+  for (const con of [...nut.childNodes]) {
+    const s = loc(con, goc, ra);
+    if (s) manh.appendChild(s);
+  }
+  return manh.childNodes.length ? manh : null;
+}
+
 /* Lọc một nhánh cây theo danh sách cho phép, trả về nhánh sạch. */
 function loc(nut, goc, ra) {
   if (nut.nodeType === 3) return document.createTextNode(nut.nodeValue);
@@ -133,12 +156,14 @@ function loc(nut, goc, ra) {
   // nằm trong <div>, <span>, <section>…
   if (!THE_CHO_PHEP.has(ten)) {
     if (laRac(nut)) return null;
-    const bọc = document.createDocumentFragment();
-    for (const con of [...nut.childNodes]) {
-      const s = loc(con, goc, ra);
-      if (s) bọc.appendChild(s);
-    }
-    return bọc.childNodes.length ? bọc : null;
+    return gomCon(nut, goc, ra);
+  }
+
+  /* Span không mang lớp nào mình dùng thì chẳng để làm gì: bóc vỏ luôn,
+     khỏi xét tiếp. Bài chép từ báo về có hàng trăm cái như vậy. */
+  if (ten === "SPAN" && !locLop(nut.getAttribute("class"))) {
+    if (laRac(nut)) return null;
+    return gomCon(nut, goc, ra);
   }
 
   if (laRac(nut)) return null;
@@ -158,6 +183,12 @@ function loc(nut, goc, ra) {
   for (const t of THUOC_TINH[ten] || []) {
     let v = nut.getAttribute(t);
     if (!v) continue;
+    if (t === "class") {
+      v = locLop(v);
+      if (!v) continue;
+      moi.setAttribute("class", v);
+      continue;
+    }
     if (t === "href") {
       v = tuyetDoi(v, goc);
       // chặn javascript: và mọi giao thức lạ

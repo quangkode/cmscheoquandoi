@@ -116,6 +116,51 @@ thứ người ta đã gửi.
 
 ---
 
+## Soạn bài viết
+
+Mục Tin tức soạn ở trang riêng (`soan-bai.html`), mở ra hỏi ngay làm theo cách nào:
+
+| Lối | Có gì | Dùng khi |
+|---|---|---|
+| **Tự soạn thảo** | Ảnh bìa, ghi công ảnh, đủ công cụ định dạng. *Không có ô ghi nguồn.* | Bài Nhà hát tự viết |
+| **Chép link rồi biên soạn** | Thêm thanh dán link + ô Tên nguồn, Đường dẫn bài gốc | Lấy bài báo về biên tập lại |
+
+Ghi vào địa chỉ `?che=tu` / `?che=bao` chứ không giữ trong biến, để tải lại trang
+vẫn đúng lối. Sửa bài cũ thì suy ra từ chỗ bài đó có ghi nguồn hay không. Đổi lối
+giữa chừng được, bài đang viết dở giữ nguyên.
+
+Lưu ở lối tự soạn là hai ô nguồn bị xoá hẳn — bài mình viết thì không dẫn nguồn ai,
+để trống lửng chỉ tổ có người điền bừa.
+
+### Cỡ chữ, phông, màu
+
+Khai một chỗ duy nhất ở `js/kieu-chu.js`: cỡ 8-14pt (đúng như Word), ba phông của
+trang web, bảng màu Nhà hát, bốn kiểu căn lề. Hàm `cssKieu()` sinh thẳng CSS từ đó
+cho ô soạn và cửa sổ xem thử, khỏi viết tay hai bản rồi lệch nhau.
+
+**Vì sao không dùng `style=""`:** bài đi qua hai bộ lọc danh sách trắng —
+`locHtml()` bên này và `quet()` trong `tin-bai.js` bên kho web — cả hai đều vứt
+sạch `style`. Định dạng đi bằng **lớp CSS cố định**, hai bộ lọc cùng tra vào danh
+sách `LOP_CHO_PHEP` mà giữ lại. Lớp nào không có tên trong danh sách thì rụng, nên
+dán HTML từ trang lạ vào cũng không lôi được CSS của họ sang.
+
+`js/kieu-chu.js` **có bản sao viết tay** bên kho web (hằng `LOP_CHO_PHEP` trong
+`tin-bai.js`, quy tắc CSS ở cuối `styles.css`). Hai kho riêng, trang công khai lại
+nạp bằng `<script>` thường nên không import module qua được. **Thêm lớp mới bên này
+thì phải thêm cả bên kia**, không thì lớp ấy qua được CMS mà rụng lúc bài lên trang.
+
+### Hoàn tác
+
+Tự dựng chồng hoàn tác (chụp `innerHTML` + vị trí con trỏ, giữ 60 mốc) chứ không
+nhờ `execCommand("undo")`: mấy lệnh cỡ chữ/phông/màu đều sửa thẳng cây DOM sau khi
+execCommand chạy xong, nên chồng sẵn có của trình duyệt không biết gì về chúng.
+
+### Tự giữ nháp
+
+Cứ ngừng gõ 1,5 giây là bài được ghi vào `localStorage` (khoá `nhap-bai:<id>`).
+Mở lại mà thấy nháp mới hơn lần sửa trên máy chủ thì hiện dải hỏi khôi phục. Lưu
+thành công là xoá. Chỉ nằm trong máy người soạn, không lên mạng.
+
 ## CMS và trang web ăn khớp nhau
 
 Cả sáu mục nội dung đều nối hai chiều — sửa trong CMS là trang web đổi theo:

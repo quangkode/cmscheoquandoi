@@ -369,7 +369,7 @@ table.bang-tinh tbody tr:last-child td { border-bottom: 1px solid var(--vien); }
 }
 .soan-bai table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 14px; }
 .soan-bai th, .soan-bai td { border: 1px solid var(--vien); padding: 8px 10px; text-align: left; }
-.soan-bai:empty::before { content: "Chưa có nội dung. Dùng nút “Lấy từ link báo” hoặc gõ thẳng vào đây."; color: var(--muc-nhat); }
+.soan-bai:empty::before { content: "Gõ thẳng vào đây. Bôi đen chữ rồi dùng thanh trên để đổi cỡ, phông, màu."; color: var(--muc-nhat); }
 
 /* ---------- Xem trước bài báo vừa lấy về ---------- */
 .xem-bai {
@@ -524,3 +524,89 @@ table.bang-tinh tbody tr:last-child td { border-bottom: 1px solid var(--vien); }
 
 .doi-chieu__nut { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-top: 18px; }
 .doi-chieu__tiendo { margin-top: 12px; font-weight: 600; color: var(--do-dam); }
+
+
+/* ==========================================================
+   TRANG SOẠN BÀI — màn chọn lối vào, thanh công cụ mở rộng
+
+   CSS của cỡ chữ / phông / màu KHÔNG nằm ở đây: nó sinh thẳng từ
+   js/kieu-chu.js rồi chèn vào <head> lúc chạy. Viết tay ở đây nữa là có
+   ngày thêm một cỡ chữ bên kia mà quên thêm quy tắc bên này.
+   ========================================================== */
+
+/* ---------- Màn chọn: tự soạn hay biên soạn từ bài báo ---------- */
+.sb-chon { max-width: 760px; margin: 40px auto; text-align: center; }
+.sb-chon h1 { font-family: var(--serif); font-size: 32px; margin: 0 0 6px; }
+.sb-chon__dan { color: var(--muc-nhat); margin: 0 0 28px; }
+.sb-chon__luoi { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; text-align: left; }
+.sb-chon__nho { margin-top: 22px; font-size: 13px; color: var(--muc-nhat); }
+
+.sb-the {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px;
+  padding: 26px 24px; background: var(--the);
+  border: 1px solid var(--vien); border-radius: var(--r);
+  cursor: pointer; text-align: left; font: inherit; color: inherit;
+  transition: var(--t);
+}
+.sb-the:hover { border-color: var(--do); box-shadow: var(--bong); transform: translateY(-2px); }
+.sb-the__hinh { font-size: 30px; line-height: 1; }
+.sb-the strong { font-size: 17px; }
+.sb-the__mo { font-size: 13.5px; line-height: 1.6; color: var(--muc-nhat); }
+
+/* ---------- Dải báo đang ở lối nào ---------- */
+.sb-che {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  margin-bottom: 16px; padding: 9px 14px;
+  background: var(--the); border: 1px solid var(--vien); border-radius: var(--r);
+}
+.sb-che__nhan { font-weight: 600; font-size: 14px; }
+.sb-che .nut { margin-left: auto; }
+
+/* ---------- Ô chọn phông và cỡ trên thanh công cụ ---------- */
+.sb-chon-nho {
+  height: 32px; padding: 0 6px; font: inherit; font-size: 13px;
+  border: 1px solid var(--vien); border-radius: 7px;
+  background: var(--the); color: inherit; cursor: pointer; max-width: 130px;
+}
+.sb-chon-nho--hep { max-width: 66px; }
+
+/* ---------- Bảng màu thả xuống ----------
+   Dùng <details> chứ không dựng menu bằng JS: nó tự lo đóng/mở, tự lo
+   bàn phím và đọc màn hình, không phải viết thêm dòng nào. */
+.sb-thavo { position: relative; }
+.sb-thavo > summary {
+  list-style: none; display: flex; flex-direction: column; align-items: center;
+  justify-content: center; gap: 2px;
+  min-width: 34px; height: 32px; border-radius: 7px;
+  border: 1px solid transparent; cursor: pointer; font-size: 13px; line-height: 1;
+  transition: var(--t);
+}
+.sb-thavo > summary::-webkit-details-marker { display: none; }
+.sb-thavo > summary:hover { background: #efeadf; border-color: var(--vien); }
+.sb-thavo[open] > summary { background: var(--vien); }
+.sb-thavo__vach { display: block; width: 16px; height: 3px; border-radius: 2px;
+  background: linear-gradient(90deg, var(--do), var(--vang), var(--quan-doi-nhat)); }
+.sb-thavo__o {
+  position: absolute; top: calc(100% + 6px); left: 0; z-index: 30;
+  display: grid; grid-template-columns: repeat(5, 26px); gap: 6px;
+  padding: 10px; background: var(--the);
+  border: 1px solid var(--vien); border-radius: var(--r); box-shadow: var(--bong-lon);
+}
+.sb-o-mau {
+  width: 26px; height: 26px; min-width: 0; padding: 0;
+  border: 1px solid rgba(0, 0, 0, .12); border-radius: 6px; cursor: pointer;
+}
+.sb-o-mau:hover { outline: 2px solid var(--muc); outline-offset: 1px; }
+.sb-o-mau--bo { background: var(--the); color: var(--muc-nhat); font-size: 12px; }
+
+/* ---------- Dải hỏi khôi phục bản nháp ---------- */
+.sb-nhap { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 18px; }
+.sb-nhap__nut { display: flex; gap: 8px; margin-left: auto; }
+
+.nhac--nho { padding: 12px 14px; font-size: 13px; line-height: 1.6; }
+.nhac--nho strong { display: block; margin-bottom: 3px; }
+
+@media (max-width: 720px) {
+  .sb-chon__luoi { grid-template-columns: 1fr; }
+  .sb-che .nut { margin-left: 0; }
+}

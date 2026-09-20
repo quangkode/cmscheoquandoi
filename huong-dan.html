@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Noto+Serif:wght@400;700;900&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="./cms.css?v=11" />
+<link rel="stylesheet" href="./cms.css?v=12" />
 <style>
 /* ==========================================================
    Trang hướng dẫn — bản HTML của README.md. Cùng một nội dung,
@@ -167,6 +167,7 @@
       <li class="ml__con"><a href="#b7">7 · Nạp dữ liệu ban đầu</a></li>
       <li class="ml__con"><a href="#b8">8 · Đưa CMS lên mạng</a></li>
       <li><a href="#hang-ngay">Cách dùng hằng ngày</a></li>
+      <li><a href="#soan-bai">Soạn bài viết</a></li>
       <li><a href="#dong-bo">CMS và trang web ăn khớp nhau</a></li>
       <li><a href="#cau-truc">Cấu trúc mã</a></li>
       <li><a href="#hong">Hỏng thì xem ở đây</a></li>
@@ -317,6 +318,83 @@
         Nhập <strong>không xoá</strong> bản ghi nào — xoá một dòng trong bảng tính rồi nạp lại thì dòng đó vẫn còn trên web, muốn bỏ hẳn phải vào bảng bấm Xoá.
       </div>
       <p>Trước khi ghi, hộp thoại đếm rõ bao nhiêu dòng thêm mới, bao nhiêu dòng cập nhật, dòng nào sai và sai ở cột nào. Dòng sai bị bỏ qua, phần còn lại vẫn nạp bình thường. Cột ảnh không nhập qua bảng tính được — ảnh phải chọn trong biểu mẫu.</p>
+    </section>
+
+    <section id="soan-bai">
+      <h2>Soạn bài viết</h2>
+      <p>Bấm <strong>Thêm mới</strong> ở mục Tin tức là mở trang soạn riêng, và câu hỏi
+         đầu tiên là làm theo cách nào:</p>
+      <div class="cuon-ngang">
+        <table>
+          <thead><tr><th>Lối</th><th>Có gì</th><th>Dùng khi</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Tự soạn thảo</strong></td>
+              <td>Ảnh bìa, ghi công ảnh, đủ công cụ định dạng.<br /><em>Không có ô ghi nguồn.</em></td>
+              <td>Bài của Nhà hát, tự viết từ đầu</td>
+            </tr>
+            <tr>
+              <td><strong>Chép link rồi biên soạn</strong></td>
+              <td>Thêm thanh dán link, ô <strong>Tên nguồn</strong> và <strong>Đường dẫn bài gốc</strong></td>
+              <td>Lấy bài báo về rồi biên tập lại</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Chọn nhầm không sao: trong lúc soạn có nút <strong>Đổi sang…</strong> ở dải trên
+         cùng, đổi xong vẫn giữ nguyên bài đang viết dở. Sửa bài cũ thì trang tự mở đúng
+         lối — bài nào có ghi nguồn là lối biên soạn từ báo.</p>
+      <div class="nhac">
+        <strong>Vì sao lối tự soạn không có ô nguồn.</strong>
+        Bài Nhà hát tự viết thì chẳng dẫn nguồn ai cả. Để ô đó trống lửng chỉ tổ có người
+        điền bừa tên một tờ báo, thành ra ghi công sai. Lưu ở lối này là hai ô nguồn bị
+        xoá hẳn, kể cả bài trước đó lấy từ báo về.
+      </div>
+
+      <h3>Cỡ chữ và phông</h3>
+      <p>Bôi đen chữ rồi chọn trên thanh công cụ. <strong>Cỡ chữ 8 đến 14</strong>, tính
+         bằng pt đúng như trong Word. Không bôi đen gì thì áp cho cả đoạn đang đứng.</p>
+      <div class="cuon-ngang">
+        <table>
+          <thead><tr><th>Cỡ</th><th>Trông ra sao</th></tr></thead>
+          <tbody>
+            <tr><td>8 - 10</td><td>Nhỏ, chỉ hợp cho chú thích. Trên điện thoại khá khó đọc.</td></tr>
+            <tr><td>11 - 12</td><td>Hơi nhỏ hơn chữ thường một chút</td></tr>
+            <tr><td><strong>13</strong></td><td>Đúng bằng cỡ chữ thân bài ngoài trang — để trống cũng ra cỡ này</td></tr>
+            <tr><td>14</td><td>To hơn chữ thường, hợp cho câu dẫn đầu bài</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Ba phông là ba phông đang dùng sẵn trên trang web, nên bài viết luôn ăn nhập với
+         phần còn lại: <strong>Chữ thường</strong> (Montserrat), <strong>Chữ tiêu đề</strong>
+         (Playfair Display, có chân, trang trọng), <strong>Chữ có chân</strong> (Noto Serif,
+         dễ đọc đoạn dài).</p>
+      <p>Màu chữ và màu nền lấy theo bảng màu Nhà hát, không cho chọn màu tự do — mỗi bài
+         một màu tuỳ hứng thì trang tin trông như tờ rơi.</p>
+
+      <h3>Phím tắt</h3>
+      <div class="cuon-ngang">
+        <table>
+          <thead><tr><th>Phím</th><th>Việc</th></tr></thead>
+          <tbody>
+            <tr><td><code>Ctrl + S</code></td><td>Lưu bài</td></tr>
+            <tr><td><code>Ctrl + Z</code></td><td>Hoàn tác</td></tr>
+            <tr><td><code>Ctrl + Y</code> hoặc <code>Ctrl + Shift + Z</code></td><td>Làm lại</td></tr>
+            <tr><td><code>Ctrl + B</code> / <code>Ctrl + I</code></td><td>Đậm / nghiêng</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Tự giữ nháp</h3>
+      <p>Cứ ngừng tay một lát là bài được giữ vào trình duyệt của bạn, dòng trạng thái trên
+         cùng ghi <em>“Chưa lưu · đã giữ nháp”</em>. Đóng nhầm tab, mất điện hay sập máy thì
+         lần sau mở lại trang sẽ có dải hỏi <strong>Khôi phục</strong>. Lưu bài thành công
+         là nháp tự xoá.</p>
+      <div class="nhac">
+        <strong>Nháp chỉ nằm trong máy bạn.</strong>
+        Không lên mạng, không ai khác thấy, và mở máy khác thì không có. Nó là lưới hứng
+        khi tai nạn, không thay được nút <strong>Lưu bài</strong>.
+      </div>
     </section>
 
     <section id="dong-bo">
