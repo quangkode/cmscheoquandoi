@@ -26,18 +26,16 @@ import { LUOC_DO } from "./luoc-do.js";
    bản ghi". Khoá đối chiếu phải là thứ người nhập nhìn vào là biết, chứ
    không dùng id: id do Firestore sinh, dữ liệu gốc không có. */
 export const MUC = [
-  /* Tin tức không có mặt ở đây: dữ liệu gốc không còn giữ tin bài nào,
-     tin chỉ do người dùng viết trong CMS.
+  /* Tin tức và Thư viện ảnh không có mặt ở đây: dữ liệu gốc không còn giữ
+     tin bài hay ảnh nào, hai mục đó chỉ do người dùng tự đăng trong CMS.
 
      khongThem: chỉ so trường của bản ghi đang có, KHÔNG thêm lại bản ghi đã
      mất. Lịch diễn gắn với thời gian, suất diễn qua rồi xoá đi là chuyện
      bình thường; dữ liệu gốc là ảnh chụp trang web hồi 2024, thêm lại theo
-     nó là dựng dậy đúng mấy suất vừa cố ý xoá. Bốn mục còn lại là danh mục
+     nó là dựng dậy đúng mấy suất vừa cố ý xoá. Ba mục còn lại là danh mục
      tra cứu, thiếu bản nào đúng là thiếu thật. */
   { ma: "lich-dien",    khoa: "lichDien", nhanKhoa: "tên vở + ngày diễn", khongThem: true,
     lay: (r) => ch(r.tenVo) + "|" + ngay10(r.ngay) },
-  { ma: "thu-vien-anh", khoa: "thuVien",  nhanKhoa: "chú thích",
-    lay: (r) => ch(r.chuThich) },
   { ma: "nghe-si",      khoa: "ngheSi",   nhanKhoa: "họ tên",
     lay: (r) => ch(r.hoTen) },
   /* Không đưa nhiệm kỳ vào khoá: sửa một chữ trong nhiệm kỳ là bản ghi hoá

@@ -211,9 +211,10 @@ rồi **chỉ điền vào chỗ trống**. Dùng khi:
 Bấm **Xem** để đọc trước đúng những gì nó sắp sửa. Chỗ đã nhập và bản ghi tự thêm
 đều không bị đụng tới; không xoá gì cả.
 
-**Tin tức không có trong dữ liệu gốc.** Tin bài chỉ do bạn viết trong CMS: đăng
-trong mục Tin tức là hiện ra trang web, xoá trong đó là mất hẳn. Không có gì để
-nạp, cũng không có gì dựng bài đã xoá sống lại.
+**Tin tức và Thư viện ảnh không có trong dữ liệu gốc.** Tin bài và ảnh chỉ do bạn
+tự đăng trong CMS: đăng vào là hiện ra trang web, xoá trong đó là mất hẳn. Không có
+gì để nạp, cũng không có gì dựng lại thứ vừa xoá. Trang web cũng không còn bản viết
+tay của hai mục này — CMS trống thì trang hiện "Chưa có tin nào." / "Chưa có ảnh nào."
 
 **Lịch diễn chỉ so trường, không thêm lại bản ghi** (`khongThem: true`). Mục này
 gắn với thời gian — suất diễn qua rồi xoá đi là chuyện bình thường; dữ liệu gốc là

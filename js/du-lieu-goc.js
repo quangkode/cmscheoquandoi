@@ -68,74 +68,10 @@ export const DU_LIEU_GOC = {
       "maCu": "nhc-2908"
     }
   ],
-  "thuVien": [
-    {
-      "anh": {
-        "url": "/anh/tin-tuc/tu-long-giam-doc.jpg",
-        "duongDan": null
-      },
-      "chuThich": "Đại tá, NSND Tự Long, Giám đốc Nhà hát",
-      "nguon": "Ảnh: Báo Thanh Niên",
-      "khoAnh": "cao",
-      "thuTu": 10,
-      "hienThi": true
-    },
-    {
-      "anh": {
-        "url": "/anh/tin-tuc/dieu-binh-quan-khu-2.jpg",
-        "duongDan": null
-      },
-      "chuThich": "Phục vụ các khối diễu binh, diễu hành",
-      "nguon": "Ảnh: Báo Quân khu 2",
-      "khoAnh": "thuong",
-      "thuTu": 20,
-      "hienThi": true
-    },
-    {
-      "anh": {
-        "url": "/anh/tin-tuc/nghe-an.jpg",
-        "duongDan": null
-      },
-      "chuThich": "Biểu diễn tại Trung đoàn 764, Nghệ An",
-      "nguon": "Ảnh: Truyền hình Nghệ An",
-      "khoAnh": "thuong",
-      "thuTu": 30,
-      "hienThi": true
-    },
-    {
-      "anh": {
-        "url": "/anh/tin-tuc/nha-may-x46.jpg",
-        "duongDan": null
-      },
-      "chuThich": "Đêm diễn tại Hội trường Nhà máy X46",
-      "nguon": "Ảnh: Báo Hải quân Việt Nam",
-      "khoAnh": "rong",
-      "thuTu": 40,
-      "hienThi": true
-    },
-    {
-      "anh": {
-        "url": "/anh/tin-tuc/canh-sat-bien-hai-phong.jpg",
-        "duongDan": null
-      },
-      "chuThich": "Đoàn diễn 1 tại Hải Phòng",
-      "nguon": "Ảnh: Báo An ninh Hải Phòng",
-      "khoAnh": "thuong",
-      "thuTu": 50,
-      "hienThi": true
-    },
-    {
-      "anh": {
-        "url": "/anh/tin-tuc/nghe-si-chien-si.png",
-        "duongDan": null
-      },
-      "chuThich": "Người “nghệ sĩ - chiến sĩ”",
-      "nguon": "Ảnh: Tạp chí Quốc phòng toàn dân",
-      "khoAnh": "thuong",
-      "thuTu": 60,
-      "hienThi": true
-    }
-  ],
+  /* Cũng không có "thuVien". Sáu ảnh đầu tiên là ảnh mượn của báo, đưa
+     vào cho mục Thư viện ảnh đỡ trống lúc mới dựng — cùng một loại nội
+     dung thừa như mấy bài tin kia. Ảnh nay chỉ do người dùng tải lên
+     trong CMS. */
   "ngheSi": [
     {
       "hoTen": "Đào Lê",
