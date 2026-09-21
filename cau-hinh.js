@@ -22,6 +22,10 @@ export const cauHinhFirebase = {
   appId: "1:298927410640:web:5f41b7c0c2d86caca03dd5"
 };
 
+/* Địa chỉ trang web công khai. CMS dùng để dựng nút "Xem trên web"
+   ở đầu mỗi mục — bấm là mở đúng chỗ nội dung đó hiện ra. */
+export const TRANG_WEB = "https://demonhahatcheoquandoi.vercel.app";
+
 /* Đổi số này khi muốn nâng phiên bản Firebase SDK. Để một chỗ
    thay vì rải khắp các file, nâng cấp sau này chỉ sửa một dòng. */
 export const PHIEN_BAN_SDK = "11.0.2";

@@ -116,6 +116,27 @@ thứ người ta đã gửi.
 
 ---
 
+## Ba mục thêm sau, theo phản hồi
+
+| Mục | Đổ ra đâu trên web |
+|---|---|
+| **Ảnh bìa trang chủ** | dải ảnh chạy ở đầu trang chủ |
+| **Dấu mốc** | mục *Dấu mốc nổi bật* trang Lịch sử |
+| **Thông tin chung** | dải trên cùng, chân trang và mục Liên hệ của **mọi trang** |
+
+> **Phải đăng lại `firestore.rules` thì ba mục này mới chạy.** Firebase Console
+> → Firestore Database → tab Rules → dán đè cả file → Publish. Chưa đăng thì
+> CMS không ghi được và trang web nhận 403 khi đọc ba collection mới (trang vẫn
+> hiện bình thường bằng HTML viết sẵn, chỉ là chưa lấy được bản từ CMS).
+
+Mỗi mục có nút **Xem trên web ↗** ở góc phải tiêu đề, bấm là mở đúng chỗ nội
+dung đó hiện ra — khai ở `xemTrenWeb` trong `luoc-do.js`, địa chỉ gốc để ở
+`TRANG_WEB` trong `cau-hinh.js`.
+
+**Thông tin chung** khai `motBanGhi: true`: có bản ghi rồi thì CMS giấu nút
+*Thêm mới*, nút *Nhập bảng tính* và nút *Xoá*. Hai bản ghi thì trang web không
+biết lấy bản nào, mà người dùng cũng không thấy vì sao sửa một bên lại không ăn.
+
 ## Soạn bài viết
 
 Mục Tin tức soạn ở trang riêng (`soan-bai.html`), mở ra hỏi ngay làm theo cách nào:

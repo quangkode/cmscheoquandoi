@@ -42,6 +42,9 @@ service cloud.firestore {
     match /vo-dien/{id}      { allow read: if true; allow write: if laQuanTri(); }
     match /nghe-si/{id}      { allow read: if true; allow write: if laQuanTri(); }
     match /lanh-dao/{id}     { allow read: if true; allow write: if laQuanTri(); }
+    match /anh-bia/{id}      { allow read: if true; allow write: if laQuanTri(); }
+    match /dau-moc/{id}      { allow read: if true; allow write: if laQuanTri(); }
+    match /thong-tin/{id}    { allow read: if true; allow write: if laQuanTri(); }
 
     /* Đơn đặt chỗ đi ngược chiều với mọi thứ ở trên:
        - AI CŨNG TẠO được (khách vãng lai giữ chỗ, không đăng nhập)

@@ -6,6 +6,7 @@
    ========================================================== */
 import { daCauHinh } from "../cau-hinh.js";
 import { LUOC_DO, DANH_MUC } from "./luoc-do.js";
+import { TRANG_WEB } from "../cau-hinh.js";
 import { xuatXlsx, soanNhap } from "./xuat-nhap.js";
 import { bocBai, locHtml } from "./doc-bai.js";
 
@@ -334,9 +335,10 @@ function veDanhSach(ma) {
       <p>${esc(m.moTa)}</p>
     </div>
     <div class="dau__phai">
+      ${m.xemTrenWeb ? `<a class="nut" href="${TRANG_WEB}${m.xemTrenWeb}" target="_blank" rel="noopener">Xem trên web ↗</a>` : ""}
       <button type="button" class="nut" id="nutXuat" title="Tải toàn bộ mục này về máy dạng .xlsx">Xuất Excel</button>
       ${m.layTuBao && !m.trangSoan ? `<button type="button" class="nut" id="nutLayBai" title="Lấy bài từ báo về">Lấy từ link báo</button>` : ""}
-      ${m.chiDoc ? "" : `<button type="button" class="nut" id="nutNhap">Nhập bảng tính</button>`}
+      ${m.chiDoc || m.motBanGhi ? "" : `<button type="button" class="nut" id="nutNhap">Nhập bảng tính</button>`}
       ${m.chiDoc ? "" : `<button type="button" class="nut nut--chinh" id="nutThem">+ Thêm mới</button>`}
     </div></div>
 
@@ -408,6 +410,10 @@ function veDanhSach(ma) {
       b.classList.toggle("dang-bat", nhanhDangBat(thanh, m.locNhanh[+b.dataset.nhanh])));
     veBang(ma, dangHien, duLieu.length, dangLoc, daChon, veThanhChon);
     veThanhChon();
+    if (m.motBanGhi) {
+      const nutThem = document.getElementById("nutThem");
+      if (nutThem) nutThem.hidden = duLieu.length > 0;
+    }
     luuLoc(ma, thanh);
   };
 
@@ -559,7 +565,7 @@ function veBang(ma, ds, tong, dangLoc, daChon, khiDoiChon) {
       ${m.cot.map((c) => oBang(m, c, d)).join("")}
       <td class="o-thao-tac">
         <button type="button" class="nut nut--nho" data-sua="${esc(d.id)}">${m.chiDoc ? "Xem" : "Sửa"}</button>
-        <button type="button" class="nut nut--nho nut--nguy" data-xoa="${esc(d.id)}">Xoá</button>
+        ${m.motBanGhi ? "" : `<button type="button" class="nut nut--nho nut--nguy" data-xoa="${esc(d.id)}">Xoá</button>`}
       </td></tr>`).join("")}</tbody>
   </table>`;
 

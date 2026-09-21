@@ -164,6 +164,74 @@ export const LUOC_DO = {
     ]
   },
 
+  /* ---------- Ảnh bìa chạy ở đầu trang chủ ---------- */
+  "anh-bia": {
+    nhan: "Ảnh bìa trang chủ",
+    moTa: "Những tấm chạy luân phiên ở đầu trang chủ. Xoá hết thì trang chủ dùng lại ba tấm viết sẵn.",
+    bieuTuong: "M4 6h16v12H4zM4 14l4-4 4 4 3-3 5 5",
+    xemTrenWeb: "/#hero",
+    sapXep: { truong: "thuTu", chieu: "asc" },
+    locNhanh: [{ nhan: "Đang ẩn", dat: { "co:hienThi": "0" } }],
+    cot: [cot("anh", "Ảnh", "anh"), cot("tieuDe", "Tiêu đề"), cot("nhan", "Nhãn nhỏ"), cot("thuTu", "Thứ tự"), cot("hienThi", "Hiện", "cong-tac")],
+    truong: [
+      { ten: "anh", nhan: "Ảnh bìa", kieu: "anh", thuMuc: "anh-bia", batBuoc: true },
+      { ten: "nhan", nhan: "Nhãn nhỏ phía trên", kieu: "text", goiY: "Ví dụ: Mùa diễn 2026" },
+      { ten: "tieuDe", nhan: "Tiêu đề", kieu: "text", batBuoc: true, goiY: "Ví dụ: Hồn chèo" },
+      { ten: "tieuDeVang", nhan: "Phần tiêu đề tô vàng", kieu: "text", goiY: "Ví dụ: giữa lòng người lính" },
+      { ten: "moTa", nhan: "Mô tả", kieu: "dai" },
+      { ten: "nut1Chu", nhan: "Nút 1 — chữ", kieu: "text", goiY: "Ví dụ: Lịch biểu diễn" },
+      { ten: "nut1Link", nhan: "Nút 1 — đường dẫn", kieu: "text", goiY: "Ví dụ: #lich-dien hoặc ./vo-dien.html" },
+      { ten: "nut2Chu", nhan: "Nút 2 — chữ", kieu: "text" },
+      { ten: "nut2Link", nhan: "Nút 2 — đường dẫn", kieu: "text" },
+      { ten: "thuTu", nhan: "Thứ tự", kieu: "so", macDinh: 10 },
+      { ten: "hienThi", nhan: "Hiện trên web", kieu: "cong-tac", macDinh: true }
+    ]
+  },
+
+  /* ---------- Dấu mốc lịch sử ---------- */
+  "dau-moc": {
+    nhan: "Dấu mốc",
+    moTa: "Mục Dấu mốc nổi bật ở trang Lịch sử.",
+    bieuTuong: "M12 3v18M6 7h12M8 12h8M9 17h6",
+    xemTrenWeb: "/lich-su.html#dau-moc",
+    sapXep: { truong: "thuTu", chieu: "asc" },
+    locNhanh: [{ nhan: "Đang ẩn", dat: { "co:hienThi": "0" } }],
+    cot: [cot("anh", "Ảnh", "anh"), cot("moc", "Mốc"), cot("tieuDe", "Tiêu đề"), cot("thuTu", "Thứ tự"), cot("hienThi", "Hiện", "cong-tac")],
+    truong: [
+      { ten: "moc", nhan: "Mốc thời gian", kieu: "text", batBuoc: true, goiY: "Ví dụ: 01/10/1954" },
+      { ten: "tieuDe", nhan: "Tiêu đề", kieu: "text", batBuoc: true },
+      { ten: "moTa", nhan: "Nội dung", kieu: "dai" },
+      { ten: "anh", nhan: "Ảnh tư liệu", kieu: "anh", thuMuc: "dau-moc" },
+      { ten: "anhMoTa", nhan: "Mô tả ảnh", kieu: "text", goiY: "Ví dụ: Đội Văn công trong những năm đầu thành lập" },
+      { ten: "thuTu", nhan: "Thứ tự", kieu: "so", macDinh: 10 },
+      { ten: "hienThi", nhan: "Hiện trên web", kieu: "cong-tac", macDinh: true }
+    ]
+  },
+
+  /* ---------- Thông tin chung: dải trên cùng, chân trang, mục Liên hệ ----------
+     motBanGhi: mục này chỉ có đúng một bản ghi. Có rồi thì CMS giấu nút
+     "Thêm mới" và nút xoá — hai bản ghi thì trang web biết lấy bản nào. */
+  "thong-tin": {
+    nhan: "Thông tin chung",
+    moTa: "Địa chỉ, điện thoại, email, mạng xã hội. Hiện ở dải trên cùng và chân trang của mọi trang, và ở mục Liên hệ ngoài trang chủ.",
+    bieuTuong: "M12 21.2s6.8-6.2 6.8-11.3a6.8 6.8 0 1 0-13.6 0c0 5.1 6.8 11.3 6.8 11.3ZM12 7.1a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5",
+    xemTrenWeb: "/#lien-he",
+    motBanGhi: true,
+    cot: [cot("diaChi", "Địa chỉ"), cot("dienThoai", "Điện thoại"), cot("email", "Email")],
+    truong: [
+      { ten: "diaChi", nhan: "Địa chỉ", kieu: "text" },
+      { ten: "dienThoai", nhan: "Điện thoại", kieu: "text", goiY: "Ví dụ: 024 3845 7583" },
+      { ten: "email", nhan: "Email chung", kieu: "text" },
+      { ten: "emailTruyenThong", nhan: "Email truyền thông", kieu: "text" },
+      { ten: "gioDonTiep", nhan: "Giờ quầy đón tiếp", kieu: "text", goiY: "Ví dụ: 8:00 - 21:00 hằng ngày" },
+      { ten: "gioHanhChinh", nhan: "Giờ hành chính", kieu: "text", goiY: "Ví dụ: 8:00 - 17:00 các ngày trong tuần" },
+      { ten: "gioiThieu", nhan: "Giới thiệu ngắn ở chân trang", kieu: "dai" },
+      { ten: "facebook", nhan: "Facebook", kieu: "url" },
+      { ten: "youtube", nhan: "YouTube", kieu: "url" },
+      { ten: "tiktok", nhan: "TikTok", kieu: "url" }
+    ]
+  },
+
   "dat-cho": {
     nhan: "Đơn đặt chỗ",
     moTa: "Đơn giữ chỗ người xem gửi từ trang web. Đặt chỗ miễn phí, không thu tiền.",
