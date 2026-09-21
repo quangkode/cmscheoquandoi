@@ -22,8 +22,8 @@ function bao(t, k) {
 }
 
 /* Ghép mục trong Firestore với mảng dữ liệu tương ứng */
+/* Không có tin-tuc: tin bài không nạp sẵn, chỉ do người dùng viết trong CMS. */
 const BANG = [
-  ["tin-tuc", "tinTuc"],
   ["lich-dien", "lichDien"],
   ["thu-vien-anh", "thuVien"],
   ["nghe-si", "ngheSi"],

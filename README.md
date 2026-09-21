@@ -211,10 +211,13 @@ rồi **chỉ điền vào chỗ trống**. Dùng khi:
 Bấm **Xem** để đọc trước đúng những gì nó sắp sửa. Chỗ đã nhập và bản ghi tự thêm
 đều không bị đụng tới; không xoá gì cả.
 
-**Tin tức và Lịch diễn chỉ so trường, không thêm lại bản ghi** (`khongThem: true`).
-Hai mục này gắn với thời gian — bài cũ gỡ đi, suất diễn qua rồi xoá đi là chuyện
-bình thường; dữ liệu gốc là ảnh chụp trang web hồi 2024, thêm lại theo nó là dựng
-dậy đúng mấy bài vừa cố ý xoá.
+**Tin tức không có trong dữ liệu gốc.** Tin bài chỉ do bạn viết trong CMS: đăng
+trong mục Tin tức là hiện ra trang web, xoá trong đó là mất hẳn. Không có gì để
+nạp, cũng không có gì dựng bài đã xoá sống lại.
+
+**Lịch diễn chỉ so trường, không thêm lại bản ghi** (`khongThem: true`). Mục này
+gắn với thời gian — suất diễn qua rồi xoá đi là chuyện bình thường; dữ liệu gốc là
+ảnh chụp trang web hồi 2024, thêm lại theo nó là dựng dậy đúng mấy suất vừa cố ý xoá.
 
 Nút **Ghi đè cả chỗ khác bản gốc** kéo bản ghi về đúng bản gốc, kể cả chỗ đã sửa.
 Ảnh đã tải lên Firebase Storage thì kể cả ghi đè cũng chừa ra: xoá đường dẫn đi là

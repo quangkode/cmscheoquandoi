@@ -13,78 +13,11 @@
    Firebase thì vào CMS tải lại từng ảnh.
    ========================================================== */
 export const DU_LIEU_GOC = {
-  "tinTuc": [
-    {
-      "tieuDe": "Biểu diễn phục vụ các lực lượng diễu binh, diễu hành",
-      "ngay": "2025-07-05",
-      "chuDe": "hoat-dong",
-      "tomTat": "Tối 4/7 tại Trường Sĩ quan Chính trị, Nhà hát biểu diễn ca nhạc và trích đoạn phục vụ hơn 900 cán bộ, chiến sĩ trong 4 khối diễu binh, diễu hành của Quân khu. Chương trình gồm hát văn, dân ca Quan họ Bắc Ninh, múa và trích đoạn chèo.",
-      "anh": {
-        "url": "/anh/tin-tuc/dieu-binh-quan-khu-2.jpg",
-        "duongDan": null
-      },
-      "anhNguon": "Ảnh: Báo Quân khu 2",
-      "nguonTen": "Báo Quân khu 2",
-      "nguonUrl": "https://baoquankhu2.com.vn/nha-hat-cheo-quan-doi-bieu-dien-phuc-vu-cac-luc-luong-dieu-binh-dieu-hanh/",
-      "hienThi": true
-    },
-    {
-      "tieuDe": "NSND Tự Long giữ chức Giám đốc Nhà hát Chèo Quân đội",
-      "ngay": "2024-12-30",
-      "chuDe": "su-kien",
-      "tomTat": "Đại tá, NSND Tự Long được bổ nhiệm giữ chức Giám đốc Nhà hát Chèo Quân đội, thay Đại tá, NSND Nguyễn Quốc Trượng nghỉ hưu theo chế độ. Trước đó ông giữ cương vị Phó Giám đốc Nhà hát.",
-      "anh": {
-        "url": "/anh/tin-tuc/tu-long-giam-doc.jpg",
-        "duongDan": null
-      },
-      "anhNguon": "Ảnh: Báo Thanh Niên",
-      "nguonTen": "Báo Thanh Niên",
-      "nguonUrl": "https://thanhnien.vn/nsnd-tu-long-giu-chuc-giam-doc-nha-hat-cheo-quan-doi-18524123101142834.htm",
-      "hienThi": true
-    },
-    {
-      "tieuDe": "Phát huy vai trò người “nghệ sĩ - chiến sĩ” trên mặt trận văn hóa",
-      "ngay": "2024-10-01",
-      "chuDe": "hoat-dong",
-      "tomTat": "Bài viết nhìn lại 70 năm phát triển của Nhà hát qua bốn nội dung: xây dựng tổ chức đảng vững mạnh, học tập tư tưởng Hồ Chí Minh, nâng cao chất lượng sáng tác - biểu diễn và thực hiện công tác dân vận.",
-      "anh": {
-        "url": "/anh/tin-tuc/nghe-si-chien-si.png",
-        "duongDan": null
-      },
-      "anhNguon": "Ảnh: Tạp chí Quốc phòng toàn dân",
-      "nguonTen": "Tạp chí Quốc phòng toàn dân",
-      "nguonUrl": "https://tapchiqptd.vn/vi/bao-ve-to-quoc/nha-hat-cheo-quan-doi-phat-huy-vai-tro-nguoi-nghe-si-chien-si-tren-mat-tran-van-hoa/22768.html",
-      "hienThi": true
-    },
-    {
-      "tieuDe": "Biểu diễn phục vụ cán bộ, chiến sĩ và nhân dân Nghệ An",
-      "ngay": "2024-04-07",
-      "chuDe": "hoat-dong",
-      "tomTat": "Nhà hát biểu diễn tại Trung đoàn 764, Bộ Chỉ huy Quân sự tỉnh Nghệ An. Vở “Đất liền và biển cả” ca ngợi tinh thần chiến đấu và sự hy sinh của các chiến sĩ Hải quân nhân dân Việt Nam trong bảo vệ chủ quyền biển đảo.",
-      "anh": {
-        "url": "/anh/tin-tuc/nghe-an.jpg",
-        "duongDan": null
-      },
-      "anhNguon": "Ảnh: Truyền hình Nghệ An",
-      "nguonTen": "Truyền hình Nghệ An",
-      "nguonUrl": "https://truyenhinhnghean.vn/van-hoa-giai-tri/202404/nha-hat-cheo-quan-doi-bieu-dien-phuc-vu-can-bo-chien-si-va-nhan-dan-nghe-an-9b515d8/",
-      "hienThi": true
-    },
-    {
-      "tieuDe": "Biểu diễn phục vụ các đơn vị Cảnh sát biển và nhân dân Hải Phòng",
-      "ngay": "2024-04-05",
-      "chuDe": "hoat-dong",
-      "tomTat": "Tối 4/4 tại Hải Phòng, Đoàn diễn 1 biểu diễn chương trình kết hợp ca khúc cách mạng với các làn điệu chèo, quan họ và trích đoạn chèo cổ. Đây là hoạt động hướng tới kỷ niệm 70 năm Chiến thắng lịch sử Điện Biên Phủ.",
-      "anh": {
-        "url": "/anh/tin-tuc/canh-sat-bien-hai-phong.jpg",
-        "duongDan": null
-      },
-      "anhNguon": "Ảnh: Báo An ninh Hải Phòng",
-      "nguonTen": "Báo An ninh Hải Phòng",
-      "nguonUrl": "https://www.anhp.vn/nha-hat-cheo-quan-doi-bieu-dien-phuc-vu-can-bo-chien-si-cac-don-vi-canh-sat-bien-va-nhan-dan-hai-phong-d59243.html",
-      "hienThi": true
-    }
-  ],
+  /* KHÔNG có "tinTuc" ở đây. Năm bài đầu tiên vốn là tin lấy theo đường
+     dẫn báo chí, đưa vào cho trang đỡ trống lúc mới dựng. Nay tin bài chỉ
+     đến từ CMS: viết trong mục Tin tức là hiện ra trang, xoá trong đó là
+     mất hẳn. Để lại dữ liệu gốc thì bấm "Nạp" một cái là năm bài vừa xoá
+     sống dậy. */
   "lichDien": [
     {
       "tenVo": "Quan Âm Thị Kính",
