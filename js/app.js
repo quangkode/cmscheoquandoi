@@ -150,10 +150,14 @@ async function veTongQuan() {
   chinh.innerHTML = `
     <div class="dau">${nutMoBen}<div>
       <h1>Tổng quan</h1>
+    </div>
+    <div class="dau__phai">
+      <a class="nut" href="./nap-du-lieu.html">Nạp dữ liệu</a>
     </div></div>
 
     ${trong.length ? `<div class="nhac">
       <h3>Còn ${trong.length} mục chưa có dữ liệu</h3>
+      <p><a class="nut nut--nho nut--chinh" href="./nap-du-lieu.html">Nạp dữ liệu vào ${trong.length} mục này</a></p>
     </div>` : ""}
 
     <div class="the-so">
