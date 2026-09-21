@@ -40,6 +40,10 @@ service cloud.firestore {
     match /lich-dien/{id}    { allow read: if true; allow write: if laQuanTri(); }
     match /thu-vien-anh/{id} { allow read: if true; allow write: if laQuanTri(); }
     match /vo-dien/{id}      { allow read: if true; allow write: if laQuanTri(); }
+    /* nhan-su gộp nghe-si với lanh-dao làm một. Hai mục cũ CỐ Ý giữ
+       nguyên luật ở đây: dữ liệu vẫn nằm đó làm bản lưu cho tới khi
+       đối chiếu xong bản gộp, xoá luật là mất đường đọc lại. */
+    match /nhan-su/{id}      { allow read: if true; allow write: if laQuanTri(); }
     match /nghe-si/{id}      { allow read: if true; allow write: if laQuanTri(); }
     match /lanh-dao/{id}     { allow read: if true; allow write: if laQuanTri(); }
     match /anh-bia/{id}      { allow read: if true; allow write: if laQuanTri(); }

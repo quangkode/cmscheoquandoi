@@ -140,9 +140,63 @@ export const LUOC_DO = {
     ]
   },
 
+  /* ==========================================================
+     NHÂN SỰ — gộp Nghệ sĩ và Lãnh đạo làm một
+
+     Trước đây tách hai mục, mà chín bản ghi lãnh đạo chính là người đã
+     có trong bảng nghệ sĩ. Sửa tên hay đổi ảnh một bên thì bên kia vẫn
+     giữ bản cũ, không ai biết cho tới lúc nhìn ra trang web thấy hai chỗ
+     ghi khác nhau. Ba người còn tệ hơn: trong tên bên Lãnh đạo có ghi
+     NSND/NSƯT nhưng bảng Nghệ sĩ không hề có họ.
+
+     Nay mỗi người MỘT bản ghi, đội mấy vai thì bật mấy công tắc.
+
+     Tên lưu TRẦN ("Vũ Tự Long"), quân hàm và nghề tách thành ô riêng.
+     Gộp lại lúc hiển thị mới ra "Đại tá, Đạo diễn, NSND Vũ Tự Long" —
+     để nguyên cả cụm trong ô họ tên thì không lọc, không sắp, không đối
+     chiếu được, mà thăng quân hàm lại phải sửa chuỗi bằng tay.
+     ========================================================== */
+  "nhan-su": {
+    nhan: "Nhân sự",
+    moTa: "Nghệ sĩ và lãnh đạo chung một danh sách. Một người giữ cả hai vai thì bật cả hai công tắc.",
+    bieuTuong: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 20c0-4 4-6 8-6s8 2 8 6",
+    sapXep: { truong: "thuTu", chieu: "asc" },
+    locNhanh: [
+      { nhan: "Nghệ sĩ", dat: { "co:laNgheSi": "1" } },
+      { nhan: "Lãnh đạo", dat: { "co:laLanhDao": "1" } },
+      { nhan: "Giữ cả hai vai", dat: { "co:laNgheSi": "1", "co:laLanhDao": "1" } }
+    ],
+    cot: [cot("anh", "Ảnh", "anh"), cot("hoTen", "Họ tên"), cot("danhHieu", "Danh hiệu"),
+          cot("nhom", "Cương vị"), cot("nhiemKy", "Nhiệm kỳ"), cot("hienThi", "Hiện", "cong-tac")],
+    truong: [
+      { ten: "hoTen", nhan: "Họ và tên", kieu: "text", batBuoc: true,
+        goiY: "Chỉ tên, không gõ quân hàm hay NSND/NSƯT. Ví dụ: Vũ Tự Long" },
+      { ten: "quanHam", nhan: "Quân hàm", kieu: "text", goiY: "Ví dụ: Đại tá. Để trống nếu không có." },
+      { ten: "ngheChinh", nhan: "Nghề", kieu: "text", goiY: "Ví dụ: Đạo diễn, Nhạc sĩ. Để trống nếu không có." },
+
+      { ten: "laNgheSi", nhan: "Là nghệ sĩ có danh hiệu", kieu: "cong-tac", macDinh: false },
+      { ten: "danhHieu", nhan: "Danh hiệu", kieu: "chon", batBuoc: true, phuThuoc: "laNgheSi",
+        chon: [{ gia: "NSND", nhan: "Nghệ sĩ Nhân dân" }, { gia: "NSƯT", nhan: "Nghệ sĩ Ưu tú" }] },
+      { ten: "namNSND", nhan: "Năm phong NSND", kieu: "text", phuThuoc: "laNgheSi" },
+      { ten: "namNSUT", nhan: "Năm phong NSƯT", kieu: "text", phuThuoc: "laNgheSi" },
+
+      { ten: "laLanhDao", nhan: "Trong ban lãnh đạo", kieu: "cong-tac", macDinh: false },
+      { ten: "nhom", nhan: "Cương vị", kieu: "chon", batBuoc: true, phuThuoc: "laLanhDao",
+        chon: [{ gia: "doan-truong", nhan: "Đoàn trưởng" }, { gia: "giam-doc", nhan: "Giám đốc Nhà hát" }, { gia: "chinh-tri-vien", nhan: "Chính trị viên - Bí thư Đảng ủy" }, { gia: "cap-pho", nhan: "Phó Đoàn trưởng - Phó Giám đốc" }] },
+      { ten: "nhiemKy", nhan: "Nhiệm kỳ", kieu: "text", batBuoc: true, phuThuoc: "laLanhDao",
+        goiY: "Cương vị cao nhất. Ví dụ: 9/2014 - 12/2024 · từ 12/2024 · chưa rõ" },
+      { ten: "chucDanh", nhan: "Các cương vị đã giữ trước đó", kieu: "text", phuThuoc: "laLanhDao",
+        goiY: "Ví dụ: Phó Đoàn trưởng (2002 - 2009) · Phó Giám đốc (2010 - 2011)" },
+
+      { ten: "anh", nhan: "Ảnh chân dung", kieu: "anh", thuMuc: "nhan-su" },
+      { ten: "thuTu", nhan: "Thứ tự", kieu: "so", macDinh: 10 },
+      { ten: "hienThi", nhan: "Hiện trên web", kieu: "cong-tac", macDinh: true }
+    ]
+  },
+
   "nghe-si": {
-    nhan: "Nghệ sĩ",
-    moTa: "Bảng vàng danh hiệu NSND và NSƯT ở trang Lịch sử.",
+    nhan: "Nghệ sĩ (bản cũ)",
+    moTa: "Đã gộp vào Nhân sự. Giữ lại làm bản lưu, chưa xoá. Sửa ở đây KHÔNG ra trang web nữa.",
     bieuTuong: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 20c0-4 4-6 8-6s8 2 8 6",
     sapXep: { truong: "thuTu", chieu: "asc" },
     cot: [cot("anh", "Ảnh", "anh"), cot("hoTen", "Họ tên"), cot("danhHieu", "Danh hiệu"), cot("namNSND", "Năm"), cot("hienThi", "Hiện", "cong-tac")],
@@ -159,8 +213,8 @@ export const LUOC_DO = {
   },
 
   "lanh-dao": {
-    nhan: "Lãnh đạo",
-    moTa: "Danh sách lãnh đạo qua các thời kỳ ở trang Lịch sử.",
+    nhan: "Lãnh đạo (bản cũ)",
+    moTa: "Đã gộp vào Nhân sự. Giữ lại làm bản lưu, chưa xoá. Sửa ở đây KHÔNG ra trang web nữa.",
     bieuTuong: "M12 3l8 4v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7z",
     sapXep: { truong: "thuTu", chieu: "asc" },
     cot: [cot("anh", "Ảnh", "anh"), cot("hoTen", "Họ tên"), cot("nhom", "Nhóm"), cot("nhiemKy", "Nhiệm kỳ"), cot("hienThi", "Hiện", "cong-tac")],

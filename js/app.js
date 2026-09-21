@@ -146,7 +146,12 @@ async function veTongQuan() {
     })
   );
 
-  const trong = DANH_MUC.filter((ma) => dem[ma] === 0 && ma !== "dat-cho");
+  /* Hai mục cũ còn dữ liệu mà Nhân sự chưa có gì = chưa gộp. Nút chỉ hiện
+     lúc đó; gộp xong là tự biến mất, không để lại nút chạy một lần nằm
+     chình ình rồi có ngày ai đó bấm nhầm lần hai. */
+  const canGop = dem["nhan-su"] === 0 && (dem["nghe-si"] > 0 || dem["lanh-dao"] > 0);
+  const trong = DANH_MUC.filter((ma) => dem[ma] === 0 && ma !== "dat-cho" && !(canGop && ma === "nhan-su"));
+
   chinh.innerHTML = `
     <div class="dau">${nutMoBen}<div>
       <h1>Tổng quan</h1>
@@ -154,6 +159,14 @@ async function veTongQuan() {
     <div class="dau__phai">
       <a class="nut" href="./nap-du-lieu.html">Nạp dữ liệu</a>
     </div></div>
+
+    ${canGop ? `<div class="nhac nhac--nguy">
+      <h3>Nghệ sĩ và Lãnh đạo chưa được gộp</h3>
+      <p>Đang có ${dem["nghe-si"]} nghệ sĩ và ${dem["lanh-dao"]} lãnh đạo ở hai mục riêng, nhiều người
+         nằm ở cả hai nên sửa một bên là bên kia lệch. Gộp lại thành một danh sách Nhân sự,
+         mỗi người một bản ghi.</p>
+      <p><a class="nut nut--nho nut--chinh" href="./gop-nhan-su.html">Xem trước rồi gộp</a></p>
+    </div>` : ""}
 
     ${trong.length ? `<div class="nhac">
       <h3>Còn ${trong.length} mục chưa có dữ liệu</h3>
@@ -872,7 +885,7 @@ function moBieuMau(ma, d, dienSan) {
          ${d?.taoLuc ? `<dt>Gửi lúc</dt><dd>${esc(ngayGioVN(d.taoLuc))}</dd>` : ""}</dl></div>` : "") +
       `<form id="bmChinh" novalidate>${m.truong.map((t) => veTruong(t, giaTri)).join("")}</form>`,
     nutChinh: laSua ? "Lưu thay đổi" : "Tạo mới",
-    khiMo: (hop) => ganTaiAnh(hop, m, giaTri, anhDaChon),
+    khiMo: (hop) => { ganTaiAnh(hop, m, giaTri, anhDaChon); ganPhuThuoc(hop, m); },
     khiXacNhan: async () => {
       const bm = document.getElementById("bmChinh");
       const duLieu = {};
@@ -889,6 +902,16 @@ function moBieuMau(ma, d, dienSan) {
         else gia = o.value.trim();
 
         const oNhap = bm.querySelector(`[data-o="${t.ten}"]`);
+        /* Ô đang bị ẩn vì công tắc phụ thuộc đang tắt thì không đòi điền, và
+           cũng không giữ lại giá trị cũ: tắt "Là lãnh đạo" mà vẫn lưu nhiệm kỳ
+           thì trang web lọc theo laLanhDao là đúng, nhưng ai mở bản ghi ra xem
+           lại thấy dữ liệu mâu thuẫn. */
+        if (t.phuThuoc && !bm.querySelector(`[name="${t.phuThuoc}"]`)?.checked) {
+          oNhap.classList.remove("co-loi");
+          oNhap.querySelector(".loi")?.remove();
+          duLieu[t.ten] = t.kieu === "so" ? null : t.kieu === "anh" ? gia : "";
+          continue;
+        }
         const thieu = t.batBuoc && (gia === null || gia === "" || gia === undefined);
         oNhap.classList.toggle("co-loi", !!thieu);
         const elLoi = oNhap.querySelector(".loi");
@@ -906,6 +929,25 @@ function moBieuMau(ma, d, dienSan) {
       bao(laSua ? "Đã lưu." : "Đã tạo mới.", "xong");
     }
   });
+}
+
+/* Trường khai phuThuoc: "tenCongTac" chỉ hiện khi công tắc đó đang bật.
+   Một người trong Nhân sự có thể chỉ là nghệ sĩ, chỉ là lãnh đạo, hoặc cả
+   hai — không ẩn đi thì ai nhập một ông Chính trị viên cũng phải nhìn ô
+   "Năm phong NSND" nằm chình ình. */
+function ganPhuThuoc(hop, m) {
+  const cot = [...new Set((m.truong || []).filter((t) => t.phuThuoc).map((t) => t.phuThuoc))];
+  for (const ten of cot) {
+    const ct = hop.querySelector(`[name="${ten}"]`);
+    if (!ct) continue;
+    const con = (m.truong || []).filter((t) => t.phuThuoc === ten);
+    const dong = () => con.forEach((t) => {
+      const o = hop.querySelector(`[data-o="${t.ten}"]`);
+      if (o) o.hidden = !ct.checked;
+    });
+    ct.addEventListener("change", dong);
+    dong();
+  }
 }
 
 function veTruong(t, d) {
