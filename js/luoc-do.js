@@ -81,9 +81,19 @@ export const LUOC_DO = {
     moTa: "Mảng ảnh ở trang Tin tức. Bấm vào ảnh trên web sẽ mở bản đầy đủ.",
     bieuTuong: "M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5",
     sapXep: { truong: "thuTu", chieu: "asc" },
-    cot: [cot("anh", "Ảnh", "anh"), cot("chuThich", "Chú thích"), cot("khoAnh", "Khổ"), cot("thuTu", "Thứ tự"), cot("hienThi", "Hiện", "cong-tac")],
+    locNhanh: [
+      { nhan: "Thư viện (Tin tức)", dat: { "chon:khu": "thu-vien" } },
+      { nhan: "Tư liệu (Lịch sử)", dat: { "chon:khu": "tu-lieu" } }
+    ],
+    cot: [cot("anh", "Ảnh", "anh"), cot("chuThich", "Chú thích"), cot("khu", "Khu vực"), cot("khoAnh", "Khổ"), cot("thuTu", "Thứ tự"), cot("hienThi", "Hiện", "cong-tac")],
     truong: [
       { ten: "anh", nhan: "Ảnh", kieu: "anh", batBuoc: true, thuMuc: "thu-vien" },
+      /* Một mục chứa hai mảng ảnh khác hẳn nhau: ảnh hoạt động (trang Tin
+         tức) và ảnh tư liệu lịch sử (trang Lịch sử). Gộp một chỗ vì cách
+         nhập y hệt nhau, phân biệt bằng ô này. */
+      { ten: "khu", nhan: "Khu vực", kieu: "chon", batBuoc: true, macDinh: "thu-vien",
+        chon: [{ gia: "thu-vien", nhan: "Trang Tin tức · Thư viện ảnh" },
+               { gia: "tu-lieu", nhan: "Trang Lịch sử · Tư liệu & hình ảnh" }] },
       { ten: "chuThich", nhan: "Chú thích", kieu: "text", batBuoc: true },
       { ten: "nguon", nhan: "Nguồn ảnh", kieu: "text" },
       { ten: "khoAnh", nhan: "Khổ trong lưới", kieu: "chon", macDinh: "thuong",
@@ -119,6 +129,8 @@ export const LUOC_DO = {
       { ten: "tomTat", nhan: "Tóm tắt", kieu: "dai" },
       { ten: "nam", nhan: "Năm dàn dựng", kieu: "text" },
       { ten: "trichDoan", nhan: "Là trích đoạn", kieu: "cong-tac" },
+      { ten: "giaiDoan", nhan: "Chặng đường", kieu: "text",
+        goiY: "Ví dụ: Giai đoạn 1986 - 2010 — gõ giống hệt nhau cho các vở cùng chặng" },
       { ten: "giaiThuong", nhan: "Giải thưởng", kieu: "dai", goiY: "Mỗi giải một dòng" },
       { ten: "anh", nhan: "Ảnh", kieu: "anh", thuMuc: "vo-dien" },
       { ten: "anhMoTa", nhan: "Mô tả ảnh", kieu: "text", goiY: "Ví dụ: Cảnh trong vở Đêm trắng" },
@@ -229,6 +241,54 @@ export const LUOC_DO = {
       { ten: "facebook", nhan: "Facebook", kieu: "url" },
       { ten: "youtube", nhan: "YouTube", kieu: "url" },
       { ten: "tiktok", nhan: "TikTok", kieu: "url" }
+    ]
+  },
+
+  /* ---------- Khối nội dung rải trên các trang ----------
+     Chín vùng khác nhau nhưng cùng một khuôn: một dòng nhỏ, một tiêu đề,
+     một đoạn mô tả. Gộp vào MỘT mục chứ không tách chín mục — chín dòng
+     menu cho vài chục thẻ thì tìm còn lâu hơn là sửa. Phân biệt bằng ô
+     "Khu vực", và có nút lọc nhanh cho từng vùng. */
+  "khoi-trang": {
+    nhan: "Khối nội dung",
+    moTa: "Các thẻ ngắn rải trên những trang khác: nhiệm vụ, giá trị, phần thưởng, liệt sĩ, hướng dẫn đặt chỗ…",
+    bieuTuong: "M4 5h7v7H4zM13 5h7v7h-7zM4 14h7v5H4zM13 14h7v5h-7z",
+    xemTrenWeb: "/gioi-thieu.html#su-menh",
+    sapXep: { truong: "thuTu", chieu: "asc" },
+    locNhanh: [
+      { nhan: "Giới thiệu", dat: { "tim": "gioi-thieu" } },
+      { nhan: "Đang ẩn", dat: { "co:hienThi": "0" } }
+    ],
+    cot: [cot("khu", "Khu vực"), cot("nhan", "Dòng nhỏ"), cot("tieuDe", "Tiêu đề"), cot("thuTu", "Thứ tự"), cot("hienThi", "Hiện", "cong-tac")],
+    truong: [
+      { ten: "khu", nhan: "Khu vực", kieu: "chon", batBuoc: true,
+        chon: [
+          { gia: "nhanh", nhan: "Trang chủ · Thông tin nhanh" },
+          { gia: "gioi-thieu-doi-net", nhan: "Giới thiệu · Đôi nét (đoạn văn)" },
+          { gia: "gioi-thieu-su-menh", nhan: "Giới thiệu · Bốn nhiệm vụ" },
+          { gia: "gioi-thieu-tam-nhin", nhan: "Giới thiệu · Tầm nhìn" },
+          { gia: "gioi-thieu-gia-tri", nhan: "Giới thiệu · Ba thành tố" },
+          { gia: "gioi-thieu-chuc-nang", nhan: "Giới thiệu · Chức năng & Năng lực" },
+          { gia: "phan-thuong", nhan: "Lịch sử · Phần thưởng cao quý" },
+          { gia: "liet-si", nhan: "Nghệ sĩ · Tưởng nhớ liệt sĩ" },
+          { gia: "huong-dan", nhan: "Đặt chỗ · Hướng dẫn đặt chỗ" }
+        ] },
+      { ten: "nhan", nhan: "Dòng nhỏ phía trên", kieu: "text",
+        goiY: "Năm với phần thưởng, chức vụ với liệt sĩ. Mấy khu khác để trống." },
+      { ten: "tieuDe", nhan: "Tiêu đề", kieu: "text",
+        goiY: "Khu Đôi nét và Tầm nhìn để trống, chỉ cần ô Nội dung." },
+      { ten: "moTa", nhan: "Nội dung", kieu: "dai" },
+      { ten: "ghiChu", nhan: "Dòng nhỏ phía dưới", kieu: "text",
+        goiY: 'Ví dụ: Tác giả ca khúc "Trước ngày hội bắn"' },
+      { ten: "noiBat", nhan: "Thẻ lớn nổi bật", kieu: "cong-tac",
+        goiY: "Chỉ dùng cho Phần thưởng — thẻ chiếm trọn hàng, nền xanh đậm." },
+      { ten: "bieuTuong", nhan: "Biểu tượng", kieu: "chon", macDinh: "",
+        goiY: "Chỉ dùng cho Thông tin nhanh ở trang chủ.",
+        chon: [{ gia: "", nhan: "— không —" }, { gia: "ve", nhan: "Tấm vé" },
+               { gia: "gio", nhan: "Đồng hồ" }, { gia: "xe", nhan: "Xe lưu diễn" },
+               { gia: "hoc", nhan: "Mũ tốt nghiệp" }, { gia: "sao", nhan: "Ngôi sao" }] },
+      { ten: "thuTu", nhan: "Thứ tự", kieu: "so", macDinh: 10 },
+      { ten: "hienThi", nhan: "Hiện trên web", kieu: "cong-tac", macDinh: true }
     ]
   },
 
