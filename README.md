@@ -191,8 +191,7 @@ Cả sáu mục nội dung đều nối hai chiều — sửa trong CMS là tran
 | Tin tức | Trang chủ (khối tin mới) và trang Tin tức |
 | Lịch diễn | Trang chủ và danh sách suất khi đặt chỗ |
 | Thư viện ảnh | Trang Tin tức, mục Thư viện ảnh |
-| Nghệ sĩ | Trang Nghệ sĩ, hai mục NSND và NSƯT |
-| Lãnh đạo | Trang Nghệ sĩ, mục Ban lãnh đạo qua các thời kỳ |
+| Nhân sự | Trang Nghệ sĩ — cả hai mục NSND/NSƯT lẫn Ban lãnh đạo qua các thời kỳ |
 | Vở diễn | Trang Vở diễn, ba mục Chèo cổ · Người lính · Danh nhân |
 
 **Trang web không bao giờ để CMS làm nó nghèo đi.** Mỗi khối vẫn giữ bản HTML

@@ -32,17 +32,13 @@ export const MUC = [
      khongThem: chỉ so trường của bản ghi đang có, KHÔNG thêm lại bản ghi đã
      mất. Lịch diễn gắn với thời gian, suất diễn qua rồi xoá đi là chuyện
      bình thường; dữ liệu gốc là ảnh chụp trang web hồi 2024, thêm lại theo
-     nó là dựng dậy đúng mấy suất vừa cố ý xoá. Ba mục còn lại là danh mục
-     tra cứu, thiếu bản nào đúng là thiếu thật. */
+     nó là dựng dậy đúng mấy suất vừa cố ý xoá. Vở diễn là danh mục tra cứu,
+     thiếu bản nào đúng là thiếu thật.
+
+     Nghệ sĩ với Lãnh đạo cũng không còn: hai mục ấy đã gộp vào Nhân sự, mà
+     Nhân sự thì không có bản gốc để đối chiếu. */
   { ma: "lich-dien",    khoa: "lichDien", nhanKhoa: "tên vở + ngày diễn", khongThem: true,
     lay: (r) => ch(r.tenVo) + "|" + ngay10(r.ngay) },
-  { ma: "nghe-si",      khoa: "ngheSi",   nhanKhoa: "họ tên",
-    lay: (r) => ch(r.hoTen) },
-  /* Không đưa nhiệm kỳ vào khoá: sửa một chữ trong nhiệm kỳ là bản ghi hoá
-     ra "chưa có", công cụ lại thêm mới một bản trùng. Một người giữ hai
-     cương vị thì hai dòng đã khác nhóm rồi. */
-  { ma: "lanh-dao",     khoa: "lanhDao",  nhanKhoa: "họ tên + nhóm",
-    lay: (r) => ch(r.hoTen) + "|" + ch(r.nhom) },
   { ma: "vo-dien",      khoa: "voDien",   nhanKhoa: "tên vở",
     lay: (r) => ch(r.ten) }
 ];

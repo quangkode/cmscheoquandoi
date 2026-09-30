@@ -146,11 +146,7 @@ async function veTongQuan() {
     })
   );
 
-  /* Hai mục cũ còn dữ liệu mà Nhân sự chưa có gì = chưa gộp. Nút chỉ hiện
-     lúc đó; gộp xong là tự biến mất, không để lại nút chạy một lần nằm
-     chình ình rồi có ngày ai đó bấm nhầm lần hai. */
-  const canGop = dem["nhan-su"] === 0 && (dem["nghe-si"] > 0 || dem["lanh-dao"] > 0);
-  const trong = DANH_MUC.filter((ma) => dem[ma] === 0 && ma !== "dat-cho" && !(canGop && ma === "nhan-su"));
+  const trong = DANH_MUC.filter((ma) => dem[ma] === 0 && ma !== "dat-cho");
 
   chinh.innerHTML = `
     <div class="dau">${nutMoBen}<div>
@@ -159,14 +155,6 @@ async function veTongQuan() {
     <div class="dau__phai">
       <a class="nut" href="./nap-du-lieu.html">Nạp dữ liệu</a>
     </div></div>
-
-    ${canGop ? `<div class="nhac nhac--nguy">
-      <h3>Nghệ sĩ và Lãnh đạo chưa được gộp</h3>
-      <p>Đang có ${dem["nghe-si"]} nghệ sĩ và ${dem["lanh-dao"]} lãnh đạo ở hai mục riêng, nhiều người
-         nằm ở cả hai nên sửa một bên là bên kia lệch. Gộp lại thành một danh sách Nhân sự,
-         mỗi người một bản ghi.</p>
-      <p><a class="nut nut--nho nut--chinh" href="./gop-nhan-su.html">Xem trước rồi gộp</a></p>
-    </div>` : ""}
 
     ${trong.length ? `<div class="nhac">
       <h3>Còn ${trong.length} mục chưa có dữ liệu</h3>

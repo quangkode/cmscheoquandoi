@@ -198,41 +198,10 @@ export const LUOC_DO = {
     ]
   },
 
-  "nghe-si": {
-    nhan: "Nghệ sĩ (bản cũ)",
-    moTa: "Đã gộp vào Nhân sự. Giữ lại làm bản lưu, chưa xoá. Sửa ở đây KHÔNG ra trang web nữa.",
-    bieuTuong: "M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 20c0-4 4-6 8-6s8 2 8 6",
-    sapXep: { truong: "thuTu", chieu: "asc" },
-    cot: [cot("anh", "Ảnh", "anh"), cot("hoTen", "Họ tên"), cot("danhHieu", "Danh hiệu"), cot("namNSND", "Năm"), cot("hienThi", "Hiện", "cong-tac")],
-    truong: [
-      { ten: "hoTen", nhan: "Họ và tên", kieu: "text", batBuoc: true },
-      { ten: "danhHieu", nhan: "Danh hiệu", kieu: "chon", batBuoc: true,
-        chon: [{ gia: "NSND", nhan: "Nghệ sĩ Nhân dân" }, { gia: "NSƯT", nhan: "Nghệ sĩ Ưu tú" }] },
-      { ten: "namNSND", nhan: "Năm phong NSND", kieu: "text" },
-      { ten: "namNSUT", nhan: "Năm phong NSƯT", kieu: "text" },
-      { ten: "anh", nhan: "Ảnh chân dung", kieu: "anh", thuMuc: "nghe-si" },
-      { ten: "thuTu", nhan: "Thứ tự", kieu: "so", macDinh: 10 },
-      { ten: "hienThi", nhan: "Hiện trên web", kieu: "cong-tac", macDinh: true }
-    ]
-  },
-
-  "lanh-dao": {
-    nhan: "Lãnh đạo (bản cũ)",
-    moTa: "Đã gộp vào Nhân sự. Giữ lại làm bản lưu, chưa xoá. Sửa ở đây KHÔNG ra trang web nữa.",
-    bieuTuong: "M12 3l8 4v5c0 5-3.4 8-8 9-4.6-1-8-4-8-9V7z",
-    sapXep: { truong: "thuTu", chieu: "asc" },
-    cot: [cot("anh", "Ảnh", "anh"), cot("hoTen", "Họ tên"), cot("nhom", "Nhóm"), cot("nhiemKy", "Nhiệm kỳ"), cot("hienThi", "Hiện", "cong-tac")],
-    truong: [
-      { ten: "hoTen", nhan: "Họ và tên", kieu: "text", batBuoc: true, goiY: "Ví dụ: Đại tá, Đạo diễn, NSND Vũ Tự Long" },
-      { ten: "nhom", nhan: "Nhóm", kieu: "chon", batBuoc: true,
-        chon: [{ gia: "doan-truong", nhan: "Đoàn trưởng" }, { gia: "giam-doc", nhan: "Giám đốc Nhà hát" }, { gia: "chinh-tri-vien", nhan: "Chính trị viên - Bí thư Đảng ủy" }, { gia: "cap-pho", nhan: "Phó Đoàn trưởng - Phó Giám đốc" }] },
-      { ten: "nhiemKy", nhan: "Nhiệm kỳ", kieu: "text", batBuoc: true, goiY: "Ví dụ: 9/2014 - 12/2024 · từ 12/2024 · chưa rõ" },
-      { ten: "chucDanh", nhan: "Chức danh chi tiết", kieu: "text", goiY: "Ví dụ: Phó Đoàn trưởng (2002 - 2009) · Phó Giám đốc (2010 - 2011)" },
-      { ten: "anh", nhan: "Ảnh chân dung", kieu: "anh", thuMuc: "lanh-dao" },
-      { ten: "thuTu", nhan: "Thứ tự", kieu: "so", macDinh: 10 },
-      { ten: "hienThi", nhan: "Hiện trên web", kieu: "cong-tac", macDinh: true }
-    ]
-  },
+  /* KHÔNG còn "nghe-si" và "lanh-dao" ở đây. Hai mục ấy đã gộp vào "nhan-su";
+     giữ lại trong menu chỉ tổ có hai chỗ sửa cho cùng một người, sửa nhầm bên
+     cũ thì trang web không đổi mà chẳng ai biết. Dữ liệu cũ vẫn nằm nguyên
+     trong Firestore và luật vẫn cho đọc — xem bằng gop-nhan-su.html. */
 
   /* ---------- Ảnh bìa chạy ở đầu trang chủ ---------- */
   "anh-bia": {

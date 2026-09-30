@@ -23,11 +23,10 @@ function bao(t, k) {
 
 /* Ghép mục trong Firestore với mảng dữ liệu tương ứng */
 /* Không có tin-tuc lẫn thu-vien-anh: tin bài và ảnh không nạp sẵn, chỉ do
-   người dùng tự đăng trong CMS. */
+   người dùng tự đăng trong CMS. Cũng không còn nghe-si với lanh-dao: hai
+   mục ấy đã gộp vào Nhân sự, mà Nhân sự không có bản gốc để nạp. */
 const BANG = [
   ["lich-dien", "lichDien"],
-  ["nghe-si", "ngheSi"],
-  ["lanh-dao", "lanhDao"],
   ["vo-dien", "voDien"]
 ];
 
