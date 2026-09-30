@@ -105,8 +105,13 @@ export function cssKieu(tienTo) {
   });
   MAU.forEach((m) => dong.push(`${t}.${m.lop}{color:${m.hex}}`));
   NEN.forEach((m) => dong.push(`${t}.${m.lop}{background:${m.hex};padding:.1em .22em;border-radius:3px}`));
-  dong.push(`${t}.can-giua{text-align:center}`);
-  dong.push(`${t}.can-phai{text-align:right}`);
-  dong.push(`${t}.can-deu{text-align:justify}`);
+  /* Hai kiểu chọn cho mỗi lớp căn: "${t}.can-giua" là đoạn NẰM TRONG ô
+     soạn, còn "${tienTo}.can-giua" là chính cái ô ấy — ô rỗng chưa có đoạn
+     nào thì lớp rơi thẳng lên nó, mà bộ chọn hậu duệ không với tới. */
+  ["can-giua:center", "can-phai:right", "can-deu:justify"].forEach((c) => {
+    const [lop, gia] = c.split(":");
+    dong.push(`${t}.${lop}{text-align:${gia}}`);
+    if (tienTo) dong.push(`${tienTo}.${lop}{text-align:${gia}}`);
+  });
   return dong.join("\n");
 }

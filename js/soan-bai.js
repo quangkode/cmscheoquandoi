@@ -315,6 +315,42 @@ function viTriCon() {
   return d.toString().length;
 }
 
+/* Giữ cả hai đầu vùng chọn, không chỉ con trỏ: căn lề cần biết bôi đen
+   tới đâu để căn đúng mấy đoạn ấy. Đo bằng số ký tự vì hàm gói đoạn bên
+   dưới dựng lại cây DOM, mọi tham chiếu nút cũ đều hỏng. */
+function khoangChon() {
+  const s = window.getSelection();
+  if (!s || !s.rangeCount) return null;
+  const o = oSoan();
+  const r = s.getRangeAt(0);
+  if (!o.contains(r.startContainer)) return null;
+  const dem = (nut, lech) => {
+    const d = document.createRange();
+    d.selectNodeContents(o);
+    d.setEnd(nut, lech);
+    return d.toString().length;
+  };
+  return { a: dem(r.startContainer, r.startOffset), b: dem(r.endContainer, r.endOffset) };
+}
+
+function datKhoang(k) {
+  if (!k) return;
+  const o = oSoan();
+  const di = document.createTreeWalker(o, NodeFilter.SHOW_TEXT);
+  const r = document.createRange();
+  r.selectNodeContents(o);
+  let da = 0, nut, xongA = false;
+  while ((nut = di.nextNode())) {
+    const d = nut.nodeValue.length;
+    if (!xongA && da + d >= k.a) { r.setStart(nut, Math.max(0, k.a - da)); xongA = true; }
+    if (xongA && da + d >= k.b) { r.setEnd(nut, Math.max(0, k.b - da)); break; }
+    da += d;
+  }
+  const s = window.getSelection();
+  s.removeAllRanges();
+  s.addRange(r);
+}
+
 function datCon(n) {
   const o = oSoan();
   const di = document.createTreeWalker(o, NodeFilter.SHOW_TEXT);
@@ -537,8 +573,65 @@ function khoiTrongVungChon() {
   return trong.length ? trong : (o.contains(r.startContainer) ? [o] : []);
 }
 
+/* Gói mấy dòng rời thành <p>.
+
+   Gõ thẳng vào ô contenteditable thì dòng đầu là CHỮ TRẦN, còn mỗi lần
+   Enter Chrome đẻ ra một <div> — cả hai đều không phải thẻ khối mà bộ căn
+   lề nhận ra, nên bấm mấy nút căn chẳng thấy gì đổi. Tệ hơn: <div> không
+   nằm trong danh sách thẻ cho phép, lưu xuống là bị bóc vỏ, mấy dòng dính
+   liền vào nhau thành một cục.
+
+   Gọi trước mỗi lần căn lề, và lúc lưu. Nút Enter nay cũng đã sinh thẳng
+   <p> (xem defaultParagraphSeparator trong ganSuKien). */
+const KHOI_BAI = "P,H2,H3,H4,UL,OL,LI,BLOCKQUOTE,FIGURE,TABLE,HR,PRE";
+
+function goiThanhDoan() {
+  const o = oSoan();
+  let doi = false;
+
+  // div ở mức trên cùng: có khối bên trong thì bóc vỏ, không thì hoá thành <p>
+  [...o.children].forEach((el) => {
+    if (el.tagName !== "DIV") return;
+    doi = true;
+    if (el.querySelector(KHOI_BAI)) {
+      while (el.firstChild) o.insertBefore(el.firstChild, el);
+      el.remove();
+      return;
+    }
+    const p = document.createElement("p");
+    if (el.className) p.className = el.className;   // giữ lớp căn lề đã có
+    while (el.firstChild) p.appendChild(el.firstChild);
+    o.replaceChild(p, el);
+  });
+
+  // chữ trần và thẻ trong dòng ở mức trên cùng: gom từng mạch vào một <p>
+  let dem = null;
+  [...o.childNodes].forEach((nut) => {
+    if (nut.nodeType === 1 && nut.matches(KHOI_BAI)) { dem = null; return; }
+    if (nut.nodeType === 3 && !nut.nodeValue.trim() && !dem) return;
+    if (nut.nodeType !== 1 && nut.nodeType !== 3) { dem = null; return; }
+    if (!dem) { dem = document.createElement("p"); o.insertBefore(dem, nut); doi = true; }
+    dem.appendChild(nut);
+  });
+
+  // mấy <p> vừa gom mà rỗng thì vứt, nhưng chừa đoạn cách dòng <p><br></p>
+  [...o.querySelectorAll("p")].forEach((p) => {
+    if (!p.textContent.trim() && !p.querySelector("img, br")) p.remove();
+  });
+
+  if (!o.childNodes.length) {
+    o.appendChild(document.createElement("p"));
+    doi = true;
+  }
+  return doi;
+}
+
 function canLe(lop) {
   oSoan().focus();
+  /* Gói đoạn TRƯỚC khi tìm khối: gói xong cây DOM khác hẳn, nên phải giữ
+     vùng chọn theo số ký tự rồi dựng lại. */
+  const k = khoangChon();
+  if (goiThanhDoan()) datKhoang(k);
   const ds = khoiTrongVungChon();
   if (!ds.length) { bao("Đặt con trỏ vào đoạn muốn căn đã.", "loi"); return; }
   ds.forEach((el) => {
@@ -586,6 +679,11 @@ function ganSuKien() {
      bôi đậm xong lưu lại là mất sạch định dạng. Nó cũng là thứ khiến
      fontSize sinh ra <font size="7"> — chỗ datLop() bám vào. */
   try { document.execCommand("styleWithCSS", false, false); } catch { /* trình duyệt cũ */ }
+
+  /* Enter đẻ ra <p> chứ không phải <div>. Mặc định của Chrome là <div>, mà
+     <div> không nằm trong danh sách thẻ cho phép — lưu xuống là bị bóc vỏ,
+     bài đang mấy đoạn rõ ràng dính lại thành một cục chữ. */
+  try { document.execCommand("defaultParagraphSeparator", false, "p"); } catch { /* trình duyệt cũ */ }
 
   document.querySelectorAll("#sbCongCu [data-lenh]").forEach((b) =>
     b.addEventListener("click", () => lenh(b.dataset.lenh)));
@@ -1000,7 +1098,8 @@ function gomDuLieu(loc) {
     ngay: g("f-ngay"),
     chuDe: g("f-chuDe"),
     tomTat: g("f-tomTat"),
-    noiDung: loc ? locHtml(oSoan().innerHTML, nguonUrl) : oSoan().innerHTML,
+    // gói nốt mấy dòng rời trước khi lọc, không thì <div> bị bóc vỏ mất đoạn
+    noiDung: loc ? (goiThanhDoan(), locHtml(oSoan().innerHTML, nguonUrl)) : oSoan().innerHTML,
     anh: anhBia,
     anhNguon: g("f-anhNguon"),
     // lối tự soạn thì xoá hẳn hai ô nguồn, kể cả bài trước đó lấy từ báo
