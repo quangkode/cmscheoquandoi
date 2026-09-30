@@ -1055,6 +1055,21 @@ async function luu() {
       o.insertAdjacentHTML("beforeend", `<p class="loi">Bắt buộc điền.</p>`);
     }
   }
+
+  /* Ô thứ năm, nhưng chỉ bắt buộc khi đang bật "Hiện trên web": trang web
+     không hiện bài rỗng ruột, nên bật mà để trống thì lưu xong bài biến mất
+     khỏi trang mà chẳng có gì báo. Tắt công tắc đi thì lưu kiểu gì cũng được,
+     coi như bản nháp nằm trong CMS. */
+  const oBai = document.querySelector('[data-o="noiDung"]');
+  oBai.querySelector(".loi")?.remove();
+  const baiRong = !duLieu.noiDung.replace(/<[^>]*>/g, "").trim();
+  const chanBai = baiRong && duLieu.hienThi;
+  oBai.classList.toggle("co-loi", chanBai);
+  if (chanBai) {
+    thieu = true;
+    oBai.insertAdjacentHTML("beforeend",
+      `<p class="loi">Chưa có nội dung thì bài không ra web được. Soạn tiếp, hoặc tắt "Hiện trên web" để lưu tạm.</p>`);
+  }
   if (thieu) {
     bao("Còn ô bắt buộc chưa điền.", "loi");
     document.querySelector(".co-loi")?.scrollIntoView({ behavior: "smooth", block: "center" });

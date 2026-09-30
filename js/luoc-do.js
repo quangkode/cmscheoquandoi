@@ -37,6 +37,10 @@ export const LUOC_DO = {
       { ten: "chuDe", nhan: "Chủ đề", kieu: "chon", batBuoc: true,
         chon: [{ gia: "hoat-dong", nhan: "Hoạt động" }, { gia: "su-kien", nhan: "Sự kiện" }] },
       { ten: "tomTat", nhan: "Tóm tắt", kieu: "dai", batBuoc: true },
+      /* Trang web CHỈ hiện bài đã có nội dung — bài mới có tóm tắt thì nằm
+         lại trong CMS. Chỗ bắt buộc nhập nằm trong luu() bên soan-bai.js,
+         không phải ở cờ batBuoc: mục này soạn ở trang riêng, trang đó tự
+         dựng lấy khung nhập nên không đọc lược đồ. */
       { ten: "noiDung", nhan: "Nội dung bài", kieu: "bai" },
       { ten: "anh", nhan: "Ảnh minh hoạ", kieu: "anh", thuMuc: "tin-tuc" },
       { ten: "anhNguon", nhan: "Ghi công ảnh", kieu: "text", goiY: "Ví dụ: Ảnh: Báo Quân đội nhân dân" },
