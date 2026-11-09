@@ -89,7 +89,10 @@ export const LUOC_DO = {
       { nhan: "Thư viện ảnh (Thư viện)", dat: { "chon:khu": "thu-vien" } },
       { nhan: "Tư liệu (Lịch sử)", dat: { "chon:khu": "tu-lieu" } }
     ],
-    cot: [cot("anh", "Ảnh", "anh"), cot("chuThich", "Chú thích"), cot("khu", "Khu vực"), cot("khoAnh", "Khổ"), cot("thuTu", "Thứ tự"), cot("hienThi", "Hiện", "cong-tac")],
+    /* Bật nút "Tải nhiều ảnh": chọn một lượt cả chục tấm, điền chung khu
+       vực / vở / chủ đề một lần, mỗi tấm thành một bản ghi riêng. */
+    taiNhieu: true,
+    cot: [cot("anh", "Ảnh", "anh"), cot("chuThich", "Chú thích"), cot("khu", "Khu vực"), cot("tenVo", "Vở diễn"), cot("chuDe", "Chủ đề"), cot("thuTu", "Thứ tự"), cot("hienThi", "Hiện", "cong-tac")],
     truong: [
       { ten: "anh", nhan: "Ảnh", kieu: "anh", batBuoc: true, thuMuc: "thu-vien" },
       /* Một mục chứa hai mảng ảnh khác hẳn nhau: ảnh hoạt động (trang Thư
@@ -98,6 +101,19 @@ export const LUOC_DO = {
       { ten: "khu", nhan: "Khu vực", kieu: "chon", batBuoc: true, macDinh: "thu-vien",
         chon: [{ gia: "thu-vien", nhan: "Trang Thư viện · Thư viện ảnh" },
                { gia: "tu-lieu", nhan: "Trang Lịch sử · Tư liệu & hình ảnh" }] },
+      /* Ảnh thư viện gom theo vở diễn hoặc theo chủ đề; ngoài web mỗi vở /
+         mỗi chủ đề thành một nút lọc. Chỉ áp cho khu thu-vien — ảnh tư liệu
+         trang Lịch sử có cách bày riêng, không lọc. Ba ô này không bắt buộc
+         để mở lại ảnh cũ (chưa có nhóm) mà sửa thì không bị bắt điền. */
+      { ten: "nhomTheo", nhan: "Xếp ảnh theo", kieu: "chon", macDinh: "chu-de",
+        phuThuoc: "khu", khiLa: "thu-vien",
+        chon: [{ gia: "vo-dien", nhan: "Theo vở diễn" }, { gia: "chu-de", nhan: "Theo chủ đề" }] },
+      { ten: "tenVo", nhan: "Vở diễn", kieu: "text", phuThuoc: "nhomTheo", khiLa: "vo-dien",
+        goiYTu: { muc: "vo-dien", truong: "ten" },
+        goiY: "Gõ vài chữ rồi chọn từ danh sách vở. Các ảnh cùng vở phải ghi giống hệt nhau." },
+      { ten: "chuDe", nhan: "Chủ đề", kieu: "text", phuThuoc: "nhomTheo", khiLa: "chu-de",
+        goiYTu: { muc: "thu-vien-anh", truong: "chuDe", them: ["Biểu diễn", "Hậu trường", "Phục vụ bộ đội", "Sự kiện"] },
+        goiY: "Chọn chủ đề có sẵn hoặc gõ chủ đề mới. Các ảnh cùng chủ đề phải ghi giống hệt nhau." },
       { ten: "chuThich", nhan: "Chú thích", kieu: "text", batBuoc: true },
       { ten: "nguon", nhan: "Nguồn ảnh", kieu: "text" },
       { ten: "khoAnh", nhan: "Khổ trong lưới", kieu: "chon", macDinh: "thuong",

@@ -344,6 +344,7 @@ function veDanhSach(ma) {
       <button type="button" class="nut" id="nutXuat" title="Tải toàn bộ mục này về máy dạng .xlsx">Xuất Excel</button>
       ${m.layTuBao && !m.trangSoan ? `<button type="button" class="nut" id="nutLayBai" title="Lấy bài từ báo về">Lấy từ link báo</button>` : ""}
       ${m.chiDoc || m.motBanGhi ? "" : `<button type="button" class="nut" id="nutNhap">Nhập bảng tính</button>`}
+      ${m.taiNhieu ? `<button type="button" class="nut" id="nutTaiNhieu" title="Chọn nhiều ảnh, tải lên một lượt">Tải nhiều ảnh</button>` : ""}
       ${m.chiDoc ? "" : `<button type="button" class="nut nut--chinh" id="nutThem">+ Thêm mới</button>`}
     </div></div>
 
@@ -383,6 +384,7 @@ function veDanhSach(ma) {
   });
   document.getElementById("nutNhap")?.addEventListener("click", () => moNhap(ma, m, () => duLieu));
   document.getElementById("nutLayBai")?.addEventListener("click", () => moLayBai(ma, m, () => duLieu));
+  document.getElementById("nutTaiNhieu")?.addEventListener("click", () => moTaiNhieu(ma, m, () => duLieu));
 
   /* Các dòng được tích chọn, giữ theo id chứ không theo phần tử: onSnapshot
      vẽ lại bảng bất cứ lúc nào, bám vào ô checkbox là mất sạch lựa chọn. */
@@ -873,7 +875,7 @@ function moBieuMau(ma, d, dienSan) {
          ${d?.taoLuc ? `<dt>Gửi lúc</dt><dd>${esc(ngayGioVN(d.taoLuc))}</dd>` : ""}</dl></div>` : "") +
       `<form id="bmChinh" novalidate>${m.truong.map((t) => veTruong(t, giaTri)).join("")}</form>`,
     nutChinh: laSua ? "Lưu thay đổi" : "Tạo mới",
-    khiMo: (hop) => { ganTaiAnh(hop, m, giaTri, anhDaChon); ganPhuThuoc(hop, m); },
+    khiMo: (hop) => { ganTaiAnh(hop, m, giaTri, anhDaChon); ganPhuThuoc(hop, m); napGoiY(hop, m); },
     khiXacNhan: async () => {
       const bm = document.getElementById("bmChinh");
       const duLieu = {};
@@ -894,7 +896,7 @@ function moBieuMau(ma, d, dienSan) {
            cũng không giữ lại giá trị cũ: tắt "Là lãnh đạo" mà vẫn lưu nhiệm kỳ
            thì trang web lọc theo laLanhDao là đúng, nhưng ai mở bản ghi ra xem
            lại thấy dữ liệu mâu thuẫn. */
-        if (t.phuThuoc && !bm.querySelector(`[name="${t.phuThuoc}"]`)?.checked) {
+        if (!truongDangHien(bm, m, t)) {
           oNhap.classList.remove("co-loi");
           oNhap.querySelector(".loi")?.remove();
           duLieu[t.ten] = t.kieu === "so" ? null : t.kieu === "anh" ? gia : "";
@@ -922,20 +924,204 @@ function moBieuMau(ma, d, dienSan) {
 /* Trường khai phuThuoc: "tenCongTac" chỉ hiện khi công tắc đó đang bật.
    Một người trong Nhân sự có thể chỉ là nghệ sĩ, chỉ là lãnh đạo, hoặc cả
    hai — không ẩn đi thì ai nhập một ông Chính trị viên cũng phải nhìn ô
-   "Năm phong NSND" nằm chình ình. */
+   "Năm phong NSND" nằm chình ình.
+
+   Khai thêm khiLa thì trường cha là ô chọn: chỉ hiện khi ô đó đang chọn
+   đúng giá trị ấy (Thư viện ảnh: "Xếp theo vở diễn" thì hiện ô Vở diễn).
+   Phụ thuộc lồng được: cha đang ẩn thì con ẩn theo, dù giá trị khớp. */
+function truongDangHien(goc, m, t) {
+  if (!t.phuThuoc) return true;
+  const cha = (m.truong || []).find((x) => x.ten === t.phuThuoc);
+  if (cha && !truongDangHien(goc, m, cha)) return false;
+  const o = goc.querySelector(`[name="${t.phuThuoc}"]`);
+  if (!o) return false;
+  return t.khiLa !== undefined ? o.value === t.khiLa : o.checked;
+}
+
 function ganPhuThuoc(hop, m) {
-  const cot = [...new Set((m.truong || []).filter((t) => t.phuThuoc).map((t) => t.phuThuoc))];
-  for (const ten of cot) {
-    const ct = hop.querySelector(`[name="${ten}"]`);
-    if (!ct) continue;
-    const con = (m.truong || []).filter((t) => t.phuThuoc === ten);
-    const dong = () => con.forEach((t) => {
-      const o = hop.querySelector(`[data-o="${t.ten}"]`);
-      if (o) o.hidden = !ct.checked;
-    });
-    ct.addEventListener("change", dong);
-    dong();
+  const con = (m.truong || []).filter((t) => t.phuThuoc);
+  if (!con.length) return;
+  const dong = () => con.forEach((t) => {
+    const o = hop.querySelector(`[data-o="${t.ten}"]`);
+    if (o) o.hidden = !truongDangHien(hop, m, t);
+  });
+  for (const ten of new Set(con.map((t) => t.phuThuoc))) {
+    hop.querySelector(`[name="${ten}"]`)?.addEventListener("change", dong);
   }
+  dong();
+}
+
+/* Trường khai goiYTu: ô chữ có danh sách gợi ý (datalist) lấy từ một mục
+   khác — tên vở lấy từ mục Vở diễn, chủ đề lấy từ các chủ đề đã dùng. Vẫn
+   gõ tự do được; gợi ý chỉ để các ảnh cùng nhóm ghi giống hệt nhau. */
+async function napGoiY(hop, m) {
+  for (const t of (m.truong || []).filter((x) => x.goiYTu)) {
+    const dl = hop.querySelector(`#dl-${t.ten}`);
+    if (!dl) continue;
+    const { muc, truong, them = [] } = t.goiYTu;
+    let ds = [];
+    try { ds = await fb.layDanhSach(muc); } catch (e) { /* không đọc được thì chỉ còn gợi ý sẵn */ }
+    const gia = [...new Set([...them, ...ds.map((d) => String(d[truong] || "").trim())].filter(Boolean))]
+      .sort((a, b) => a.localeCompare(b, "vi"));
+    dl.innerHTML = gia.map((g) => `<option value="${esc(g)}"></option>`).join("");
+  }
+}
+
+/* ---------- Tải nhiều ảnh một lượt ----------
+   Chọn (hoặc kéo thả) cả loạt ảnh, điền các ô dùng chung một lần — khu vực,
+   xếp theo vở hay chủ đề, nguồn, khổ — rồi mỗi tấm thành một bản ghi riêng,
+   y như bấm Thêm mới từng cái. Chú thích sửa riêng được từng tấm; để trống
+   thì lấy tên vở / chủ đề làm chú thích.
+
+   Tải lên ba tấm một lúc. Tấm nào lỗi thì ở lại trong hộp để bấm lưu lại,
+   tấm đã xong thì rút khỏi danh sách — bấm lần nữa không ra bản trùng. */
+const TAI_CUNG_LUC = 3;
+
+function moTaiNhieu(ma, m, layDuLieu) {
+  const tAnh = m.truong.find((t) => t.kieu === "anh");
+  // các ô điền chung: bỏ ảnh, chú thích (riêng từng tấm) và thứ tự (tự đánh)
+  const chung = m.truong.filter((t) => t.kieu !== "anh" && t.ten !== "chuThich" && t.ten !== "thuTu");
+  const mChung = { ...m, truong: chung };
+  let tep = [];   // [{ id, file, url, chuThich }]
+  let dem = 0;
+
+  moHop({
+    tieuDe: "Tải nhiều ảnh",
+    than: `
+      <div class="tai-nhieu__vung" id="tnVung">
+        <input type="file" accept="image/*" multiple id="tnTep" hidden />
+        <p><strong>Kéo thả ảnh vào đây</strong> hoặc</p>
+        <button type="button" class="nut" id="tnChon">Chọn ảnh…</button>
+        <p class="goi-y">Chọn được nhiều tấm cùng lúc. Mỗi tấm tối đa ${GIOI_HAN_MB} MB.</p>
+      </div>
+      <p class="tai-nhieu__so" id="tnSo" hidden></p>
+      <div class="tai-nhieu__luoi" id="tnLuoi"></div>
+      <p class="tai-nhieu__tt" id="tnTT" hidden></p>
+      <form id="bmNhieu" novalidate>${chung.map((t) => veTruong(t, null)).join("")}</form>`,
+    nutChinh: "Tải lên",
+    khiMo: (hop) => {
+      ganPhuThuoc(hop, mChung);
+      napGoiY(hop, mChung);
+      const inp = hop.querySelector("#tnTep");
+      const vung = hop.querySelector("#tnVung");
+      const luoi = hop.querySelector("#tnLuoi");
+
+      const ve = () => {
+        luoi.innerHTML = tep.map((x) => `
+          <div class="tai-nhieu__the" data-id="${x.id}">
+            <div class="tai-nhieu__anh"><img src="${x.url}" alt="" />
+              <button type="button" class="tai-nhieu__bo" data-bo-tep="${x.id}" aria-label="Bỏ ảnh này">×</button></div>
+            <input type="text" data-cap="${x.id}" value="${esc(x.chuThich)}" placeholder="Chú thích (để trống: lấy tên vở / chủ đề)" />
+            ${x.loi ? `<p class="loi">${esc(x.loi)}</p>` : ""}
+          </div>`).join("");
+        const so = hop.querySelector("#tnSo");
+        so.hidden = !tep.length;
+        so.textContent = `Đã chọn ${tep.length} ảnh`;
+      };
+      luoi.addEventListener("ve-lai", ve);
+
+      const them = (ds) => {
+        let bo = 0;
+        for (const f of ds) {
+          if (!f.type.startsWith("image/") || f.size > GIOI_HAN_MB * 1024 * 1024) { bo++; continue; }
+          tep.push({ id: ++dem, file: f, url: URL.createObjectURL(f), chuThich: "" });
+        }
+        if (bo) bao(`Bỏ qua ${bo} tệp không phải ảnh hoặc nặng quá ${GIOI_HAN_MB} MB.`, "loi");
+        ve();
+      };
+
+      hop.querySelector("#tnChon").addEventListener("click", () => inp.click());
+      inp.addEventListener("change", () => { them([...inp.files]); inp.value = ""; });
+      vung.addEventListener("dragover", (e) => { e.preventDefault(); vung.classList.add("dang-keo"); });
+      vung.addEventListener("dragleave", () => vung.classList.remove("dang-keo"));
+      vung.addEventListener("drop", (e) => {
+        e.preventDefault();
+        vung.classList.remove("dang-keo");
+        them([...e.dataTransfer.files]);
+      });
+      luoi.addEventListener("input", (e) => {
+        const x = tep.find((y) => String(y.id) === e.target.dataset.cap);
+        if (x) x.chuThich = e.target.value;
+      });
+      luoi.addEventListener("click", (e) => {
+        const id = e.target.closest("[data-bo-tep]")?.dataset.boTep;
+        if (!id) return;
+        const x = tep.find((y) => String(y.id) === id);
+        if (x) URL.revokeObjectURL(x.url);
+        tep = tep.filter((y) => String(y.id) !== id);
+        ve();
+      });
+    },
+    khiXacNhan: async () => {
+      if (!tep.length) { bao("Chưa chọn ảnh nào.", "loi"); return false; }
+      const bm = document.getElementById("bmNhieu");
+      const duLieu = {};
+      let hopLe = true;
+      for (const t of chung) {
+        const o = bm.querySelector(`[name="${t.ten}"]`);
+        const oNhap = bm.querySelector(`[data-o="${t.ten}"]`);
+        oNhap.classList.remove("co-loi");
+        oNhap.querySelector(".loi")?.remove();
+        if (!truongDangHien(bm, mChung, t)) { duLieu[t.ten] = t.kieu === "so" ? null : ""; continue; }
+        const gia = t.kieu === "cong-tac" ? o.checked : t.kieu === "so" ? (o.value === "" ? null : Number(o.value)) : o.value.trim();
+        if (t.batBuoc && (gia === "" || gia === null)) {
+          hopLe = false;
+          oNhap.classList.add("co-loi");
+          oNhap.insertAdjacentHTML("beforeend", `<p class="loi">Bắt buộc điền.</p>`);
+        }
+        duLieu[t.ten] = gia;
+      }
+      if (!hopLe) { bao("Còn ô bắt buộc chưa điền.", "loi"); return false; }
+
+      const tenNhom = duLieu.tenVo || duLieu.chuDe || "";
+      if (!tenNhom && tep.some((x) => !x.chuThich.trim())) {
+        bao("Có ảnh chưa có chú thích. Điền chú thích, hoặc điền tên vở / chủ đề để dùng làm chú thích chung.", "loi");
+        return false;
+      }
+
+      // ảnh mới xếp nối tiếp sau ảnh cuối cùng đang có, giữ đúng thứ tự đã chọn
+      const thuTuMax = Math.max(0, ...layDuLieu().map((d) => Number(d.thuTu) || 0));
+      const tt = document.getElementById("tnTT");
+      tt.hidden = false;
+      let xong = 0;
+      const tong = tep.length;
+      const viTri = new Map(tep.map((x, i) => [x.id, i]));
+      tt.textContent = `Đang tải lên 0 / ${tong} ảnh…`;
+
+      const hang = [...tep];
+      const chay = async () => {
+        while (hang.length) {
+          const x = hang.shift();
+          try {
+            const anh = await fb.taiAnhLen(x.file, tAnh.thuMuc || "khac");
+            await fb.themMoi(ma, {
+              ...duLieu,
+              [tAnh.ten]: anh,
+              chuThich: x.chuThich.trim() || tenNhom,
+              thuTu: thuTuMax + 1 + viTri.get(x.id)
+            });
+            x.xong = true;
+            URL.revokeObjectURL(x.url);
+          } catch (e) {
+            x.loi = "Lỗi: " + (e.code || e.message);
+          }
+          xong++;
+          tt.textContent = `Đang tải lên ${xong} / ${tong} ảnh…`;
+        }
+      };
+      await Promise.all(Array.from({ length: Math.min(TAI_CUNG_LUC, tep.length) }, chay));
+
+      const loi = tep.filter((x) => !x.xong);
+      const thanhCong = tong - loi.length;
+      if (!loi.length) { bao(`Đã tải lên ${thanhCong} ảnh.`, "xong"); return; }
+      // giữ lại những tấm lỗi để bấm Tải lên lần nữa
+      tep = loi;
+      tt.textContent = `Đã tải ${thanhCong} / ${tong} ảnh. ${loi.length} ảnh lỗi còn lại bên trên, bấm Tải lên để thử lại.`;
+      document.getElementById("tnLuoi").dispatchEvent(new Event("ve-lai"));
+      bao(`${loi.length} ảnh chưa tải được.`, "loi");
+      return false;
+    }
+  });
 }
 
 function veTruong(t, d) {
@@ -981,7 +1167,11 @@ function veTruong(t, d) {
     case "url":
       return `${mo}${nhan}<input type="url" id="f-${t.ten}" name="${t.ten}" value="${esc(gia)}" placeholder="https://…" />${goiY}</div>`;
     default:
-      return `${mo}${nhan}<input type="text" id="f-${t.ten}" name="${t.ten}" value="${esc(gia)}" />${goiY}</div>`;
+      // goiYTu: danh sách gợi ý nạp sau bằng napGoiY(), lúc dựng còn rỗng
+      return t.goiYTu
+        ? `${mo}${nhan}<input type="text" id="f-${t.ten}" name="${t.ten}" value="${esc(gia)}" list="dl-${t.ten}" autocomplete="off" />
+           <datalist id="dl-${t.ten}"></datalist>${goiY}</div>`
+        : `${mo}${nhan}<input type="text" id="f-${t.ten}" name="${t.ten}" value="${esc(gia)}" />${goiY}</div>`;
   }
 }
 
