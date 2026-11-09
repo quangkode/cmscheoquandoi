@@ -82,21 +82,21 @@ export const LUOC_DO = {
 
   "thu-vien-anh": {
     nhan: "Thư viện ảnh",
-    moTa: "Mảng ảnh ở trang Tin tức. Bấm vào ảnh trên web sẽ mở bản đầy đủ.",
+    moTa: "Mảng ảnh ở trang Thư viện, ngăn Thư viện ảnh. Bấm vào ảnh trên web sẽ mở bản đầy đủ.",
     bieuTuong: "M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5",
     sapXep: { truong: "thuTu", chieu: "asc" },
     locNhanh: [
-      { nhan: "Thư viện (Tin tức)", dat: { "chon:khu": "thu-vien" } },
+      { nhan: "Thư viện ảnh (Thư viện)", dat: { "chon:khu": "thu-vien" } },
       { nhan: "Tư liệu (Lịch sử)", dat: { "chon:khu": "tu-lieu" } }
     ],
     cot: [cot("anh", "Ảnh", "anh"), cot("chuThich", "Chú thích"), cot("khu", "Khu vực"), cot("khoAnh", "Khổ"), cot("thuTu", "Thứ tự"), cot("hienThi", "Hiện", "cong-tac")],
     truong: [
       { ten: "anh", nhan: "Ảnh", kieu: "anh", batBuoc: true, thuMuc: "thu-vien" },
-      /* Một mục chứa hai mảng ảnh khác hẳn nhau: ảnh hoạt động (trang Tin
-         tức) và ảnh tư liệu lịch sử (trang Lịch sử). Gộp một chỗ vì cách
+      /* Một mục chứa hai mảng ảnh khác hẳn nhau: ảnh hoạt động (trang Thư
+         viện) và ảnh tư liệu lịch sử (trang Lịch sử). Gộp một chỗ vì cách
          nhập y hệt nhau, phân biệt bằng ô này. */
       { ten: "khu", nhan: "Khu vực", kieu: "chon", batBuoc: true, macDinh: "thu-vien",
-        chon: [{ gia: "thu-vien", nhan: "Trang Tin tức · Thư viện ảnh" },
+        chon: [{ gia: "thu-vien", nhan: "Trang Thư viện · Thư viện ảnh" },
                { gia: "tu-lieu", nhan: "Trang Lịch sử · Tư liệu & hình ảnh" }] },
       { ten: "chuThich", nhan: "Chú thích", kieu: "text", batBuoc: true },
       { ten: "nguon", nhan: "Nguồn ảnh", kieu: "text" },
@@ -109,7 +109,7 @@ export const LUOC_DO = {
 
   "vo-dien": {
     nhan: "Vở diễn",
-    moTa: "Danh mục vở ở trang Vở diễn, ba mục: Chèo cổ, Đề tài người lính, Danh nhân.",
+    moTa: "Danh mục vở ở trang Thư viện, ngăn Thư viện vở diễn, ba mục: Chèo cổ, Đề tài người lính, Danh nhân.",
     bieuTuong: "M5 4h14v16l-7-4-7 4z",
     /* Trang web xếp theo đúng thứ tự này chứ không theo bảng chữ cái: trong
        mỗi nhóm phụ, vở có năm dàn dựng đứng trước và xếp theo năm, vở chưa
