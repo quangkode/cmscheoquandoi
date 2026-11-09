@@ -995,9 +995,9 @@ function moTaiNhieu(ma, m, layDuLieu) {
         <p class="goi-y">Chọn được nhiều tấm cùng lúc. Mỗi tấm tối đa ${GIOI_HAN_MB} MB.</p>
       </div>
       <div class="tai-nhieu__drive">
-        <label for="tnDrive">Hoặc dán link ảnh Google Drive, mỗi dòng một link</label>
-        <textarea id="tnDrive" rows="3" placeholder="https://drive.google.com/file/d/…/view"></textarea>
-        <p class="goi-y">Ảnh trên Drive phải chia sẻ “Bất kỳ ai có đường liên kết”. Ảnh nặng bao nhiêu cũng được.</p>
+        <label for="tnDrive">Hoặc dán link Google Drive: link thư mục (lấy hết ảnh trong đó) hoặc link từng ảnh, mỗi dòng một link</label>
+        <textarea id="tnDrive" rows="3" placeholder="https://drive.google.com/drive/folders/…"></textarea>
+        <p class="goi-y">Thư mục / ảnh trên Drive phải chia sẻ “Bất kỳ ai có đường liên kết”. Ảnh nặng bao nhiêu cũng được.</p>
         <button type="button" class="nut nut--nho" id="tnLayDrive">Thêm ảnh từ Drive</button>
       </div>
       <p class="tai-nhieu__so" id="tnSo" hidden></p>
@@ -1052,27 +1052,56 @@ function moTaiNhieu(ma, m, layDuLieu) {
 
       // Dán một loạt link Drive: tách theo dòng / dấu cách / dấu phẩy, bỏ link
       // trùng (cả với ảnh đã có trong danh sách), link lỗi thì báo gộp một câu.
-      hop.querySelector("#tnLayDrive").addEventListener("click", () => {
+      // Link thư mục thì nhờ /api/drive-thu-muc liệt kê ảnh bên trong.
+      const nutDrive = hop.querySelector("#tnLayDrive");
+      nutDrive.addEventListener("click", async () => {
         const o = hop.querySelector("#tnDrive");
         const link = o.value.split(/[\s,]+/).filter(Boolean);
         if (!link.length) { bao("Chưa dán link nào.", "loi"); return; }
         const daCo = new Set(tep.filter((x) => x.drive).map((x) => x.drive.driveId));
-        let hong = 0, thuMuc = 0, trung = 0, them = 0;
-        for (const l of link) {
-          const id = maDrive(l);
-          if (!id) { if (/\/folders\//.test(l)) thuMuc++; else hong++; continue; }
-          if (daCo.has(id)) { trung++; continue; }
+        let hong = 0, trung = 0, them = 0, conThuMuc = 0, khongAnh = 0;
+        const loiThuMuc = [];
+        const nhan = (id) => {
+          if (daCo.has(id)) { trung++; return; }
           daCo.add(id);
           const anh = anhDrive(id);
           tep.push({ id: ++dem, drive: anh, url: anh.url, chuThich: "" });
           them++;
+        };
+
+        nutDrive.disabled = true;
+        const chuNut = nutDrive.textContent;
+        try {
+          for (const l of link) {
+            const tm = maThuMuc(l);
+            if (tm) {
+              nutDrive.textContent = "Đang đọc thư mục…";
+              try {
+                const r = await fetch(`/api/drive-thu-muc?id=${encodeURIComponent(tm)}`);
+                const kq = await r.json().catch(() => ({}));
+                if (!r.ok) throw new Error(kq.loi || `Lỗi ${r.status}`);
+                if (!kq.tep.length) loiThuMuc.push("thư mục không có ảnh nào");
+                kq.tep.forEach((f) => nhan(f.id));
+                conThuMuc += kq.thuMucCon || 0;
+                khongAnh += kq.boQua || 0;
+              } catch (e) { loiThuMuc.push(e.message); }
+              continue;
+            }
+            const id = maDrive(l);
+            if (id) nhan(id); else hong++;
+          }
+        } finally {
+          nutDrive.disabled = false;
+          nutDrive.textContent = chuNut;
         }
-        const loi = [];
-        if (thuMuc) loi.push(`${thuMuc} link thư mục (cần link từng ảnh)`);
-        if (hong) loi.push(`${hong} link không phải ảnh Drive`);
-        if (trung) loi.push(`${trung} link trùng`);
-        if (loi.length) bao("Bỏ qua " + loi.join(", ") + ".", "loi");
-        if (them) { o.value = ""; ve(); }
+
+        const loi = [...loiThuMuc];
+        if (hong) loi.push(`bỏ qua ${hong} link không phải ảnh Drive`);
+        if (trung) loi.push(`bỏ qua ${trung} ảnh trùng`);
+        if (khongAnh) loi.push(`bỏ qua ${khongAnh} tệp không phải ảnh`);
+        if (conThuMuc) loi.push(`${conThuMuc} thư mục con không đọc vào, dán link riêng nếu cần`);
+        if (them) { o.value = ""; ve(); bao(`Đã thêm ${them} ảnh từ Drive.` + (loi.length ? " " + loi.join("; ") + "." : ""), "xong"); }
+        else if (loi.length) bao(loi.join("; ") + ".", "loi");
       });
 
       hop.querySelector("#tnChon").addEventListener("click", () => inp.click());
@@ -1243,9 +1272,14 @@ function maDrive(link) {
     || s.match(/googleusercontent\.com\/d\/([\w-]{10,})/);
   return m ? m[1] : "";
 }
+// link thư mục: drive.google.com/drive/folders/<id> (có thể kèm /u/0/)
+function maThuMuc(link) {
+  const m = String(link || "").match(/drive\.google\.com\/drive\/(?:u\/\d+\/)?folders\/([\w-]{10,})/);
+  return m ? m[1] : "";
+}
 const anhDrive = (id) => ({ url: `https://lh3.googleusercontent.com/d/${id}=w2000`, duongDan: null, driveId: id });
 const loiLinkDrive = (link) => /\/folders\//.test(link)
-  ? "Đây là link thư mục. Mở thư mục, bấm chuột phải vào từng ảnh → Chia sẻ → Sao chép đường liên kết."
+  ? "Đây là link thư mục. Ô này nhận một ảnh; muốn lấy cả thư mục thì dùng nút “Tải nhiều ảnh”."
   : "Link này không phải link ảnh Google Drive.";
 const LOI_CHIA_SE = "Không mở được ảnh. Kiểm tra ảnh trên Drive đã chia sẻ “Bất kỳ ai có đường liên kết” chưa.";
 
