@@ -994,6 +994,12 @@ function moTaiNhieu(ma, m, layDuLieu) {
         <button type="button" class="nut" id="tnChon">Chọn ảnh…</button>
         <p class="goi-y">Chọn được nhiều tấm cùng lúc. Mỗi tấm tối đa ${GIOI_HAN_MB} MB.</p>
       </div>
+      <div class="tai-nhieu__drive">
+        <label for="tnDrive">Hoặc dán link ảnh Google Drive, mỗi dòng một link</label>
+        <textarea id="tnDrive" rows="3" placeholder="https://drive.google.com/file/d/…/view"></textarea>
+        <p class="goi-y">Ảnh trên Drive phải chia sẻ “Bất kỳ ai có đường liên kết”. Ảnh nặng bao nhiêu cũng được.</p>
+        <button type="button" class="nut nut--nho" id="tnLayDrive">Thêm ảnh từ Drive</button>
+      </div>
       <p class="tai-nhieu__so" id="tnSo" hidden></p>
       <div class="tai-nhieu__luoi" id="tnLuoi"></div>
       <p class="tai-nhieu__tt" id="tnTT" hidden></p>
@@ -1009,11 +1015,25 @@ function moTaiNhieu(ma, m, layDuLieu) {
       const ve = () => {
         luoi.innerHTML = tep.map((x) => `
           <div class="tai-nhieu__the" data-id="${x.id}">
-            <div class="tai-nhieu__anh"><img src="${x.url}" alt="" />
+            <div class="tai-nhieu__anh"><img src="${esc(x.url)}" alt="" data-anh-tep="${x.id}" />
+              ${x.drive ? `<span class="tai-nhieu__nhan">Drive</span>` : ""}
               <button type="button" class="tai-nhieu__bo" data-bo-tep="${x.id}" aria-label="Bỏ ảnh này">×</button></div>
             <input type="text" data-cap="${x.id}" value="${esc(x.chuThich)}" placeholder="Chú thích (để trống: lấy tên vở / chủ đề)" />
             ${x.loi ? `<p class="loi">${esc(x.loi)}</p>` : ""}
           </div>`).join("");
+        /* Ảnh Drive chưa chia sẻ công khai thì Google trả lỗi. Đánh dấu hỏng và
+           ghi lỗi ngay dưới thẻ — không vẽ lại cả lưới, vẽ lại thì ảnh lại
+           tải hỏng lần nữa, lặp mãi. */
+        luoi.querySelectorAll("[data-anh-tep]").forEach((im) => {
+          const x = tep.find((y) => String(y.id) === im.dataset.anhTep);
+          if (!x || !x.drive) return;
+          im.onerror = () => {
+            x.hong = true;
+            const the = im.closest(".tai-nhieu__the");
+            if (the && !the.querySelector(".loi")) the.insertAdjacentHTML("beforeend", `<p class="loi">${esc(LOI_CHIA_SE)}</p>`);
+          };
+          im.onload = () => { x.hong = false; };
+        });
         const so = hop.querySelector("#tnSo");
         so.hidden = !tep.length;
         so.textContent = `Đã chọn ${tep.length} ảnh`;
@@ -1029,6 +1049,31 @@ function moTaiNhieu(ma, m, layDuLieu) {
         if (bo) bao(`Bỏ qua ${bo} tệp không phải ảnh hoặc nặng quá ${GIOI_HAN_MB} MB.`, "loi");
         ve();
       };
+
+      // Dán một loạt link Drive: tách theo dòng / dấu cách / dấu phẩy, bỏ link
+      // trùng (cả với ảnh đã có trong danh sách), link lỗi thì báo gộp một câu.
+      hop.querySelector("#tnLayDrive").addEventListener("click", () => {
+        const o = hop.querySelector("#tnDrive");
+        const link = o.value.split(/[\s,]+/).filter(Boolean);
+        if (!link.length) { bao("Chưa dán link nào.", "loi"); return; }
+        const daCo = new Set(tep.filter((x) => x.drive).map((x) => x.drive.driveId));
+        let hong = 0, thuMuc = 0, trung = 0, them = 0;
+        for (const l of link) {
+          const id = maDrive(l);
+          if (!id) { if (/\/folders\//.test(l)) thuMuc++; else hong++; continue; }
+          if (daCo.has(id)) { trung++; continue; }
+          daCo.add(id);
+          const anh = anhDrive(id);
+          tep.push({ id: ++dem, drive: anh, url: anh.url, chuThich: "" });
+          them++;
+        }
+        const loi = [];
+        if (thuMuc) loi.push(`${thuMuc} link thư mục (cần link từng ảnh)`);
+        if (hong) loi.push(`${hong} link không phải ảnh Drive`);
+        if (trung) loi.push(`${trung} link trùng`);
+        if (loi.length) bao("Bỏ qua " + loi.join(", ") + ".", "loi");
+        if (them) { o.value = ""; ve(); }
+      });
 
       hop.querySelector("#tnChon").addEventListener("click", () => inp.click());
       inp.addEventListener("change", () => { them([...inp.files]); inp.value = ""; });
@@ -1047,7 +1092,7 @@ function moTaiNhieu(ma, m, layDuLieu) {
         const id = e.target.closest("[data-bo-tep]")?.dataset.boTep;
         if (!id) return;
         const x = tep.find((y) => String(y.id) === id);
-        if (x) URL.revokeObjectURL(x.url);
+        if (x && x.file) URL.revokeObjectURL(x.url);
         tep = tep.filter((y) => String(y.id) !== id);
         ve();
       });
@@ -1093,7 +1138,9 @@ function moTaiNhieu(ma, m, layDuLieu) {
         while (hang.length) {
           const x = hang.shift();
           try {
-            const anh = await fb.taiAnhLen(x.file, tAnh.thuMuc || "khac");
+            // ảnh Drive không tải tệp nào, chỉ lưu địa chỉ; link hỏng thì không lưu
+            if (x.hong) throw new Error(LOI_CHIA_SE);
+            const anh = x.drive || await fb.taiAnhLen(x.file, tAnh.thuMuc || "khac");
             await fb.themMoi(ma, {
               ...duLieu,
               [tAnh.ten]: anh,
@@ -1101,9 +1148,9 @@ function moTaiNhieu(ma, m, layDuLieu) {
               thuTu: thuTuMax + 1 + viTri.get(x.id)
             });
             x.xong = true;
-            URL.revokeObjectURL(x.url);
+            if (x.file) URL.revokeObjectURL(x.url);
           } catch (e) {
-            x.loi = "Lỗi: " + (e.code || e.message);
+            x.loi = x.hong ? LOI_CHIA_SE : "Lỗi: " + (e.code || e.message);
           }
           xong++;
           tt.textContent = `Đang tải lên ${xong} / ${tong} ảnh…`;
@@ -1151,6 +1198,10 @@ function veTruong(t, d) {
             <button type="button" class="nut nut--nho" data-bo="${t.ten}"${gia?.url ? "" : " hidden"}>Bỏ ảnh</button>
             <span class="goi-y" data-tt="${t.ten}"></span>
           </div>
+        </div>
+        <div class="o-anh-drive">
+          <input type="url" data-drive="${t.ten}" placeholder="…hoặc dán link ảnh Google Drive" aria-label="Link ảnh Google Drive" />
+          <button type="button" class="nut nut--nho" data-lay-drive="${t.ten}">Lấy ảnh</button>
         </div>${goiY}</div>`;
     case "bai":
       // Cố ý KHÔNG esc(): nội dung này đã lọc theo danh sách thẻ cho phép
@@ -1177,9 +1228,62 @@ function veTruong(t, d) {
 
 const GIOI_HAN_MB = 5;
 
+/* ---------- Ảnh lấy từ Google Drive ----------
+   Ảnh nặng (quá 5 MB, ảnh gốc máy ảnh) thì để trên Drive, chia sẻ "Bất kỳ
+   ai có đường liên kết", dán link vào CMS. Không tải tệp qua Firebase: bản
+   ghi chỉ giữ địa chỉ ảnh do Google phục vụ, kèm driveId để nhận ra.
+
+   Dùng lh3.googleusercontent.com/d/<id>=w2000: Google tự thu ảnh về cạnh
+   dài 2000px nên ảnh gốc 20 MB ra web vẫn nhẹ, mà phóng to xem vẫn nét.
+   duongDan để null — không có tệp nào trong Storage để xoá kèm. */
+function maDrive(link) {
+  const s = String(link || "").trim();
+  if (!/(drive|docs)\.google\.com|googleusercontent\.com/.test(s)) return "";
+  const m = s.match(/\/file\/d\/([\w-]{10,})/) || s.match(/[?&]id=([\w-]{10,})/)
+    || s.match(/googleusercontent\.com\/d\/([\w-]{10,})/);
+  return m ? m[1] : "";
+}
+const anhDrive = (id) => ({ url: `https://lh3.googleusercontent.com/d/${id}=w2000`, duongDan: null, driveId: id });
+const loiLinkDrive = (link) => /\/folders\//.test(link)
+  ? "Đây là link thư mục. Mở thư mục, bấm chuột phải vào từng ảnh → Chia sẻ → Sao chép đường liên kết."
+  : "Link này không phải link ảnh Google Drive.";
+const LOI_CHIA_SE = "Không mở được ảnh. Kiểm tra ảnh trên Drive đã chia sẻ “Bất kỳ ai có đường liên kết” chưa.";
+
+// thử tải ảnh trước khi nhận: link riêng tư thì Google trả lỗi, báo ngay
+function thuAnh(url) {
+  return new Promise((ok) => {
+    const im = new Image();
+    im.onload = () => ok(im.naturalWidth > 0);
+    im.onerror = () => ok(false);
+    im.src = url;
+  });
+}
+
 function ganTaiAnh(hop, m, d, anhDaChon) {
   hop.querySelectorAll("[data-chon]").forEach((b) =>
     b.addEventListener("click", () => hop.querySelector(`[data-tep="${b.dataset.chon}"]`).click()));
+
+  const layDrive = async (ten) => {
+    const o = hop.querySelector(`[data-drive="${ten}"]`);
+    const tt = hop.querySelector(`[data-tt="${ten}"]`);
+    const id = maDrive(o.value);
+    if (!id) { bao(loiLinkDrive(o.value), "loi"); return; }
+    const anh = anhDrive(id);
+    tt.textContent = "Đang lấy ảnh từ Drive…";
+    if (!(await thuAnh(anh.url))) { tt.textContent = ""; bao(LOI_CHIA_SE, "loi"); return; }
+    anhDaChon[ten] = anh;
+    hop.querySelector(`[data-xem="${ten}"]`).innerHTML = `<img src="${esc(anh.url)}" alt="" />`;
+    hop.querySelector(`[data-bo="${ten}"]`).hidden = false;
+    tt.textContent = "Đã lấy ảnh từ Drive";
+    o.value = "";
+  };
+  hop.querySelectorAll("[data-lay-drive]").forEach((b) =>
+    b.addEventListener("click", () => layDrive(b.dataset.layDrive)));
+  // Enter trong ô link = bấm Lấy ảnh, không để nó bấm nút Lưu của hộp thoại
+  hop.querySelectorAll("[data-drive]").forEach((o) =>
+    o.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") { e.preventDefault(); layDrive(o.dataset.drive); }
+    }));
 
   hop.querySelectorAll("[data-bo]").forEach((b) =>
     b.addEventListener("click", () => {

@@ -110,8 +110,9 @@ export function soMot(m, dsCms) {
       if (giongNhau(g[t], o.r[t])) return;
       /* Ảnh đã tải lên kho Firebase (có duongDan) thì tuyệt đối không đè:
          ghi đè xong là tệp trong Storage mất đường tìm ra, nằm lại đó
-         vĩnh viễn và vẫn tính tiền. */
-      const anhRieng = o.r[t] && typeof o.r[t] === "object" && o.r[t].duongDan;
+         vĩnh viễn và vẫn tính tiền. Ảnh lấy từ Google Drive (có driveId)
+         cũng là ảnh người dùng tự chọn, giữ nguyên như vậy. */
+      const anhRieng = o.r[t] && typeof o.r[t] === "object" && (o.r[t].duongDan || o.r[t].driveId);
       if (anhRieng) return;
       if (rong(o.r[t])) { datThieu[t] = g[t]; dongThieu.push(t + ": " + toGon(g[t])); }
       else { datKhac[t] = g[t]; dongKhac.push(t + ": " + toGon(o.r[t]) + " → " + toGon(g[t])); }
