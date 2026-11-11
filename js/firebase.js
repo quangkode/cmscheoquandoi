@@ -37,6 +37,15 @@ export function nguoiDungHienTai() {
   });
 }
 
+/* Lấy Firebase ID token của người đang đăng nhập — dùng làm Authorization
+   header khi gọi các API máy chủ cần xác thực admin (xem api/lay-bai-day-du.js).
+   Token tự hết hạn sau 1 giờ, getIdToken() tự refresh nên lần nào cũng
+   lấy ra bản còn hạn. */
+export async function layIdToken() {
+  const u = await nguoiDungHienTai();
+  return u ? u.getIdToken() : null;
+}
+
 /* --- Firestore --- */
 const {
   collection, doc, getDocs, getDoc, addDoc, updateDoc, deleteDoc,

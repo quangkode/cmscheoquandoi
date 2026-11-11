@@ -111,12 +111,9 @@ module.exports = async (req, res) => {
       nguonTen: tenBao(html, u),
       nguonUrl: meta(html, "og:url") || u.href,
 
-      /* Khi CMS xin toàn văn thì trả nguyên HTML để trình duyệt tự bóc.
-         Cố ý KHÔNG bóc ở đây: máy chủ không có sẵn bộ phân tích HTML, mà
-         bóc bài bằng biểu thức chính quy thì sai ngay khi gặp thẻ lồng
-         nhau. Trình duyệt có DOMParser dựng cây đàng hoàng, lọc theo danh
-         sách thẻ cho phép cũng chắc tay hơn nhiều. Xem js/doc-bai.js. */
-      html: req.query.html ? html : undefined,
+      /* KHÔNG trả HTML thô ở endpoint công khai này — bất kỳ ai cũng gọi
+         được. Endpoint riêng /api/lay-bai-day-du yêu cầu đăng nhập admin
+         mới trả HTML đầy đủ cho trình duyệt bóc bài (js/doc-bai.js). */
       goc: u.href,
       // Để CMS nhắc người dùng ô nào máy không tự tìm ra
       thieu: [

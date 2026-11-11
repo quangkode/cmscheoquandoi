@@ -679,13 +679,27 @@ function moLayBai(ma, m, layDuLieu) {
         hop.querySelector("#kqLayBai").innerHTML =
           `<div class="dang-tai"><div class="xoay"></div>Đang đọc bài báo…</div>`;
         try {
-          const r = await fetch("/api/lay-bai?html=1&url=" + encodeURIComponent(dc));
-          const kq = await r.json();
-          if (!r.ok) throw new Error(kq.loi || "Không đọc được bài.");
+          /* Hai lượt gọi song song: lay-bai (công khai, lấy OG metadata)
+             và lay-bai-day-du (yêu cầu đăng nhập, trả HTML thô để bóc
+             toàn văn). Tách ra sau khi vá lỗ cho phép ai cũng xin được
+             HTML trang báo qua endpoint công khai. */
+          const idToken = await fb.layIdToken();
+          if (!idToken) throw new Error("Phiên đã hết hạn. Đăng nhập lại.");
+          const [rMeta, rHtml] = await Promise.all([
+            fetch("/api/lay-bai?url=" + encodeURIComponent(dc)),
+            fetch("/api/lay-bai-day-du?url=" + encodeURIComponent(dc), {
+              headers: { Authorization: "Bearer " + idToken }
+            })
+          ]);
+          const kq = await rMeta.json();
+          if (!rMeta.ok) throw new Error(kq.loi || "Không đọc được bài.");
+          const kqHtml = await rHtml.json();
+          if (!rHtml.ok) throw new Error(kqHtml.loi || "Không lấy được toàn văn.");
 
           // Bóc toàn văn ngay tại trình duyệt — máy chủ chỉ đưa HTML thô về
-          kq.bai = kq.html ? bocBai(kq.html, kq.goc || kq.nguonUrl || dc) : { html: "", anh: [], soChu: 0 };
-          delete kq.html;   // đừng giữ cả trang báo trong bộ nhớ nữa
+          kq.bai = kqHtml.html
+            ? bocBai(kqHtml.html, kqHtml.goc || kq.nguonUrl || dc)
+            : { html: "", anh: [], soChu: 0 };
 
           ketQua = kq;
           const trung = (layDuLieu() || []).find((x) => x.nguonUrl && x.nguonUrl === kq.nguonUrl);
