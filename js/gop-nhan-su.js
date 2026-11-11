@@ -12,6 +12,7 @@
    Nghệ sĩ không hề có họ.
    ========================================================== */
 import { daCauHinh } from "../cau-hinh.js";
+import { dienGiaiLoi } from "./dien-giai-loi.js";
 
 const noiDung = document.getElementById("noiDung");
 const khayBao = document.getElementById("khayBao");
@@ -135,7 +136,7 @@ if (!daCauHinh) {
     <p>Dán <code>firebaseConfig</code> vào <code>cau-hinh.js</code> trước đã.</p></div>`;
 } else {
   chay().catch((e) => {
-    noiDung.innerHTML = `<div class="nhac nhac--nguy"><h3>Lỗi</h3><p><code>${esc(e.message)}</code></p></div>`;
+    noiDung.innerHTML = `<div class="nhac nhac--nguy"><h3>Lỗi</h3><p>${esc(dienGiaiLoi(e))}</p></div>`;
   });
 }
 

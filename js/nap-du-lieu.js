@@ -8,6 +8,7 @@ import { daCauHinh } from "../cau-hinh.js";
 import { DU_LIEU_GOC } from "./du-lieu-goc.js";
 import { LUOC_DO } from "./luoc-do.js";
 import { dungDoiChieu } from "./doi-chieu.js";
+import { dienGiaiLoi } from "./dien-giai-loi.js";
 
 const noiDung = document.getElementById("noiDung");
 const khayBao = document.getElementById("khayBao");
@@ -35,7 +36,7 @@ if (!daCauHinh) {
     <p>Dán <code>firebaseConfig</code> vào <code>cau-hinh.js</code> trước đã.</p></div>`;
 } else {
   chay().catch((e) => {
-    noiDung.innerHTML = `<div class="nhac"><h3>Lỗi</h3><p><code>${esc(e.message)}</code></p></div>`;
+    noiDung.innerHTML = `<div class="nhac"><h3>Lỗi</h3><p>${esc(dienGiaiLoi(e))}</p></div>`;
   });
 }
 
@@ -127,12 +128,7 @@ async function chay() {
     } catch (e) {
       nut.disabled = false;
       nut.textContent = "Thử lại";
-      bao(
-        e.code === "permission-denied"
-          ? "Firestore chặn ghi. Kiểm tra đã đăng firestore.rules và UID của bạn có trong collection quan-tri chưa."
-          : "Lỗi: " + (e.code || e.message),
-        "loi"
-      );
+      bao(dienGiaiLoi(e), "loi");
       // dừng hẳn: chạy tiếp sẽ để lại một mục nạp dở, khó biết đã tới đâu
       throw e;
     }
@@ -147,7 +143,7 @@ async function chay() {
 
   dungDoiChieu(fb, document.getElementById("doiChieu"), bao).catch((e) => {
     document.getElementById("doiChieu").innerHTML =
-      `<div class="nhac"><h3>Không đối chiếu được</h3><p><code>${esc(e.message)}</code></p></div>`;
+      `<div class="nhac"><h3>Không đối chiếu được</h3><p>${esc(dienGiaiLoi(e))}</p></div>`;
   });
 
   document.getElementById("napTatCa").addEventListener("click", async (e) => {
@@ -201,13 +197,8 @@ async function chay() {
       await chay();
     } catch (err) {
       nut.disabled = false;
-      viet(`Hỏng giữa chừng: ${err.code || err.message}. Bấm lại để chạy tiếp từ đầu.`);
-      bao(
-        err.code === "permission-denied"
-          ? "Firestore chặn. Kiểm tra firestore.rules và UID của bạn trong quan-tri."
-          : "Lỗi: " + (err.code || err.message),
-        "loi"
-      );
+      viet(`Hỏng giữa chừng: ${dienGiaiLoi(err)} Bấm lại để chạy tiếp từ đầu.`);
+      bao(dienGiaiLoi(err), "loi");
     }
   });
 }

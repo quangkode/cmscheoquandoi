@@ -9,6 +9,7 @@ import { LUOC_DO, DANH_MUC } from "./luoc-do.js";
 import { TRANG_WEB } from "../cau-hinh.js";
 import { xuatXlsx, soanNhap } from "./xuat-nhap.js";
 import { bocBai, locHtml } from "./doc-bai.js";
+import { dienGiaiLoi } from "./dien-giai-loi.js";
 
 const chinh = document.getElementById("chinh");
 const menu = document.getElementById("menu");
@@ -67,7 +68,7 @@ if (!daCauHinh) {
     <p>Dán khối <code>firebaseConfig</code> vào <code>cau-hinh.js</code> rồi tải lại trang.</p></div>`;
 } else {
   khoiDong().catch((e) => {
-    chinh.innerHTML = `<div class="nhac"><h3>Không khởi động được</h3><p><code>${esc(e.message)}</code></p></div>`;
+    chinh.innerHTML = `<div class="nhac"><h3>Không khởi động được</h3><p>${esc(dienGiaiLoi(e))}</p></div>`;
   });
 }
 
@@ -457,9 +458,7 @@ function veDanhSach(ma) {
   boNghe = fb.ngheDanhSach(ma, m.sapXep, (ds) => { duLieu = ds; ve(); }, (err) => {
     document.getElementById("khungBang").innerHTML =
       `<div class="trong"><h3>Không đọc được dữ liệu</h3>
-       <p>${esc(err.code === "permission-denied"
-          ? "Luật Firestore đang chặn. Kiểm tra đã đăng firestore.rules và đã thêm UID của bạn vào collection quan-tri chưa."
-          : err.message)}</p></div>`;
+       <p>${esc(dienGiaiLoi(err))}</p></div>`;
   });
 }
 
@@ -693,7 +692,7 @@ function moLayBai(ma, m, layDuLieu) {
           veKetQua(hop, kq, trung);
         } catch (e) {
           hop.querySelector("#kqLayBai").innerHTML =
-            `<div class="nhac nhac--nguy"><h3>Không lấy được bài</h3><p>${esc(e.message)}</p></div>`;
+            `<div class="nhac nhac--nguy"><h3>Không lấy được bài</h3><p>${esc(dienGiaiLoi(e))}</p></div>`;
         } finally {
           nut.disabled = false;
           nut.textContent = "Lấy về";
@@ -734,7 +733,7 @@ function moLayBai(ma, m, layDuLieu) {
       if (ketQua.anh) {
         viet("Đang tải ảnh đại diện…");
         try { dienSan.anh = await veKho(ketQua.anh); }
-        catch (e) { bao("Không lấy được ảnh đại diện (" + e.message + ").", "loi"); }
+        catch (e) { bao("Không lấy được ảnh đại diện: " + dienGiaiLoi(e), "loi"); }
       }
 
       /* Ảnh trong thân bài. Chặn ở 20 tấm: bài ảnh dài của báo có khi vài
@@ -1084,7 +1083,7 @@ function moTaiNhieu(ma, m, layDuLieu) {
                 kq.tep.forEach((f) => nhan(f.id));
                 conThuMuc += kq.thuMucCon || 0;
                 khongAnh += kq.boQua || 0;
-              } catch (e) { loiThuMuc.push(e.message); }
+              } catch (e) { loiThuMuc.push(dienGiaiLoi(e)); }
               continue;
             }
             const id = maDrive(l);
@@ -1179,7 +1178,7 @@ function moTaiNhieu(ma, m, layDuLieu) {
             x.xong = true;
             if (x.file) URL.revokeObjectURL(x.url);
           } catch (e) {
-            x.loi = x.hong ? LOI_CHIA_SE : "Lỗi: " + (e.code || e.message);
+            x.loi = x.hong ? LOI_CHIA_SE : dienGiaiLoi(e);
           }
           xong++;
           tt.textContent = `Đang tải lên ${xong} / ${tong} ảnh…`;
@@ -1351,7 +1350,7 @@ function ganTaiAnh(hop, m, d, anhDaChon) {
         tt.textContent = "Đã tải lên";
       } catch (e) {
         tt.textContent = "";
-        bao("Không tải được ảnh: " + (e.code || e.message), "loi");
+        bao("Không tải được ảnh: " + dienGiaiLoi(e), "loi");
       }
       inp.value = "";
     }));
@@ -1389,9 +1388,7 @@ function moHop({ tieuDe, than, nutChinh, lopNutChinh, khiXacNhan, khiMo, hep }) 
         // trả về false = biểu mẫu chưa hợp lệ, giữ hộp thoại lại cho sửa
         if ((await khiXacNhan()) !== false) dong();
       } catch (e) {
-        bao(e.code === "permission-denied"
-          ? "Luật Firestore chặn thao tác này. Kiểm tra UID của bạn đã có trong collection quan-tri chưa."
-          : "Lỗi: " + (e.code || e.message), "loi");
+        bao(dienGiaiLoi(e), "loi");
       } finally {
         ok.disabled = false;
         ok.textContent = chuGoc;

@@ -29,6 +29,7 @@ import { daCauHinh } from "../cau-hinh.js";
 import { LUOC_DO } from "./luoc-do.js";
 import { bocBai, locHtml } from "./doc-bai.js";
 import { CO_CHU, PHONG, MAU, NEN, HO, cssKieu } from "./kieu-chu.js";
+import { dienGiaiLoi } from "./dien-giai-loi.js";
 
 const than = document.getElementById("sbThan");
 const khayBao = document.getElementById("khayBao");
@@ -58,7 +59,7 @@ if (!daCauHinh) {
     <p>Dán <code>firebaseConfig</code> vào <code>cau-hinh.js</code> trước đã.</p></div>`;
 } else {
   chay().catch((e) => {
-    than.innerHTML = `<div class="nhac nhac--nguy"><h3>Không mở được trang</h3><p><code>${esc(e.message)}</code></p></div>`;
+    than.innerHTML = `<div class="nhac nhac--nguy"><h3>Không mở được trang</h3><p>${esc(dienGiaiLoi(e))}</p></div>`;
   });
 }
 
@@ -946,7 +947,7 @@ async function chenAnh(inp) {
     demChu();
     bao("Đã chèn ảnh.", "xong");
   } catch (e) {
-    bao("Không tải được ảnh: " + (e.code || e.message), "loi");
+    bao("Không tải được ảnh: " + dienGiaiLoi(e), "loi");
   }
 }
 
@@ -971,7 +972,7 @@ async function taiAnhBia(inp) {
     danhDauDoi();
     bao("Đã tải ảnh bìa.", "xong");
   } catch (e) {
-    bao("Không tải được ảnh: " + (e.code || e.message), "loi");
+    bao("Không tải được ảnh: " + dienGiaiLoi(e), "loi");
   }
 }
 
@@ -1062,7 +1063,7 @@ async function layTuBao() {
          <p>Trang này dựng nội dung bằng JavaScript hoặc có cấu trúc lạ. Các ô khác vẫn điền rồi, phần nội dung bạn tự dán vào.</p></div>`;
     if (hong) bao(`${hong} ảnh trong bài không tải được, đã bỏ.`, "loi");
   } catch (e) {
-    oKq.innerHTML = `<div class="nhac nhac--nguy"><h3>Không lấy được bài</h3><p>${esc(e.message)}</p></div>`;
+    oKq.innerHTML = `<div class="nhac nhac--nguy"><h3>Không lấy được bài</h3><p>${esc(dienGiaiLoi(e))}</p></div>`;
   } finally {
     nut.disabled = false;
     nut.textContent = "Lấy về";
@@ -1195,9 +1196,7 @@ async function luu() {
     document.getElementById("sbTrangThai").textContent = "Đã lưu";
     bao("Đã lưu bài.", "xong");
   } catch (e) {
-    bao(e.code === "permission-denied"
-      ? "Luật Firestore chặn. Kiểm tra UID của bạn trong collection quan-tri."
-      : "Lỗi: " + (e.code || e.message), "loi");
+    bao(dienGiaiLoi(e), "loi");
   } finally {
     nut.disabled = false;
     nut.textContent = "Lưu bài";
