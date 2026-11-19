@@ -208,7 +208,9 @@ export async function catAnh(blob, { tiLe = 5 / 6, tron = false, tieuDe = "Cắt
     phu.querySelector("[data-huy]").addEventListener("click", () => dong(null));
     phu.querySelector("[data-dat-lai]").addEventListener("click", datLai);
     phu.querySelector("[data-ok]").addEventListener("click", async (e) => {
-      e.currentTarget.disabled = true;
+      const nut = e.currentTarget;
+      nut.disabled = true;
+      try {
       const v = vung();
       // không phóng ảnh nhỏ lên quá cỡ gốc — chỉ làm ảnh mờ mà nặng thêm
       const rong = Math.round(Math.min(RONG_RA, v.sw));
@@ -221,9 +223,15 @@ export async function catAnh(blob, { tiLe = 5 / 6, tron = false, tieuDe = "Cắt
       const xuat = (kieu) => new Promise((ok) => c.toBlob(ok, kieu, CHAT_LUONG));
       let ra = await xuat("image/webp");
       if (!ra || ra.type !== "image/webp") ra = await xuat("image/jpeg");   // Safari cũ không xuất được webp
+      if (!ra) throw new Error("trình duyệt không xuất được ảnh");
       const duoi = ra.type === "image/webp" ? "webp" : "jpg";
       const goc = (blob.name || "anh").replace(/\.[^.]+$/, "");
       dong(new File([ra], `${goc}-cat.${duoi}`, { type: ra.type }));
+      } catch (loi) {
+        // không để nút khoá mãi: báo ngay trong cửa sổ, cho bấm lại hoặc Huỷ
+        nut.disabled = false;
+        phu.querySelector(".cat-anh__huong-dan").textContent = "Không cắt được ảnh này (" + loi.message + "). Thử lại, hoặc bấm Huỷ rồi chọn ảnh khác.";
+      }
     });
   });
 }

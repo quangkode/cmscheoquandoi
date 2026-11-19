@@ -1339,7 +1339,7 @@ function ganTaiAnh(hop, m, d, anhDaChon) {
     const tt = hop.querySelector(`[data-tt="${ten}"]`);
     const tep = await catAnh(blob, { tiLe: truong.khung, tron: !!truong.tron });
     if (!tep) { tt.textContent = ""; return false; }
-    if (tep.size > GIOI_HAN_MB * 1024 * 1024) { bao("Ảnh sau khi cắt vẫn quá nặng. Chọn ảnh nhỏ hơn.", "loi"); return false; }
+    if (tep.size > GIOI_HAN_MB * 1024 * 1024) { tt.textContent = ""; bao("Ảnh sau khi cắt vẫn quá nặng. Chọn ảnh nhỏ hơn.", "loi"); return false; }
     tt.textContent = "Đang tải lên…";
     hienAnh(ten, await fb.taiAnhLen(tep, truong.thuMuc || "khac"));
     tt.textContent = "Đã cắt và tải lên";
@@ -1374,9 +1374,7 @@ function ganTaiAnh(hop, m, d, anhDaChon) {
         bao("Chưa cắt được ảnh Drive (" + dienGiaiLoi(e) + "). Tạm dùng nguyên ảnh, bấm \"Cắt lại ảnh\" sau.", "loi");
       }
     }
-    anhDaChon[ten] = anh;
-    hop.querySelector(`[data-xem="${ten}"]`).innerHTML = `<img src="${esc(anh.url)}" alt="" />`;
-    hop.querySelector(`[data-bo="${ten}"]`).hidden = false;
+    hienAnh(ten, anh);   // hiện cả nút "Cắt lại ảnh" nếu ô có khung
     tt.textContent = "Đã lấy ảnh từ Drive";
     o.value = "";
   };
