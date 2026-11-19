@@ -208,7 +208,9 @@ export const LUOC_DO = {
       { ten: "chucDanh", nhan: "Các cương vị đã giữ trước đó", kieu: "text", phuThuoc: "laLanhDao",
         goiY: "Ví dụ: Phó Đoàn trưởng (2002 - 2009) · Phó Giám đốc (2010 - 2011)" },
 
-      { ten: "anh", nhan: "Ảnh chân dung", kieu: "anh", thuMuc: "nhan-su" },
+      /* khung 5/6 = đúng khung ảnh ở trang Nghệ sĩ của web; tron = còn hiện ở
+         vòng tròn trang chủ. Có khung thì tải ảnh lên là bật công cụ cắt (T10). */
+      { ten: "anh", nhan: "Ảnh chân dung", kieu: "anh", thuMuc: "nhan-su", khung: 5 / 6, tron: true },
       { ten: "thuTu", nhan: "Thứ tự", kieu: "so", macDinh: 10 },
       { ten: "hienThi", nhan: "Hiện trên web", kieu: "cong-tac", macDinh: true }
     ]
