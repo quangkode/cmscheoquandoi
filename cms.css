@@ -49,7 +49,7 @@ body {
 h1, h2, h3, h4 { margin: 0 0 .5em; line-height: 1.25; }
 a { color: var(--do); }
 /* height:auto là BẮT BUỘC, không phải cho đẹp: các thẻ img ở đây có sẵn
-   thuộc tính height trong HTML (logo là height="1121"). Thiếu dòng này thì
+   thuộc tính height trong HTML (logo là height="181"). Thiếu dòng này thì
    CSS width:36px đi cùng height 1121px từ thuộc tính, logo cao 1121px đẩy
    toàn bộ menu ra ngoài màn hình. Có height:auto thì trình duyệt mới suy
    chiều cao theo tỉ lệ ảnh. */
@@ -95,7 +95,7 @@ button, input, select, textarea { font: inherit; color: inherit; }
   position: sticky; top: 0; height: 100vh; height: 100dvh; overflow-y: auto;
 }
 .ben__hieu { display: flex; align-items: center; gap: 10px; padding: 4px 8px 18px; }
-.ben__hieu img { width: 36px; flex: none; }
+.ben__hieu img { width: 46px; flex: none; }
 .ben__hieu strong { font-size: 14px; line-height: 1.3; color: #fff; }
 .ben a {
   display: flex; align-items: center; gap: 11px; padding: 10px 12px;
