@@ -301,6 +301,48 @@ table.bang-tinh tbody tr:last-child td { border-bottom: 1px solid var(--vien); }
 .o-anh-tai__xem img { width: 100%; height: 100%; object-fit: cover; }
 .o-anh-tai__nut { display: flex; flex-direction: column; gap: 8px; }
 .o-anh-tai input[type="file"] { display: none; }
+/* ô ảnh có khung cố định (chân dung 5:6): xem trước đúng tỉ lệ như trên web */
+.o-anh-tai__xem--khung { width: 110px; height: auto; }
+
+/* ---------- Cửa sổ cắt ảnh (js/cat-anh.js, T10) ----------
+   Nằm trên hộp thoại sửa (z 60) nhưng dưới khay thông báo (z 90). */
+.cat-anh {
+  position: fixed; inset: 0; z-index: 80; background: rgba(24, 38, 33, .72);
+  display: grid; place-items: center; padding: 16px; overflow-y: auto;
+  opacity: 0; transition: opacity .18s ease;
+}
+.cat-anh.dang-mo { opacity: 1; }
+.cat-anh__hop {
+  background: var(--the); border-radius: 14px; box-shadow: var(--bong-lon);
+  width: 100%; max-width: 560px; padding: 20px 22px;
+}
+.cat-anh__hop h2 { font-family: var(--serif); font-size: 20px; margin: 0 0 6px; }
+.cat-anh__huong-dan { margin: 0 0 14px; font-size: 13.5px; color: var(--muc-nhat); }
+.cat-anh__than { display: flex; gap: 18px; align-items: flex-start; }
+.cat-anh__khung {
+  position: relative; overflow: hidden; flex: none;
+  width: min(300px, 62vw); aspect-ratio: 5 / 6;
+  border-radius: 8px; background: var(--nen); cursor: grab; touch-action: none;
+  outline: 2px solid var(--vang); outline-offset: 2px;
+}
+.cat-anh__khung:active { cursor: grabbing; }
+.cat-anh__khung:focus-visible { outline-color: var(--do); }
+.cat-anh__khung img {
+  position: absolute; left: 0; top: 0; max-width: none; height: auto;
+  user-select: none; -webkit-user-drag: none; pointer-events: none;
+}
+.cat-anh__ben { display: flex; flex-direction: column; gap: 14px; }
+.cat-anh__xem { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--muc-nhat); }
+.cat-anh__xem canvas { width: 84px; height: auto; border-radius: 6px; box-shadow: var(--bong); background: var(--nen); }
+.cat-anh__xem .cat-anh__tron { border-radius: 50%; border: 3px solid #fff; }
+.cat-anh__phong { display: flex; align-items: center; gap: 10px; margin: 16px 0 0; font-size: 12.5px; color: var(--muc-nhat); }
+.cat-anh__phong input { flex: 1; accent-color: var(--do); }
+.cat-anh__chan { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--vien); }
+@media (max-width: 520px) {
+  .cat-anh__than { flex-direction: column; align-items: center; }
+  .cat-anh__khung { width: min(300px, 82vw); }
+  .cat-anh__ben { flex-direction: row; }
+}
 
 /* ô dán link ảnh Google Drive, nằm dưới hàng chọn ảnh */
 .o-anh-drive { display: flex; gap: 8px; margin-top: 10px; }

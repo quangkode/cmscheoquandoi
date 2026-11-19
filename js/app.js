@@ -10,6 +10,7 @@ import { TRANG_WEB } from "../cau-hinh.js";
 import { xuatXlsx, soanNhap } from "./xuat-nhap.js";
 import { bocBai, locHtml } from "./doc-bai.js";
 import { dienGiaiLoi } from "./dien-giai-loi.js";
+import { catAnh } from "./cat-anh.js";
 
 const chinh = document.getElementById("chinh");
 const menu = document.getElementById("menu");
@@ -1233,11 +1234,13 @@ function veTruong(t, d) {
     case "anh":
       return `${mo}${nhan}
         <div class="o-anh-tai">
-          <div class="o-anh-tai__xem" data-xem="${t.ten}">${gia?.url ? `<img src="${esc(gia.url)}" alt="" />` : "Chưa có ảnh"}</div>
+          <div class="o-anh-tai__xem${t.khung ? " o-anh-tai__xem--khung" : ""}" data-xem="${t.ten}"${t.khung ? ` style="aspect-ratio: ${t.khung}"` : ""}>${gia?.url ? `<img src="${esc(gia.url)}" alt="" />` : "Chưa có ảnh"}</div>
           <div class="o-anh-tai__nut">
             <input type="file" accept="image/*" data-tep="${t.ten}" id="tep-${t.ten}" />
             <button type="button" class="nut nut--nho" data-chon="${t.ten}">Chọn ảnh…</button>
+            ${t.khung ? `<button type="button" class="nut nut--nho" data-cat-lai="${t.ten}"${gia?.url ? "" : " hidden"}>Cắt lại ảnh</button>` : ""}
             <button type="button" class="nut nut--nho" data-bo="${t.ten}"${gia?.url ? "" : " hidden"}>Bỏ ảnh</button>
+            ${t.khung ? `<span class="goi-y">Chọn ảnh xong sẽ hiện khung cắt — khung đúng bằng khung trên web.</span>` : ""}
             <span class="goi-y" data-tt="${t.ten}"></span>
           </div>
         </div>
@@ -1306,9 +1309,53 @@ function thuAnh(url) {
   });
 }
 
+/* Ảnh đang nằm ở máy khác (Drive, kho Firebase) thì trình duyệt không được
+   vẽ lên canvas để cắt (chặn tải chéo). Tải hộ qua /api/lay-anh — cùng tên
+   miền với CMS — là cắt được. Chỉ chạy khi CMS đã đưa lên Vercel. */
+async function layAnhVe(url) {
+  const r = await fetch("/api/lay-anh?url=" + encodeURIComponent(url));
+  if (!r.ok) throw new Error(((await r.json().catch(() => ({}))).loi) || "lỗi " + r.status);
+  return r.blob();
+}
+
+/* Ô ảnh có khung: ảnh gốc được phép to hơn mức 5 MB của kho, vì thứ đẩy lên là bản đã cắt. */
+const GIOI_HAN_GOC_MB = 25;   // cắt xong chỉ còn vài trăm KB
+
 function ganTaiAnh(hop, m, d, anhDaChon) {
   hop.querySelectorAll("[data-chon]").forEach((b) =>
     b.addEventListener("click", () => hop.querySelector(`[data-tep="${b.dataset.chon}"]`).click()));
+
+  const truongCua = (ten) => m.truong.find((t) => t.ten === ten);
+  const hienAnh = (ten, kq) => {
+    anhDaChon[ten] = kq;
+    hop.querySelector(`[data-xem="${ten}"]`).innerHTML = `<img src="${esc(kq.url)}" alt="" />`;
+    hop.querySelector(`[data-bo="${ten}"]`).hidden = false;
+    const cl = hop.querySelector(`[data-cat-lai="${ten}"]`);
+    if (cl) cl.hidden = false;
+  };
+  // cắt một ảnh rồi đẩy lên kho; trả về false nếu người dùng bấm Huỷ
+  const catVaTai = async (ten, blob) => {
+    const truong = truongCua(ten);
+    const tt = hop.querySelector(`[data-tt="${ten}"]`);
+    const tep = await catAnh(blob, { tiLe: truong.khung, tron: !!truong.tron });
+    if (!tep) { tt.textContent = ""; return false; }
+    if (tep.size > GIOI_HAN_MB * 1024 * 1024) { bao("Ảnh sau khi cắt vẫn quá nặng. Chọn ảnh nhỏ hơn.", "loi"); return false; }
+    tt.textContent = "Đang tải lên…";
+    hienAnh(ten, await fb.taiAnhLen(tep, truong.thuMuc || "khac"));
+    tt.textContent = "Đã cắt và tải lên";
+    return true;
+  };
+
+  hop.querySelectorAll("[data-cat-lai]").forEach((b) =>
+    b.addEventListener("click", async () => {
+      const ten = b.dataset.catLai;
+      const tt = hop.querySelector(`[data-tt="${ten}"]`);
+      const url = anhDaChon[ten] === undefined ? d?.[ten]?.url : anhDaChon[ten]?.url;
+      if (!url) return;
+      tt.textContent = "Đang mở ảnh…";
+      try { await catVaTai(ten, await layAnhVe(url)); }
+      catch (e) { tt.textContent = ""; bao("Không mở được ảnh để cắt: " + dienGiaiLoi(e), "loi"); }
+    }));
 
   const layDrive = async (ten) => {
     const o = hop.querySelector(`[data-drive="${ten}"]`);
@@ -1318,6 +1365,15 @@ function ganTaiAnh(hop, m, d, anhDaChon) {
     const anh = anhDrive(id);
     tt.textContent = "Đang lấy ảnh từ Drive…";
     if (!(await thuAnh(anh.url))) { tt.textContent = ""; bao(LOI_CHIA_SE, "loi"); return; }
+    if (truongCua(ten).khung) {
+      // ảnh chân dung: mang về cắt theo khung rồi lưu vào kho của mình
+      try {
+        if (await catVaTai(ten, await layAnhVe(anh.url))) o.value = "";
+        return;
+      } catch (e) {
+        bao("Chưa cắt được ảnh Drive (" + dienGiaiLoi(e) + "). Tạm dùng nguyên ảnh, bấm \"Cắt lại ảnh\" sau.", "loi");
+      }
+    }
     anhDaChon[ten] = anh;
     hop.querySelector(`[data-xem="${ten}"]`).innerHTML = `<img src="${esc(anh.url)}" alt="" />`;
     hop.querySelector(`[data-bo="${ten}"]`).hidden = false;
@@ -1338,6 +1394,8 @@ function ganTaiAnh(hop, m, d, anhDaChon) {
       anhDaChon[ten] = null;
       hop.querySelector(`[data-xem="${ten}"]`).innerHTML = "Chưa có ảnh";
       b.hidden = true;
+      const cl = hop.querySelector(`[data-cat-lai="${ten}"]`);
+      if (cl) cl.hidden = true;
     }));
 
   hop.querySelectorAll("[data-tep]").forEach((inp) =>
@@ -1349,6 +1407,16 @@ function ganTaiAnh(hop, m, d, anhDaChon) {
       const truong = m.truong.find((t) => t.ten === ten);
 
       if (!tep.type.startsWith("image/")) { bao("Tệp này không phải ảnh.", "loi"); inp.value = ""; return; }
+      if (truong.khung) {
+        if (tep.size > GIOI_HAN_GOC_MB * 1024 * 1024) {
+          bao(`Ảnh nặng ${(tep.size / 1048576).toFixed(1)} MB, vượt mức ${GIOI_HAN_GOC_MB} MB. Chọn ảnh nhỏ hơn.`, "loi");
+        } else {
+          try { await catVaTai(ten, tep); }
+          catch (e) { tt.textContent = ""; bao("Không tải được ảnh: " + dienGiaiLoi(e), "loi"); }
+        }
+        inp.value = "";
+        return;
+      }
       if (tep.size > GIOI_HAN_MB * 1024 * 1024) {
         bao(`Ảnh nặng ${(tep.size / 1048576).toFixed(1)} MB, vượt mức ${GIOI_HAN_MB} MB. Nén bớt rồi tải lại.`, "loi");
         inp.value = "";
